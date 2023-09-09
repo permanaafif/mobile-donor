@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".LoginActivity">
+
+    <ImageView
+        android:layout_marginTop="120dp"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:src="@drawable/logo"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/logo"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="DARA"
+        android:textStyle="bold"
+        android:textSize="40dp"
+        android:textColor="@color/dara"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="250dp"
+        android:id="@+id/dara"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/dara"
+        android:layout_centerHorizontal="true"
+        android:textSize="14dp"
+        android:text="Setetes Darah Akan Sangat Berarti"
+        android:id="@+id/slogan"
+        android:layout_marginBottom="20dp"
+        android:textColor="@color/black"
+        />
+
+    <EditText
+        android:layout_width="314dp"
+        android:layout_height="48dp"
+        android:layout_below="@id/slogan"
+        android:layout_centerHorizontal="true"
+        android:hint="Kode Donor"
+        android:textColor="@color/black"
+        android:textColorHint="@color/black"
+        android:background="@drawable/borderinput"
+        android:drawableLeft="@drawable/baseline_person_24"
+        android:layout_marginBottom="28dp"
+        android:id="@+id/kodedonor"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:paddingVertical="10dp"
+        android:textSize="14dp"
+        android:drawablePadding="10dp"
+        />
+
+    <EditText
+        android:textColorHint="@color/black"
+        android:textColor="@color/black"
+        android:id="@+id/password"
+        android:layout_width="314dp"
+        android:layout_height="48dp"
+        android:layout_below="@id/kodedonor"
+        android:textSize="14dp"
+        android:layout_centerHorizontal="true"
+        android:hint="Password"
+        android:background="@drawable/borderinput"
+        android:drawableLeft="@drawable/baseline_lock_24"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:paddingVertical="10dp"
+        android:drawablePadding="10dp"
+        />
+
+    <Button
+        android:id="@+id/tentangdara"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Tentang DARA?"
+        android:background="@android:color/transparent"
+        android:textColor="@color/blue"
+        android:layout_below="@id/password"
+        android:textAllCaps="false"
+        android:layout_marginLeft="54dp"
+        android:textSize="14dp"
+        android:layout_marginBottom="29dp"
+        />
+
+    <Button
+        android:id="@+id/lupapassword"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Lupa Password?"
+        android:background="@android:color/transparent"
+        android:textColor="@color/blue"
+        android:layout_below="@id/password"
+        android:textAllCaps="false"
+        android:layout_marginLeft="200dp"
+        android:textSize="14dp"
+        />
+
+    <Button
+        android:id="@+id/btnLogin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="LOGIN"
+        android:textColor="@color/white"
+        android:layout_below="@id/tentangdara"
+        android:layout_centerHorizontal="true"
+        android:textSize="14dp"
+        android:backgroundTint="@color/button"
+        android:textStyle="bold"
+        />
+
+
+
+</RelativeLayout>

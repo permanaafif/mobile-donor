@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ProfileFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/bluedark"
+        app:layout_collapseMode="pin"
+        app:layout_scrollFlags="scroll|enterAlways">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Profile"
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            android:gravity="center_horizontal"
+            />
+
+    </androidx.appcompat.widget.Toolbar>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/toolbar">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/foto"
+                android:layout_width="96dp"
+                android:layout_height="94dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginEnd="15dp"
+                android:layout_marginBottom="15dp"
+                android:src="@drawable/baseline_person_24"
+                android:background="@drawable/bulet"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Nama Panjang"
+                android:fontFamily="@font/poppins"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:layout_toRightOf="@id/foto"
+                android:layout_marginTop="27dp"
+                android:id="@+id/nama"
+                android:textSize="18sp"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Kode Donor"
+                android:textStyle="bold"
+                android:fontFamily="@font/poppins"
+                android:textColor="@color/black"
+                android:layout_toRightOf="@id/foto"
+                android:layout_below="@id/nama"
+                android:textSize="14sp"
+                android:id="@+id/kode"
+                />
+
+            <TextView
+                android:focusable="true"
+                android:clickable="true"
+                android:layout_width="77dp"
+                android:layout_height="42dp"
+                android:background="@drawable/borderedit"
+                android:textSize="20dp"
+                android:fontFamily="@font/poppins"
+                android:text="Edit"
+                android:textColor="@color/white"
+                android:gravity="center"
+                android:textStyle="bold"
+                android:layout_below="@id/kode"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="40dp"
+                android:layout_marginTop="5dp"
+                android:id="@+id/btnEdit"
+                android:layout_marginBottom="15dp"
+                />
+
+            <TextView
+                android:layout_width="314dp"
+                android:layout_height="45dp"
+                android:layout_below="@id/btnEdit"
+                android:layout_centerHorizontal="true"
+                android:hint="Nama User"
+                android:fontFamily="@font/poppins"
+                android:textColor="@color/black"
+                android:textColorHint="@color/black"
+                android:background="@drawable/borderinput"
+                android:drawableLeft="@drawable/baseline_person_24"
+                android:layout_marginBottom="18dp"
+                android:id="@+id/namauser"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:paddingVertical="13dp"
+                android:textSize="14sp"
+                android:drawablePadding="10dp"
+                />
+
+            <TextView
+                android:layout_width="314dp"
+                android:layout_height="45dp"
+                android:layout_below="@id/namauser"
+                android:layout_centerHorizontal="true"
+                android:hint="Password"
+                android:textColor="@color/black"
+                android:textColorHint="@color/black"
+                android:background="@drawable/borderinput"
+                android:drawableLeft="@drawable/baseline_key_24"
+                android:layout_marginBottom="18dp"
+                android:id="@+id/password"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:paddingVertical="13dp"
+                android:textSize="14sp"
+                android:fontFamily="@font/poppins"
+                android:drawablePadding="10dp"
+                />
+
+            <TextView
+                android:layout_width="314dp"
+                android:layout_height="45dp"
+                android:layout_below="@id/password"
+                android:layout_centerHorizontal="true"
+                android:hint="Alamat"
+                android:textColor="@color/black"
+                android:textColorHint="@color/black"
+                android:background="@drawable/borderinput"
+                android:drawableLeft="@drawable/baseline_location_city_24"
+                android:layout_marginBottom="18dp"
+                android:id="@+id/alamat"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:paddingVertical="13dp"
+                android:textSize="14sp"
+                android:fontFamily="@font/poppins"
+                android:drawablePadding="10dp"
+                />
+
+            <TextView
+                android:id="@+id/jekel"
+                android:hint="Jenis Kelamin"
+                android:layout_width="314dp"
+                android:layout_height="45dp"
+                android:layout_below="@id/alamat"
+                android:layout_centerHorizontal="true"
+                android:textColor="@color/black"
+                android:textColorHint="@color/black"
+                android:background="@drawable/borderinput"
+                android:drawableLeft="@drawable/baseline_group_24"
+                android:layout_marginBottom="18dp"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:paddingVertical="13dp"
+                android:textSize="14sp"
+                android:fontFamily="@font/poppins"
+                android:drawablePadding="10dp"
+                />
+
+            <TextView
+                android:id="@+id/notelp"
+                android:hint="Nomor Telepon"
+                android:layout_width="314dp"
+                android:layout_height="45dp"
+                android:layout_below="@id/jekel"
+                android:layout_centerHorizontal="true"
+                android:textColor="@color/black"
+                android:textColorHint="@color/black"
+                android:background="@drawable/borderinput"
+                android:drawableLeft="@drawable/baseline_call_24"
+                android:layout_marginBottom="18dp"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:paddingVertical="13dp"
+                android:textSize="14sp"
+                android:fontFamily="@font/poppins"
+                android:drawablePadding="10dp"
+                />
+
+            <TextView
+                android:id="@+id/goldar"
+                android:hint="Golongan Darah"
+                android:layout_width="314dp"
+                android:layout_height="45dp"
+                android:layout_below="@id/notelp"
+                android:layout_centerHorizontal="true"
+                android:textColor="@color/black"
+                android:textColorHint="@color/black"
+                android:background="@drawable/borderinput"
+                android:drawableLeft="@drawable/baseline_bloodtype_24"
+                android:layout_marginBottom="18dp"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:paddingVertical="13dp"
+                android:textSize="14sp"
+                android:fontFamily="@font/poppins"
+                android:drawablePadding="10dp"
+                />
+
+            <TextView
+                android:id="@+id/bb"
+                android:hint="Berat Badan"
+                android:layout_width="314dp"
+                android:layout_height="45dp"
+                android:layout_below="@id/goldar"
+                android:layout_centerHorizontal="true"
+                android:textColor="@color/black"
+                android:textColorHint="@color/black"
+                android:background="@drawable/borderinput"
+                android:drawableLeft="@drawable/baseline_monitor_weight_24"
+                android:layout_marginBottom="10dp"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:paddingVertical="13dp"
+                android:textSize="14sp"
+                android:fontFamily="@font/poppins"
+                android:drawablePadding="10dp"
+                />
+
+            <TextView
+                android:layout_width="119dp"
+                android:layout_height="49dp"
+                android:background="@drawable/borderkeluar"
+                android:layout_below="@id/bb"
+                android:layout_centerVertical="true"
+                android:layout_margin="15dp"
+                android:textStyle="bold"
+                android:text="Keluar"
+                android:drawableLeft="@drawable/baseline_exit_to_app_24"
+                android:paddingVertical="40dp"
+                android:textColor="@color/white"
+                android:padding="10dp"
+                android:gravity="center"
+                android:textSize="18sp"
+                android:id="@+id/btnLogOut"
+                />
+
+            <TextView
+                android:layout_width="119dp"
+                android:layout_height="49dp"
+                android:layout_below="@id/bb"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginEnd="15dp"
+                android:layout_marginBottom="15dp"
+                android:background="@drawable/borderkeluar"
+                android:drawableLeft="@drawable/baseline_exit_to_app_24"
+                android:gravity="center"
+                android:padding="10dp"
+                android:paddingVertical="40dp"
+                android:text="Keluar"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:fontFamily="@font/poppins"
+                android:textStyle="bold"
+                android:focusable="true"
+                android:clickable="true"/>
+
+        </RelativeLayout>
+    </ScrollView>
+
+
+</RelativeLayout>

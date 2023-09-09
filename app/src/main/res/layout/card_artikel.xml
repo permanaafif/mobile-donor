@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/card_artikel"
+    app:cardCornerRadius="15dp"
+    android:layout_marginBottom="20dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="135dp">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/card_image"
+            android:layout_width="150dp"
+            android:layout_margin="10dp"
+            android:layout_height="match_parent"
+            app:cardCornerRadius="8dp">
+            <ImageView
+                android:layout_alignParentStart="true"
+                android:id="@+id/gambar_artikel"
+                android:scaleType="fitXY"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/donor_darah"/>
+        </androidx.cardview.widget.CardView>
+
+        <LinearLayout
+            android:layout_toRightOf="@id/card_image"
+            android:layout_margin="10dp"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/judul_artikel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Krisis Donor darah"
+                android:fontFamily="@font/poppins"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:textStyle="bold"
+                android:textSize="14sp"/>
+
+            <TextView
+                android:id="@+id/deskripsi_artikel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incidid et dolore magna veniam, quis nostrud exercitat......"
+                android:fontFamily="@font/poppins"
+                android:maxLines="3"
+                android:justificationMode="inter_word"
+                android:ellipsize="end"
+                android:textSize="12sp"/>
+
+            <TextView
+                android:id="@+id/tanggal_artikel"
+                android:layout_marginTop="15dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="28/009/2023"
+                android:fontFamily="@font/poppins"
+                android:maxLines="1"
+                android:layout_gravity="end"
+                android:textSize="12sp"/>
+        </LinearLayout>
+    </RelativeLayout>
+
+</androidx.cardview.widget.CardView>

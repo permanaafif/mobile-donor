@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ProfileEdit">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/bluedark"
+        app:layout_collapseMode="pin"
+        app:layout_scrollFlags="scroll|enterAlways"
+        android:layout_centerHorizontal="true"
+        >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+            <ImageButton
+                android:id="@+id/backButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:paddingVertical="16dp"
+                android:src="@drawable/baseline_arrow_back_24"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Kembali ke halaman sebelumnya"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Edit"
+                android:textColor="@android:color/white"
+                android:textSize="18sp"
+                android:fontFamily="@font/poppins"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                />
+        </RelativeLayout>
+
+    </androidx.appcompat.widget.Toolbar>
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:layout_marginTop="20dp"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/toolbar"
+                android:id="@+id/foto"
+                android:layout_width="96dp"
+                android:layout_height="94dp"
+                android:src="@drawable/baseline_person_24"
+                android:background="@drawable/bulet" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/foto"
+                android:fontFamily="@font/poppins"
+                android:id="@+id/gantifoto"
+                android:layout_centerHorizontal="true"
+                android:text="Ganti Foto"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                android:layout_marginTop="10dp"
+                android:textSize="18sp"
+                android:clickable="true"
+                android:onClick="selectImageFromGallery" />
+
+
+            <EditText
+                android:layout_marginTop="20dp"
+                android:layout_width="314dp"
+                android:layout_height="45dp"
+                android:layout_below="@id/gantifoto"
+                android:layout_centerHorizontal="true"
+                android:hint="Nama User"
+                android:textColor="@color/black"
+                android:textColorHint="@color/black"
+                android:background="@drawable/borderinput"
+                android:drawableLeft="@drawable/baseline_person_24"
+                android:layout_marginBottom="18dp"
+                android:id="@+id/namauser"
+                android:fontFamily="@font/poppins"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:textSize="14sp"
+                android:drawablePadding="10dp"
+                />
+
+            <EditText
+                android:layout_width="314dp"
+                android:layout_height="45dp"
+                android:layout_below="@id/namauser"
+                android:layout_centerHorizontal="true"
+                android:hint="Password"
+                android:textColor="@color/black"
+                android:textColorHint="@color/black"
+                android:background="@drawable/borderinput"
+                android:drawableLeft="@drawable/baseline_key_24"
+                android:layout_marginBottom="18dp"
+                android:id="@+id/password"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:textSize="14sp"
+                android:drawablePadding="10dp"
+                />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/namauser"
+        android:src="@drawable/baseline_arrow_forward_ios_24"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="58dp"
+        android:background="@android:color/transparent"
+        android:layout_marginTop="10dp"
+        android:id="@+id/btnGantiPassword"
+        />
+
+            <EditText
+                android:layout_width="314dp"
+                android:layout_height="45dp"
+                android:layout_below="@id/password"
+                android:layout_centerHorizontal="true"
+                android:hint="Alamat"
+                android:textColor="@color/black"
+                android:textColorHint="@color/black"
+                android:background="@drawable/borderinput"
+                android:fontFamily="@font/poppins"
+                android:drawableLeft="@drawable/baseline_location_city_24"
+                android:layout_marginBottom="18dp"
+                android:id="@+id/alamat"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:textSize="14sp"
+                android:drawablePadding="10dp"
+                />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_centerHorizontal="true"
+        android:layout_width="314dp"
+        android:layout_height="45dp"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        android:layout_below="@id/alamat"
+        android:id="@+id/pilihjeniskelamin"
+        app:hintEnabled="false"
+        android:layout_marginBottom="18dp"
+        >
+
+        <AutoCompleteTextView
+            android:paddingVertical="1dp"
+            android:id="@+id/jekel"
+            android:text="Jenis Kelamin"
+            android:layout_width="314dp"
+            android:layout_height="45dp"
+            android:drawableStart="@drawable/baseline_group_24"
+            android:background="@drawable/borderinput"
+            android:layout_marginBottom="20dp"
+            android:textSize="14sp"
+            android:textColor="@color/black"
+            android:drawablePadding="10dp"
+            android:inputType="none"
+            android:paddingStart="20dp"
+            />
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+    <EditText
+                android:id="@+id/notelp"
+                android:hint="Nomor Telepon"
+                android:layout_width="314dp"
+                android:layout_height="45dp"
+                android:layout_below="@id/pilihjeniskelamin"
+                android:layout_centerHorizontal="true"
+                android:textColor="@color/black"
+                android:textColorHint="@color/black"
+                android:fontFamily="@font/poppins"
+                android:background="@drawable/borderinput"
+                android:drawableLeft="@drawable/baseline_call_24"
+                android:layout_marginBottom="18dp"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:textSize="14sp"
+                android:drawablePadding="10dp"
+                />
+
+            <EditText
+                android:id="@+id/goldar"
+                android:hint="Golongan Darah"
+                android:layout_width="314dp"
+                android:layout_height="45dp"
+                android:layout_below="@id/notelp"
+                android:layout_centerHorizontal="true"
+                android:textColor="@color/black"
+                android:textColorHint="@color/black"
+                android:background="@drawable/borderinput"
+                android:drawableLeft="@drawable/baseline_bloodtype_24"
+                android:layout_marginBottom="18dp"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:textSize="14sp"
+                android:drawablePadding="10dp"
+                />
+
+            <TextView
+                android:id="@+id/bb"
+                android:hint="Berat Badan"
+                android:layout_width="314dp"
+                android:layout_height="45dp"
+                android:layout_below="@id/goldar"
+                android:layout_centerHorizontal="true"
+                android:textColor="@color/black"
+                android:textColorHint="@color/black"
+                android:fontFamily="@font/poppins"
+                android:background="@drawable/borderinput"
+                android:drawableLeft="@drawable/baseline_monitor_weight_24"
+                android:layout_marginBottom="10dp"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:paddingVertical="12dp"
+                android:textSize="14sp"
+                android:drawablePadding="10dp"
+                />
+
+<Button
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_below="@id/bb"
+    android:backgroundTint="@color/button"
+    android:layout_centerHorizontal="true"
+    android:layout_marginTop="15dp"
+    android:textStyle="bold"
+    android:fontFamily="@font/poppins"
+    android:text="Simpan"
+    android:textAllCaps="false"
+    />
+
+
+</RelativeLayout>

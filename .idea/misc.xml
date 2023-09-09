@@ -1,0 +1,22 @@
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Users/Apip/AndroidStudioProjects/Donor3/app/src/main/res/layout/activity_home.xml" value="0.22" />
+        <entry key="..\:/Users/Apip/AndroidStudioProjects/Donor3/app/src/main/res/layout/activity_main.xml" value="0.16485507246376813" />
+        <entry key="..\:/Users/Apip/AndroidStudioProjects/Donor3/app/src/main/res/layout/fragment_blank.xml" value="0.153125" />
+        <entry key="..\:/Users/Apip/AndroidStudioProjects/Donor3/app/src/main/res/layout/fragment_home.xml" value="0.16485507246376813" />
+        <entry key="..\:/Users/Apip/AndroidStudioProjects/Donor3/app/src/main/res/layout/fragment_location.xml" value="0.15520833333333334" />
+        <entry key="..\:/Users/Apip/AndroidStudioProjects/Donor3/app/src/main/res/layout/fragment_profile.xml" value="0.16485507246376813" />
+        <entry key="..\:/Users/Apip/AndroidStudioProjects/Donor3/app/src/main/res/layout/layout.xml" value="0.153125" />
+        <entry key="..\:/Users/Apip/AndroidStudioProjects/Donor3/app/src/main/res/menu/bottom_menu.xml" value="0.19947916666666668" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_17" default="true" project-jdk-name="jbr-17" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+</project>

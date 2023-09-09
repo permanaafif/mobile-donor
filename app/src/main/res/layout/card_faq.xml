@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/card_location"
+    app:cardCornerRadius="15dp"
+    android:layout_marginBottom="20dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/borderfaq">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/relativelayout"
+            android:background="@drawable/borderfaq">
+
+
+            <LinearLayout
+                android:id="@+id/ln_ket"
+                android:orientation="vertical"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="55dp"
+                >
+
+                <TextView
+                    android:id="@+id/faqtitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Apa itu donor darah?"
+                    android:justificationMode="inter_word"
+                    android:fontFamily="@font/poppins"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/black"
+                    />
+
+            </LinearLayout>
+
+            <ImageView
+                android:layout_alignParentEnd="true"
+                android:id="@+id/faqimage"
+                android:layout_margin="20dp"
+                android:layout_width="30dp"
+                android:layout_height="wrap_content"
+                android:src="@drawable/baseline_add_24"/>
+
+        </RelativeLayout>
+
+        <TextView
+            android:fontFamily="@font/poppins"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:justificationMode="inter_word"
+            android:id="@+id/faqdesc"
+            android:layout_below="@id/relativelayout"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="20dp"
+            android:text="Donor darah adalah tindakan sukarela di mana seseorang menyumbangkan sejumlah kecil darahnya untuk tujuan medis. Darah yang didonasikan digunakan untuk membantu pasien yang membutuhkan transfusi darah, pengobatan penyakit, atau dalam situasi medis lainnya. Donor darah adalah sumber penting bagi rumah sakit dan fasilitas kesehatan serta berperan kunci dalam menyediakan pasokan darah yang aman dan memadai untuk keperluan medis."
+            android:textStyle="bold"
+            android:visibility="gone"
+            android:textSize="12sp"
+            />
+
+    </RelativeLayout>
+
+
+
+
+
+
+
+</androidx.cardview.widget.CardView>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation_btn_home">
+
+    <fragment
+        android:id="@+id/navi_artikel"
+        android:name="com.afifpermana.donor.ArtikelFragment"
+        android:label="artikel"
+        tools:layout="@layout/fragment_artikel"/>
+
+    <fragment
+        android:id="@+id/navi_faq"
+        android:name="com.afifpermana.donor.FaqFragment"
+        android:label="artikel"
+        tools:layout="@layout/fragment_faq"/>
+
+    <fragment
+        android:id="@+id/navi_call"
+        android:name="com.afifpermana.donor.CallFragment"
+        android:label="artikel"
+        tools:layout="@layout/fragment_call"/>
+
+    <fragment
+        android:id="@+id/navi_jadwal"
+        android:name="com.afifpermana.donor.JadwalFragment"
+        android:label="artikel"
+        tools:layout="@layout/fragment_jadwal"/>
+</navigation>

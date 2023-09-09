@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".OTP">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/bluedark"
+        app:layout_collapseMode="pin"
+        app:layout_scrollFlags="scroll|enterAlways">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+            <ImageButton
+                android:id="@+id/backButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:paddingVertical="16dp"
+                android:src="@drawable/baseline_arrow_back_24"
+                android:background="?attr/selectableItemBackgroundBorderless"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins"
+                android:text="Lupa Password"
+                android:textColor="@android:color/white"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"
+                />
+        </RelativeLayout>
+
+    </androidx.appcompat.widget.Toolbar>
+
+    <ImageView
+        android:layout_below="@id/toolbar"
+        android:layout_width="356dp"
+        android:layout_height="272dp"
+        android:src="@drawable/otp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="40dp"
+        android:layout_marginBottom="50dp"
+        android:id="@+id/logootp"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/logootp"
+        android:text="Verifikasi OTP"
+        android:textSize="24dp"
+        android:textStyle="bold"
+        android:fontFamily="@font/poppins"
+        android:textColor="@color/black"
+        android:id="@+id/otp1"
+        android:layout_marginBottom="12dp"
+        />
+
+    <TextView
+        android:layout_width="304dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/otp1"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:fontFamily="@font/poppins"
+        android:text="Kami telah mengirimkan kode OTP ke nomor telepon anda"
+        android:textColor="@color/black"
+        android:textSize="14dp"
+        android:id="@+id/otp2"
+        />
+
+
+    <EditText
+        android:layout_width="66dp"
+        android:layout_height="59dp"
+        android:layout_below="@id/otp2"
+        android:layout_marginTop="45dp"
+        android:background="@drawable/borderotp"
+        android:hint="#"
+        android:textColorHint="@color/white"
+        android:textColor="@color/white"
+        android:fontFamily="@font/poppins"
+        android:textSize="30dp"
+        android:layout_marginLeft="40dp"
+        android:gravity="center"
+        android:id="@+id/kode1"
+        />
+
+    <EditText
+        android:layout_width="66dp"
+        android:layout_height="59dp"
+        android:layout_below="@id/otp2"
+        android:layout_marginTop="45dp"
+        android:background="@drawable/borderotp"
+        android:hint="#"
+        android:textColorHint="@color/white"
+        android:textColor="@color/white"
+        android:fontFamily="@font/poppins"
+        android:textSize="30dp"
+        android:layout_marginLeft="120dp"
+        android:gravity="center"
+        android:id="@+id/kode2"
+        />
+
+
+    <EditText
+        android:layout_width="66dp"
+        android:layout_height="59dp"
+        android:layout_below="@id/otp2"
+        android:layout_marginTop="45dp"
+        android:background="@drawable/borderotp"
+        android:hint="#"
+        android:textColorHint="@color/white"
+        android:textColor="@color/white"
+        android:fontFamily="@font/poppins"
+        android:textSize="30dp"
+        android:layout_marginLeft="200dp"
+        android:gravity="center"
+        android:id="@+id/kode3"
+        />
+
+    <EditText
+        android:layout_width="66dp"
+        android:layout_height="59dp"
+        android:layout_below="@id/otp2"
+        android:layout_marginTop="45dp"
+        android:background="@drawable/borderotp"
+        android:hint="#"
+        android:fontFamily="@font/poppins"
+        android:textColorHint="@color/white"
+        android:textColor="@color/white"
+        android:textSize="30dp"
+        android:layout_marginLeft="280dp"
+        android:gravity="center"
+        android:id="@+id/kode4"
+        />
+    
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/kode4"
+        android:layout_marginTop="40dp"
+        android:text="VERIFIKASI"
+        android:textStyle="bold"
+        android:fontFamily="@font/poppins"
+        android:backgroundTint="@color/button"
+        android:gravity="center"
+        android:id="@+id/btnOTP"
+        />
+
+</RelativeLayout>
