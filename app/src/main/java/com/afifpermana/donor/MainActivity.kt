@@ -7,8 +7,10 @@ import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.RadioButton
 import android.widget.RadioGroup
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import com.afifpermana.donor.util.SharedPrefLogin
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlin.math.log
 
@@ -18,6 +20,12 @@ class MainActivity : AppCompatActivity() {
     private lateinit var radioGroup: RadioGroup
     private lateinit var frameLayout: FrameLayout
     private lateinit var linearLayout: LinearLayout
+    lateinit var sharedPref: SharedPrefLogin
+
+    private lateinit var nama : TextView
+    private lateinit var kodePendonor : TextView
+    private lateinit var goldar : TextView
+    private lateinit var beratBadan : TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,6 +33,18 @@ class MainActivity : AppCompatActivity() {
         frameLayout = findViewById(R.id.frame_container)
         linearLayout = findViewById(R.id.home)
         linearLayout.visibility = View.VISIBLE
+
+        sharedPref = SharedPrefLogin(this)
+
+        nama = findViewById(R.id.nama)
+        kodePendonor = findViewById(R.id.kode_donor)
+        goldar = findViewById(R.id.text_goldar)
+        beratBadan = findViewById(R.id.text_berat_badan)
+
+        nama.text = sharedPref.getString("nama")
+        kodePendonor.text = sharedPref.getString("kodePendonor")
+        goldar.text = sharedPref.getString("goldar")
+        beratBadan.text = "${sharedPref.getString("beratBadan")} KG"
 
         radioGroup = findViewById(R.id.rg)
         radioGroup.setOnCheckedChangeListener { group, checkedId ->
