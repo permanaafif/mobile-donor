@@ -6,16 +6,15 @@ import android.content.SharedPreferences
 class SharedPrefLogin (context: Context){
     val login = "login"
     val myPref = "Main_pref"
-    lateinit var sharedPreferences : SharedPreferences
+    var sharedPreferences : SharedPreferences
     val editor: SharedPreferences.Editor
-
     init {
         sharedPreferences = context.getSharedPreferences(myPref,Context.MODE_PRIVATE)
         editor = sharedPreferences.edit()
     }
 
     fun setStatusLogin(status: Boolean){
-        sharedPreferences.edit().putBoolean(login,status).apply()
+        editor.putBoolean(login,status).apply()
     }
     fun getStatusLogin(): Boolean{
         return sharedPreferences.getBoolean(login,false)

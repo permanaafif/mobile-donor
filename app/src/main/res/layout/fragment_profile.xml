@@ -234,8 +234,8 @@
                 />
 
             <TextView
-                android:layout_width="119dp"
-                android:layout_height="49dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:background="@drawable/borderkeluar"
                 android:layout_below="@id/bb"
                 android:layout_centerVertical="true"
@@ -250,28 +250,6 @@
                 android:textSize="18sp"
                 android:id="@+id/btnLogOut"
                 />
-
-            <TextView
-                android:layout_width="119dp"
-                android:layout_height="49dp"
-                android:layout_below="@id/bb"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginEnd="15dp"
-                android:layout_marginBottom="15dp"
-                android:background="@drawable/borderkeluar"
-                android:drawableLeft="@drawable/baseline_exit_to_app_24"
-                android:gravity="center"
-                android:padding="10dp"
-                android:paddingVertical="40dp"
-                android:text="Keluar"
-                android:textColor="@color/white"
-                android:textSize="14sp"
-                android:fontFamily="@font/poppins"
-                android:textStyle="bold"
-                android:focusable="true"
-                android:clickable="true"/>
 
         </RelativeLayout>
     </ScrollView>

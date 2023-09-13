@@ -1,5 +1,6 @@
 package com.afifpermana.donor
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -29,66 +30,72 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        frameLayout = findViewById(R.id.frame_container)
-        linearLayout = findViewById(R.id.home)
-        linearLayout.visibility = View.VISIBLE
-
         sharedPref = SharedPrefLogin(this)
 
-        nama = findViewById(R.id.nama)
-        kodePendonor = findViewById(R.id.kode_donor)
-        goldar = findViewById(R.id.text_goldar)
-        beratBadan = findViewById(R.id.text_berat_badan)
+        if (sharedPref.getStatusLogin() == false){
+            startActivity(Intent(this, SplashScreenActivity::class.java))
+            finish()
+        }else{
+            setContentView(R.layout.activity_main)
+            frameLayout = findViewById(R.id.frame_container)
+            linearLayout = findViewById(R.id.home)
+            linearLayout.visibility = View.VISIBLE
 
-        nama.text = sharedPref.getString("nama")
-        kodePendonor.text = sharedPref.getString("kodePendonor")
-        goldar.text = sharedPref.getString("goldar")
-        beratBadan.text = "${sharedPref.getString("beratBadan")} KG"
 
-        radioGroup = findViewById(R.id.rg)
-        radioGroup.setOnCheckedChangeListener { group, checkedId ->
-            when (checkedId) {
-                R.id.btn_artikel -> {
-                    replaceFragmentHome(ArtikelFragment())
-                }
-                R.id.btn_faq -> {
-                    replaceFragmentHome(FaqFragment())
-                }
-                R.id.btn_call -> {
-                    replaceFragmentHome(CallFragment())
-                }
-                R.id.btn_jadwal -> {
-                    replaceFragmentHome(JadwalFragment())
+            nama = findViewById(R.id.nama)
+            kodePendonor = findViewById(R.id.kode_donor)
+            goldar = findViewById(R.id.text_goldar)
+            beratBadan = findViewById(R.id.text_berat_badan)
+
+            nama.text = sharedPref.getString("nama")
+            kodePendonor.text = sharedPref.getString("kodePendonor")
+            goldar.text = sharedPref.getString("goldar")
+            beratBadan.text = "${sharedPref.getInt("beratBadan")} KG"
+
+            radioGroup = findViewById(R.id.rg)
+            radioGroup.setOnCheckedChangeListener { group, checkedId ->
+                when (checkedId) {
+                    R.id.btn_artikel -> {
+                        replaceFragmentHome(ArtikelFragment())
+                    }
+                    R.id.btn_faq -> {
+                        replaceFragmentHome(FaqFragment())
+                    }
+                    R.id.btn_call -> {
+                        replaceFragmentHome(CallFragment())
+                    }
+                    R.id.btn_jadwal -> {
+                        replaceFragmentHome(JadwalFragment())
+                    }
                 }
             }
-        }
 
-        bottomNavigationView = findViewById(R.id.navigation)
-        bottomNavigationView.setOnItemSelectedListener { menuItem ->
-            when(menuItem.itemId){
-                R.id.btn_home -> {
-                    radioGroup.check(R.id.btn_artikel)
-                    frameLayout.visibility = View.GONE
-                    linearLayout.visibility = View.VISIBLE
-                    true
+            bottomNavigationView = findViewById(R.id.navigation)
+            bottomNavigationView.setOnItemSelectedListener { menuItem ->
+                when(menuItem.itemId){
+                    R.id.btn_home -> {
+                        radioGroup.check(R.id.btn_artikel)
+                        frameLayout.visibility = View.GONE
+                        linearLayout.visibility = View.VISIBLE
+                        true
+                    }
+                    R.id.btn_location_donor -> {
+                        replaceFragment(LocationFragment())
+                        linearLayout.visibility = View.GONE
+                        frameLayout.visibility = View.VISIBLE
+                        true
+                    }
+                    R.id.btn_profile -> {
+                        replaceFragment(ProfileFragment())
+                        linearLayout.visibility = View.GONE
+                        frameLayout.visibility = View.VISIBLE
+                        true
+                    }
+                    else -> false
                 }
-                R.id.btn_location_donor -> {
-                    replaceFragment(LocationFragment())
-                    linearLayout.visibility = View.GONE
-                    frameLayout.visibility = View.VISIBLE
-                    true
-                }
-                R.id.btn_profile -> {
-                    replaceFragment(ProfileFragment())
-                    linearLayout.visibility = View.GONE
-                    frameLayout.visibility = View.VISIBLE
-                    true
-                }
-                else -> false
             }
+            replaceFragmentHome(ArtikelFragment())
         }
-        replaceFragmentHome(ArtikelFragment())
     }
     private fun replaceFragment(fragment: Fragment){
         supportFragmentManager.beginTransaction().replace(R.id.frame_container, fragment).commit()

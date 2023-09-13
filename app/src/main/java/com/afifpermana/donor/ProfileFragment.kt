@@ -8,11 +8,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.afifpermana.donor.util.SharedPrefLogin
 
 class ProfileFragment : Fragment() {
 
     private lateinit var edit : TextView
     private lateinit var logout : TextView
+    private lateinit var sharedPref: SharedPrefLogin
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -28,6 +30,7 @@ class ProfileFragment : Fragment() {
         edit = view.findViewById(R.id.btnEdit)
         logout = view.findViewById(R.id.btnLogOut)
 
+        sharedPref = SharedPrefLogin(requireActivity())
         edit.setOnClickListener{
             val intent = Intent(context, ProfileEdit::class.java)
             startActivity(intent)
@@ -35,7 +38,9 @@ class ProfileFragment : Fragment() {
         }
 
         logout.setOnClickListener{
-            startActivity(Intent(context, LoginActivity::class.java))
+            sharedPref.setStatusLogin(false)
+            val intent = Intent(context, LoginActivity::class.java)
+            startActivity(intent)
         }
     }
 }
