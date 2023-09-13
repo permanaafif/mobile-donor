@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.afifpermana.donor.ArtikelActivity
 import com.afifpermana.donor.MapsActivity
 import com.afifpermana.donor.R
-import com.afifpermana.donor.listerner.OnItemClickListener
+
 import com.afifpermana.donor.model.Jadwal
 
 class JadwalAdapter(
