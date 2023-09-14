@@ -1,4 +1,4 @@
-package com.afifpermana.donor.service.login
+package com.afifpermana.donor.service
 
 import com.example.belajarapi.model.PendonorLoginRequest
 import com.example.belajarapi.model.PendonorLoginResponse

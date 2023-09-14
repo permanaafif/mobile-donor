@@ -11,9 +11,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.afifpermana.donor.ArtikelActivity
 import com.afifpermana.donor.R
 import com.afifpermana.donor.model.Artikel
+import com.afifpermana.donor.model.BeritaResponse
+import com.squareup.picasso.Picasso
 
 class ArtikelAdapter(
     private val listArtikel : List<Artikel>
+//    private val listArtikel : List<BeritaResponse>
 ) : RecyclerView.Adapter<ArtikelAdapter.ViewHolder>(){
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ViewHolder(
@@ -24,7 +27,8 @@ class ArtikelAdapter(
 
     override fun onBindViewHolder(holder: ArtikelAdapter.ViewHolder, position: Int) {
         val artikel = listArtikel[position]
-        holder.image.setImageResource(artikel.gambar)
+//        holder.image.setImageResource(artikel.gambar)
+        Picasso.get().load(artikel.gambar).into(holder.image)
         holder.judul.text = artikel.judul
         holder.deskripsi.text = artikel.deskripsi
         holder.tanggal.text = artikel.tanggal

@@ -1,28 +1,30 @@
 package com.afifpermana.donor
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.afifpermana.donor.adapter.ArtikelAdapter
-import com.afifpermana.donor.adapter.JadwalAdapter
 import com.afifpermana.donor.model.Artikel
-import com.afifpermana.donor.model.Jadwal
+import com.afifpermana.donor.model.BeritaResponse
+import com.afifpermana.donor.provider.ArtikelViewModel
+import com.afifpermana.donor.service.BeritaAPI
+import com.afifpermana.donor.util.Retro
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 
-class ArtikelFragment : Fragment() {
+class ArtikelFragment() : Fragment() {
 
-    private lateinit var adapter : ArtikelAdapter
+    private lateinit var adapter: ArtikelAdapter
     private lateinit var recyclerView: RecyclerView
-    private lateinit var newData : ArrayList<Artikel>
-
-    lateinit var gambar : Array<Int>
-    lateinit var judul : Array<String>
-    lateinit var deskripsi : Array<String>
-    lateinit var tanggal : Array<String>
+    private lateinit var viewModel: ArtikelViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -34,48 +36,55 @@ class ArtikelFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initView()
+        viewModel = ViewModelProvider(requireActivity()).get(ArtikelViewModel::class.java)
         val layoutManager = LinearLayoutManager(context)
         recyclerView = view.findViewById(R.id.rv_artikel)
         recyclerView.layoutManager = layoutManager
         recyclerView.setHasFixedSize(true)
-        adapter = ArtikelAdapter(newData)
-        recyclerView.adapter = adapter
+
+        if (viewModel.newData == null) {
+            beritaView()
+        } else {
+            // Gunakan data yang sudah ada dalam ViewModel
+            adapter = ArtikelAdapter(viewModel.newData!!)
+            recyclerView.adapter = adapter
+        }
     }
 
-    private fun initView() {
-        newData = arrayListOf<Artikel>()
+    override fun onResume() {
+        super.onResume()
+        viewModel.newData?.clear()
+        beritaView()
+        Log.e("isi ulang", "on resume")
 
-        gambar = arrayOf(
-            R.drawable.donor_darah,
-            R.drawable.donor2,
-            R.drawable.donor_darah,
-            R.drawable.donor_darah
-        )
+    }
+    private fun beritaView() {
+        val retro = Retro().getRetroClientInstance().create(BeritaAPI::class.java)
+        retro.allBerita().enqueue(object : Callback<List<BeritaResponse>> {
+            override fun onResponse(
+                call: Call<List<BeritaResponse>>,
+                response: Response<List<BeritaResponse>>
+            ) {
+                if (response.isSuccessful) {
+                    val res = response.body()
+                    viewModel.newData = ArrayList()
+                    for (i in res!!) {
+                        val data = Artikel(
+                            i.gambar.toString(),
+                            i.judul.toString(),
+                            i.deskripsi.toString(),
+                            i.update_at.toString(),
+                        )
+                        viewModel.newData?.add(data)
+                    }
+                    adapter = ArtikelAdapter(viewModel.newData!!)
+                    recyclerView.adapter = adapter
+                }
+            }
 
-        judul = arrayOf(
-            "Krisi Donor Darah1",
-            "Krisi Donor Darah2",
-            "Krisi Donor Darah3",
-            "Krisi Donor Darah"
-        )
-
-        deskripsi = arrayOf(
-            "1Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incidid et dolore magna veniam, quis nostrud exercitat incidid et dolore magna veniam, quis nostrud exercitat",
-            "2Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incidid et dolore magna veniam, quis nostrud exercitat incidid et dolore magna veniam, quis nostrud exercitat",
-            "3Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incidid et dolore magna veniam, quis nostrud exercitat incidid et dolore magna veniam, quis nostrud exercitat",
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incidid et dolore magna veniam, quis nostrud exercitat incidid et dolore magna veniam, quis nostrud exercitat"
-        )
-        tanggal = arrayOf(
-            "29/08/2023",
-            "28/08/2023",
-            "27/08/2023",
-            "26/08/2023",
-        )
-
-        for (i in tanggal.indices){
-            val data = Artikel(gambar[i],judul[i],deskripsi[i], tanggal[i])
-            newData.add(data)
-        }
+            override fun onFailure(call: Call<List<BeritaResponse>>, t: Throwable) {
+                Log.e("hasilnya", t.message.toString())
+            }
+        })
     }
 }

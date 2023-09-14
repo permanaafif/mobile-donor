@@ -7,6 +7,7 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
+import com.squareup.picasso.Picasso
 
 class ArtikelActivity : AppCompatActivity() {
 
@@ -36,7 +37,8 @@ class ArtikelActivity : AppCompatActivity() {
         tanggal = findViewById(R.id.tanggal_artikel)
         deskripsi = findViewById(R.id.deskripsi_artikel)
 
-        gambar.setImageResource(b!!.getInt("gambar"))
+        Picasso.get().load(b!!.getString("gambar")).into(gambar)
+//        gambar.setImageResource(b!!.getInt("gambar"))
         judul.text = b!!.getString("judul")
         tanggal.text = b!!.getString("tanggal")
         deskripsi.text = b!!.getString("deskripsi")

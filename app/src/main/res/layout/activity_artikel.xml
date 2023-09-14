@@ -68,7 +68,7 @@
                 android:ellipsize="end"
                 android:gravity="center_horizontal"
                 android:textStyle="bold"
-                android:textSize="24sp"/>
+                android:textSize="16sp"/>
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/card_image"

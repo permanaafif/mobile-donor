@@ -20,8 +20,18 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.afifpermana.donor.adapter.ArtikelAdapter
 import com.afifpermana.donor.adapter.JadwalAdapter
+import com.afifpermana.donor.model.Artikel
+import com.afifpermana.donor.model.BeritaResponse
 import com.afifpermana.donor.model.Jadwal
+import com.afifpermana.donor.model.LokasiDonorResponse
+import com.afifpermana.donor.service.BeritaAPI
+import com.afifpermana.donor.service.LokasiDonorAPI
+import com.afifpermana.donor.util.Retro
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.text.SimpleDateFormat
 import java.util.Date
 
@@ -55,7 +65,7 @@ class LocationFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initView()
+        lokasiView()
         val layoutManager = LinearLayoutManager(context)
         recyclerView = view.findViewById(R.id.rv_jadwal)
         recyclerView.layoutManager = layoutManager
@@ -137,71 +147,33 @@ class LocationFragment : Fragment() {
         }
     }
 
-    private fun initView() {
-        newData = arrayListOf<Jadwal>()
-//        newData = mutableListOf()
+    private fun lokasiView() {
+        val retro = Retro().getRetroClientInstance().create(LokasiDonorAPI::class.java)
+        retro.lokasi().enqueue(object : Callback<List<LokasiDonorResponse>> {
+            override fun onResponse(
+                call: Call<List<LokasiDonorResponse>>,
+                response: Response<List<LokasiDonorResponse>>
+            ) {
+                if (response.isSuccessful) {
+                    val res = response.body()
+                    for (i in res!!) {
+                        val data = Jadwal(
+                            i.tanggal_donor.toString(),
+                            i.judul.toString(),
+                            i.deskripsi.toString(),
+                            i.update_at.toString(),
+                        )
+                    }
+                }
+            }
 
-        tanggal = arrayOf(
-            "29/08/2023",
-            "27/08/2023",
-            "28/08/2023",
-            "26/08/2023"
-        )
+            override fun onFailure(call: Call<List<LokasiDonorResponse>>, t: Throwable) {
+                TODO("Not yet implemented")
+            }
 
-        jamMulai = arrayOf(
-            "14:00",
-            "12:00",
-            "14:00",
-            "14:00"
-        )
-
-        jamSelesai = arrayOf(
-            "15:00",
-            "14:00",
-            "15:00",
-            "15:00"
-        )
-
-        lokasi = arrayOf(
-            "Bintaro Plaza",
-            "Taman Rempoa Indah",
-            "SETU BUNGUR",
-            "Providence House"
-        )
-
-        kontak = arrayOf(
-            "0888888888888888",
-            "0777777777777777",
-            "0999999999999999",
-            "0666666666666666"
-        )
-
-        alamat = arrayOf(
-            "Jl. Bintaro Utama 3A No.81, Pd. Karya, Kec. Pd. Aren, Kota Tangerang Selatan, Banten 15225",
-            "Jl. Palm Citra 3 Blok I No, Jl. Rempoa Raya No.2, RT.7/RW.2, Rempoa, Ciputat Timur, South Tangerang City, Banten 15412",
-            "Jl. Menjangan III, Pd. Ranji, Kec. Ciputat Tim., Kota Tangerang Selatan, Banten 15412",
-            "MPVM+HP7, Jl. Masjid At-Tauhid, Kedaung, Kec. Pamulang, Kota Tangerang Selatan, Banten 15431"
-        )
-
-        latitude = arrayOf(
-            -6.272617683478921,
-            -6.286140227917907,
-            -6.289851400963546,
-            -6.305037074604995
-        )
-
-        longitude = arrayOf(
-            106.74247972785645,
-            106.75724260631549,
-            106.74024812993957,
-            106.734797881249
-        )
-
-        for (i in tanggal.indices) {
-            val data = Jadwal(tanggal[i], jamMulai[i], jamSelesai[i], lokasi[i], alamat[i], kontak[i], latitude[i], longitude[i])
-            newData.add(data)
-        }
+        })
     }
+
 
     private fun sortLocationsByNearestLocation(userLatitude: Double, userLongitude: Double) {
         // Membuat daftar pasangan nilai jarak dan lokasi
