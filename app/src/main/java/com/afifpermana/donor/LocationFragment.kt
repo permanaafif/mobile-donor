@@ -41,6 +41,15 @@ class LocationFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private var newData: MutableList<Jadwal> = mutableListOf()
 
+    var tanggal: Array<String> = arrayOf()
+    var jamMulai: Array<String> = arrayOf()
+    var jamSelesai: Array<String>  = arrayOf()
+     var lokasi: Array<String> = arrayOf()
+     var alamat: Array<String> = arrayOf()
+     var kontak: Array<String> = arrayOf()
+     var latitude: Array<Double> = arrayOf()
+     var longitude: Array<Double> = arrayOf()
+
     var lat : Double = 0.0
     var long : Double = 0.0
 
@@ -75,7 +84,16 @@ class LocationFragment : Fragment() {
 
             when (itemSelected) {
                 "Tanggal" -> {
-                    sortDataByDate()
+                    // Urutkan data sumber berdasarkan tanggal terkecil
+                    val sortedIndices = tanggal.indices.sortedBy { parseDate(tanggal[it]) }
+                    // Mengisi newData dengan data yang sudah diurutkan
+                    newData.clear()
+                    for (i in sortedIndices) {
+                        val data = Jadwal(tanggal[i], jamMulai[i], jamSelesai[i], lokasi[i], alamat[i], kontak[i], latitude[i], longitude[i])
+                        newData.add(data)
+                    }
+                    // Memperbarui adapter dengan data yang sudah diurutkan
+                    adapter.notifyDataSetChanged()
                     Toast.makeText(requireActivity(), "tanggal", Toast.LENGTH_LONG).show()
                 }
                 "Lokasi Terdekat" -> {
@@ -138,19 +156,19 @@ class LocationFragment : Fragment() {
             ) {
                 if (response.isSuccessful) {
                     val res = response.body()
-                    for (i in res!!) {
-                        val data = Jadwal(
-                            i.tanggal_donor.toString(),
-                            i.jam_mulai.toString(),
-                            i.jam_selesai.toString(),
-                            i.lokasi.toString(),
-                            i.alamat.toString(),
-                            i.kontak.toString(),
-                            i.latitude!!,
-                            i.longitude!!,
-                        )
-                        newData.add(data)
+                    Log.e("lokasinya","success")
+                    for(i in res!!){
+                        tanggal += i.tanggal_donor!!
+                        jamMulai += i.jam_mulai!!
+                        jamSelesai += i.jam_selesai!!
+                        lokasi += i.lokasi!!
+                        alamat += i.alamat!!
+                        kontak += i.kontak!!
+                        latitude += i.latitude!!
+                        longitude += i.longitude!!
                     }
+                    Log.e("lokasinya", tanggal[0].toString())
+                    Log.e("lokasinya", alamat[1].toString())
                 }
             }
 
@@ -162,27 +180,16 @@ class LocationFragment : Fragment() {
     }
 
 
-    private fun sortDataByDate() {
-        // Urutkan data sumber berdasarkan tanggal terkecil
-        val sortedIndices = newData.indices.sortedBy { parseDate(newData[it].tanggal) }
-        // Mengisi newData dengan data yang sudah diurutkan
-        val sortedData = sortedIndices.map { newData[it] }
-        newData.clear()
-        newData.addAll(sortedData)
-        // Memperbarui adapter dengan data yang sudah diurutkan
-        adapter.notifyDataSetChanged()
-    }
-
     private fun sortLocationsByNearestLocation(userLatitude: Double, userLongitude: Double) {
         // Membuat daftar pasangan nilai jarak dan lokasi
-        val distancesAndLocations = mutableListOf<Pair<Double, Jadwal>>()
+        val distancesAndLocations = mutableListOf<Pair<Double, String>>()
 
         // Menghitung jarak untuk setiap lokasi dan menyimpannya dalam daftar pasangan
-        for (i in 0 until newData.size) {
-            val locationLatitude = newData[i].latitude
-            val locationLongitude = newData[i].langitude
+        for (i in 0 until latitude.size) {
+            val locationLatitude = latitude[i]
+            val locationLongitude = longitude[i]
             val distance = calculateDistance(userLatitude, userLongitude, locationLatitude, locationLongitude)
-            distancesAndLocations.add(Pair(distance, newData[i]))
+            distancesAndLocations.add(Pair(distance, lokasi[i]))
         }
 
         // Mengurutkan daftar berdasarkan jarak (ascending)
@@ -192,8 +199,16 @@ class LocationFragment : Fragment() {
         val sortedLocations = distancesAndLocations.map { it.second }
 
         // Memperbarui adapter atau tampilan Anda dengan lokasi yang sudah diurutkan
+        // Misalnya, Anda dapat menggunakan RecyclerView untuk menampilkan lokasi terurut
+        // atau mengganti nilai dalam array "lokasi" dengan nilai yang sudah diurutkan.
         newData.clear()
-        newData.addAll(sortedLocations)
+        for (sortedLocation in sortedLocations) {
+            val index = lokasi.indexOf(sortedLocation)
+            if (index != -1) {
+                val data = Jadwal(tanggal[index], jamMulai[index], jamSelesai[index], lokasi[index], alamat[index], kontak[index], latitude[index], longitude[index])
+                newData.add(data)
+            }
+        }
         adapter.notifyDataSetChanged()
     }
 
@@ -212,9 +227,8 @@ class LocationFragment : Fragment() {
         return radius * c
     }
 
-
     private fun parseDate(date: String): Date {
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd")
+        val dateFormat = SimpleDateFormat("dd/MM/yyyy")
         return dateFormat.parse(date)
     }
 
