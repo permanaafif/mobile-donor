@@ -21,36 +21,32 @@ class JadwalAdapter(
     )
 
     override fun onBindViewHolder(holder: JadwalAdapter.ViewHolder, position: Int) {
-       holder.bindmodel(listJadwal[position])
+        val jadwal = listJadwal[position]
+        holder.tanggal.text = jadwal.tanggal
+        holder.jam.text = "${jadwal.jam_mulai} - ${jadwal.jam_selesai}"
+        holder.lokasi.text = jadwal.lokasi
+
+        holder.card_location.setOnClickListener {
+            val context = it.context
+            val i = Intent(context, MapsActivity::class.java)
+            i.putExtra("tanggal",jadwal.tanggal)
+            i.putExtra("jam","${jadwal.jam_mulai} - ${jadwal.jam_selesai}")
+            i.putExtra("lokasi",jadwal.lokasi)
+            i.putExtra("alamat",jadwal.alamat)
+            i.putExtra("kontak",jadwal.kontak)
+            i.putExtra("latitude",jadwal.latitude)
+            i.putExtra("longitude",jadwal.langitude)
+            context.startActivity(i)
+        }
     }
 
     override fun getItemCount() = listJadwal.size
 
-    inner class ViewHolder(view: View):RecyclerView.ViewHolder(view){
+    class ViewHolder(view: View):RecyclerView.ViewHolder(view){
         val tanggal = view.findViewById<TextView>(R.id.tanggal_jadwal_donor)
         val jam = view.findViewById<TextView>(R.id.jam)
         val lokasi = view.findViewById<TextView>(R.id.lokasi)
         val card_location = view.findViewById<CardView>(R.id.card_location)
-
-        fun bindmodel(jadwal: Jadwal){
-            tanggal.text = jadwal.tanggal
-            jam.text = "${jadwal.jam_mulai} - ${jadwal.jam_selesai}"
-            lokasi.text = jadwal.lokasi
-
-            card_location.setOnClickListener {
-                val context = it.context
-                val i = Intent(context, MapsActivity::class.java)
-                i.putExtra("tanggal",jadwal.tanggal)
-                i.putExtra("jam","${jadwal.jam_mulai} - ${jadwal.jam_selesai}")
-                i.putExtra("lokasi",jadwal.lokasi)
-                i.putExtra("alamat",jadwal.alamat)
-                i.putExtra("kontak",jadwal.kontak)
-                i.putExtra("latitude",jadwal.latitude)
-                i.putExtra("longitude",jadwal.langitude)
-                context.startActivity(i)
-            }
-        }
-
     }
 
 }

@@ -147,6 +147,16 @@ class LocationFragment : Fragment() {
         }
     }
 
+    fun extractJamMenit(waktu: String): String {
+        val bagianWaktu = waktu.split(":")
+        return if (bagianWaktu.size >= 2) {
+            val jam = bagianWaktu[0]
+            val menit = bagianWaktu[1]
+            "$jam:$menit"
+        } else {
+            "Format waktu tidak valid"
+        }
+    }
     private fun lokasiView() {
         val retro = Retro().getRetroClientInstance().create(LokasiDonorAPI::class.java)
         retro.lokasi().enqueue(object : Callback<List<LokasiDonorResponse>> {
@@ -159,16 +169,20 @@ class LocationFragment : Fragment() {
                     Log.e("lokasinya","success")
                     for(i in res!!){
                         tanggal += i.tanggal_donor!!
-                        jamMulai += i.jam_mulai!!
-                        jamSelesai += i.jam_selesai!!
+                        jamMulai += extractJamMenit(i.jam_mulai!!)
+                        jamSelesai += extractJamMenit(i.jam_selesai!!)
                         lokasi += i.lokasi!!
                         alamat += i.alamat!!
                         kontak += i.kontak!!
                         latitude += i.latitude!!
                         longitude += i.longitude!!
                     }
-                    Log.e("lokasinya", tanggal[0].toString())
                     Log.e("lokasinya", alamat[1].toString())
+                    for (x in tanggal.indices){
+                        val data = Jadwal(tanggal[x], jamMulai[x], jamSelesai[x], lokasi[x], alamat[x], kontak[x], latitude[x], longitude[x])
+                        newData.add(data)
+                    }
+                    adapter.notifyDataSetChanged()
                 }
             }
 
@@ -228,7 +242,7 @@ class LocationFragment : Fragment() {
     }
 
     private fun parseDate(date: String): Date {
-        val dateFormat = SimpleDateFormat("dd/MM/yyyy")
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd")
         return dateFormat.parse(date)
     }
 

@@ -18,6 +18,8 @@ import com.afifpermana.donor.util.Retro
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.text.SimpleDateFormat
+import java.util.TimeZone
 
 
 class ArtikelFragment() : Fragment() {
@@ -58,6 +60,23 @@ class ArtikelFragment() : Fragment() {
         Log.e("isi ulang", "on resume")
 
     }
+
+    fun formatTanggal(waktu: String): String {
+        try {
+            val parts = waktu.split("T")
+            if (parts.size >= 1) {
+                val tanggalPart = parts[0]
+                val dateFormat = SimpleDateFormat("yyyy-MM-dd")
+                val tanggalDate = dateFormat.parse(tanggalPart)
+                return dateFormat.format(tanggalDate)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return "Format waktu tidak valid"
+    }
+
+
     private fun beritaView() {
         val retro = Retro().getRetroClientInstance().create(BeritaAPI::class.java)
         retro.allBerita().enqueue(object : Callback<List<BeritaResponse>> {
@@ -73,7 +92,7 @@ class ArtikelFragment() : Fragment() {
                             i.gambar.toString(),
                             i.judul.toString(),
                             i.deskripsi.toString(),
-                            i.update_at.toString(),
+                            formatTanggal(i.update_at.toString()),
                         )
                         viewModel.newData?.add(data)
                     }
