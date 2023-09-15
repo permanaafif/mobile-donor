@@ -41,6 +41,7 @@ class LocationFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private var newData: MutableList<Jadwal> = mutableListOf()
 
+    var id: Array<Int> = arrayOf()
     var tanggal: Array<String> = arrayOf()
     var jamMulai: Array<String> = arrayOf()
     var jamSelesai: Array<String>  = arrayOf()
@@ -74,7 +75,7 @@ class LocationFragment : Fragment() {
         recyclerView.adapter = adapter
 
         val dropdownJadwal: AutoCompleteTextView = view.findViewById(R.id.dropdown_filter_jadwal)
-        val items = listOf("Tanggal", "Lokasi Terdekat")
+        val items = listOf("Tanggal Terbaru", "Lokasi Terdekat")
         val adapterDropdown = ArrayAdapter(requireActivity(), R.layout.list_item, items)
         dropdownJadwal.setAdapter(adapterDropdown)
 
@@ -89,7 +90,7 @@ class LocationFragment : Fragment() {
                     // Mengisi newData dengan data yang sudah diurutkan
                     newData.clear()
                     for (i in sortedIndices) {
-                        val data = Jadwal(tanggal[i], jamMulai[i], jamSelesai[i], lokasi[i], alamat[i], kontak[i], latitude[i], longitude[i])
+                        val data = Jadwal(id[i],tanggal[i], jamMulai[i], jamSelesai[i], lokasi[i], alamat[i], kontak[i], latitude[i], longitude[i])
                         newData.add(data)
                     }
                     // Memperbarui adapter dengan data yang sudah diurutkan
@@ -168,6 +169,7 @@ class LocationFragment : Fragment() {
                     val res = response.body()
                     Log.e("lokasinya","success")
                     for(i in res!!){
+                        id += i.id!!
                         tanggal += i.tanggal_donor!!
                         jamMulai += extractJamMenit(i.jam_mulai!!)
                         jamSelesai += extractJamMenit(i.jam_selesai!!)
@@ -179,7 +181,7 @@ class LocationFragment : Fragment() {
                     }
                     Log.e("lokasinya", alamat[1].toString())
                     for (x in tanggal.indices){
-                        val data = Jadwal(tanggal[x], jamMulai[x], jamSelesai[x], lokasi[x], alamat[x], kontak[x], latitude[x], longitude[x])
+                        val data = Jadwal(id[x],tanggal[x], jamMulai[x], jamSelesai[x], lokasi[x], alamat[x], kontak[x], latitude[x], longitude[x])
                         newData.add(data)
                     }
                     adapter.notifyDataSetChanged()
@@ -219,7 +221,7 @@ class LocationFragment : Fragment() {
         for (sortedLocation in sortedLocations) {
             val index = lokasi.indexOf(sortedLocation)
             if (index != -1) {
-                val data = Jadwal(tanggal[index], jamMulai[index], jamSelesai[index], lokasi[index], alamat[index], kontak[index], latitude[index], longitude[index])
+                val data = Jadwal(id[index],tanggal[index], jamMulai[index], jamSelesai[index], lokasi[index], alamat[index], kontak[index], latitude[index], longitude[index])
                 newData.add(data)
             }
         }

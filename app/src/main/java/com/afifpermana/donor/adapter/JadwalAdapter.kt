@@ -29,6 +29,7 @@ class JadwalAdapter(
         holder.card_location.setOnClickListener {
             val context = it.context
             val i = Intent(context, MapsActivity::class.java)
+            i.putExtra("id",jadwal.id)
             i.putExtra("tanggal",jadwal.tanggal)
             i.putExtra("jam","${jadwal.jam_mulai} - ${jadwal.jam_selesai}")
             i.putExtra("lokasi",jadwal.lokasi)

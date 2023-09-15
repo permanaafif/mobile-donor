@@ -78,7 +78,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         btnDaftar = findViewById(R.id.btn_daftar)
         btnClipBoard = findViewById(R.id.icon_copy)
 
+        var id : Int
         b = intent.extras
+        id = b!!.getInt("id")
         tanggal.text = b!!.getString("tanggal")
         jam.text = b!!.getString("jam")
         lokasi.text = b!!.getString("lokasi")

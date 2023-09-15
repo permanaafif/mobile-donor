@@ -4,6 +4,10 @@ import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
 class LokasiDonorResponse {
+    @SerializedName("id")
+    @Expose
+    val id : Int? = null
+
     @SerializedName("lokasi")
     @Expose
     val lokasi : String? = null
