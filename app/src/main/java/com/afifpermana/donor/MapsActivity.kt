@@ -126,7 +126,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private fun checkDaftar(x : Int) {
         val retro = Retro().getRetroClientInstance().create(JadwalUserAPI::class.java)
-        retro.statusDaftar(sharedPref.getInt("id"),x).enqueue(object : Callback<DaftarJadwalDonorResponse> {
+        retro.statusDaftar("Bearer ${sharedPref.getString("token")}",sharedPref.getInt("id"),x).enqueue(object : Callback<DaftarJadwalDonorResponse> {
             override fun onResponse(
                 call: Call<DaftarJadwalDonorResponse>,
                 response: Response<DaftarJadwalDonorResponse>
@@ -180,7 +180,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         daftar.id_pendonor = sharedPref.getInt("id")
         daftar.id_jadwal_pendonor = x
         val retro = Retro().getRetroClientInstance().create(JadwalUserAPI::class.java)
-        retro.daftar(daftar).enqueue(object : Callback<DaftarJadwalDonorResponse> {
+        retro.daftar("Bearer ${sharedPref.getString("token")}",daftar).enqueue(object : Callback<DaftarJadwalDonorResponse> {
             override fun onResponse(
                 call: Call<DaftarJadwalDonorResponse>,
                 response: Response<DaftarJadwalDonorResponse>

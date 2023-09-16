@@ -70,7 +70,7 @@ class JadwalFragment : Fragment() {
     private fun jadwalView() {
         Log.e("lokasinya2","${sharedPref.getInt("id")}")
         val retro = Retro().getRetroClientInstance().create(JadwalUserAPI::class.java)
-        retro.jadwalDonor(sharedPref.getInt("id")).enqueue(object : Callback<List<LokasiDonorResponse>> {
+        retro.jadwalDonor("Bearer ${sharedPref.getString("token")}",sharedPref.getInt("id")).enqueue(object : Callback<List<LokasiDonorResponse>> {
             override fun onResponse(
                 call: Call<List<LokasiDonorResponse>>,
                 response: Response<List<LokasiDonorResponse>>

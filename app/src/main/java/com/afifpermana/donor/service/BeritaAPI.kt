@@ -6,11 +6,12 @@ import com.example.belajarapi.model.PendonorLoginResponse
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.Header
 import retrofit2.http.Path
 
 interface BeritaAPI {
     @GET("api/berita")
-    fun allBerita(): Call<List<BeritaResponse>>
+    fun allBerita(@Header("Authorization") auth_token : String): Call<List<BeritaResponse>>
 
 //    @GET("api/berita/{id}")
 //    fun Berita(@Path("id") id: Int): Call<BeritaResponse>

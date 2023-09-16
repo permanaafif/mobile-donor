@@ -1,9 +1,9 @@
-package com.example.belajarapi.model
+package com.afifpermana.donor.model
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
-class PendonorLoginResponse {
+class PendonorLogoutResponse {
 
     @SerializedName("success")
     @Expose
@@ -12,8 +12,4 @@ class PendonorLoginResponse {
     @SerializedName("message")
     @Expose
     var message : String? =null
-
-    @SerializedName("token")
-    @Expose
-    var token : String? =null
 }

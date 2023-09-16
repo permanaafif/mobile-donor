@@ -20,19 +20,24 @@ class SharedPrefLogin (context: Context){
         return sharedPreferences.getBoolean(login,false)
     }
 
-    fun setData(
-        id: Int,
-        nama: String,
-        kodePendonor: String,
-        goldar:String,
-        beratBadan: Int,
+    fun setToken(
+//        id: Int,
+//        nama: String,
+//        kodePendonor: String,
+//        goldar:String,
+//        beratBadan: Int,
         token: String){
-        editor.putInt("id",id)
-        editor.putString("nama", nama)
-        editor.putString("kodePendonor", kodePendonor)
-        editor.putString("goldar", goldar)
-        editor.putInt("beratBadan", beratBadan)
+//        editor.putInt("id",id)
+//        editor.putString("nama", nama)
+//        editor.putString("kodePendonor", kodePendonor)
+//        editor.putString("goldar", goldar)
+//        editor.putInt("beratBadan", beratBadan)
         editor.putString("token", token)
+        editor.apply()
+    }
+
+    fun setIdPendonor(id:Int){
+        editor.putInt("id", id)
         editor.apply()
     }
 

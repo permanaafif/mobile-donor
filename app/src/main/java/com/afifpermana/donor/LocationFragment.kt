@@ -29,6 +29,7 @@ import com.afifpermana.donor.model.LokasiDonorResponse
 import com.afifpermana.donor.service.BeritaAPI
 import com.afifpermana.donor.service.LokasiDonorAPI
 import com.afifpermana.donor.util.Retro
+import com.afifpermana.donor.util.SharedPrefLogin
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -40,6 +41,7 @@ class LocationFragment : Fragment() {
     private lateinit var adapter: JadwalAdapter
     private lateinit var recyclerView: RecyclerView
     private var newData: MutableList<Jadwal> = mutableListOf()
+    lateinit var sharedPref: SharedPrefLogin
 
     var id: Array<Int> = arrayOf()
     var tanggal: Array<String> = arrayOf()
@@ -66,6 +68,7 @@ class LocationFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        sharedPref = SharedPrefLogin(requireActivity())
         lokasiView()
         val layoutManager = LinearLayoutManager(context)
         recyclerView = view.findViewById(R.id.rv_jadwal)
@@ -84,9 +87,9 @@ class LocationFragment : Fragment() {
 //            Toast.makeText(requireActivity(), "$itemSelected", Toast.LENGTH_LONG).show()
 
             when (itemSelected) {
-                "Tanggal" -> {
-                    // Urutkan data sumber berdasarkan tanggal terkecil
-                    val sortedIndices = tanggal.indices.sortedBy { parseDate(tanggal[it]) }
+                "Tanggal Terbaru" -> {
+                    // Urutkan data sumber berdasarkan tanggal terbesar/ terbaru
+                    val sortedIndices = tanggal.indices.sortedByDescending { parseDate(tanggal[it]) }
                     // Mengisi newData dengan data yang sudah diurutkan
                     newData.clear()
                     for (i in sortedIndices) {
@@ -160,7 +163,7 @@ class LocationFragment : Fragment() {
     }
     private fun lokasiView() {
         val retro = Retro().getRetroClientInstance().create(LokasiDonorAPI::class.java)
-        retro.lokasi().enqueue(object : Callback<List<LokasiDonorResponse>> {
+        retro.lokasi("Bearer ${sharedPref.getString("token")}").enqueue(object : Callback<List<LokasiDonorResponse>> {
             override fun onResponse(
                 call: Call<List<LokasiDonorResponse>>,
                 response: Response<List<LokasiDonorResponse>>

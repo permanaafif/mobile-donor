@@ -63,29 +63,26 @@ class LoginActivity : AppCompatActivity() {
             ) {
                 val res = response.body()
                 if (res != null){
-                    if(res.success == "true"){
+                    if(res.success == true){
                         sharedPref.setStatusLogin(true)
-                        sharedPref.setData(
-                            res.user.id!!.toInt(),
-                            res.user.nama.toString(),
-                            res.user.kode_pendonor.toString(),
-                            res.golongan_darah.nama.toString(),
-                            res.user.berat_badan!!.toInt(),
+                        sharedPref.setToken(
+//                            res.user.id!!.toInt(),
+//                            res.user.nama.toString(),
+//                            res.user.kode_pendonor.toString(),
+//                            res.golongan_darah.nama.toString(),
+//                            res.user.berat_badan!!.toInt(),
                             res.token.toString()
                         )
                         sharedPref.setStatusLogin(true)
                         startActivity(Intent(this@LoginActivity, MainActivity::class.java))
+                    }else{
+                        Toast.makeText(this@LoginActivity,"Kode Pendonor atau password salah", Toast.LENGTH_LONG).show()
                     }
-                }else{
-                    Toast.makeText(this@LoginActivity,"Kode Pendonor atau password salah", Toast.LENGTH_LONG).show()
                 }
-                
             }
 
             override fun onFailure(call: Call<PendonorLoginResponse>, t: Throwable) {
-                
             }
-
         })
     }
 }

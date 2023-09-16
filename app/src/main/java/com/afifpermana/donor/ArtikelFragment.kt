@@ -6,27 +6,26 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.afifpermana.donor.adapter.ArtikelAdapter
 import com.afifpermana.donor.model.Artikel
 import com.afifpermana.donor.model.BeritaResponse
-import com.afifpermana.donor.provider.ArtikelViewModel
 import com.afifpermana.donor.service.BeritaAPI
 import com.afifpermana.donor.util.Retro
+import com.afifpermana.donor.util.SharedPrefLogin
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.text.SimpleDateFormat
-import java.util.TimeZone
 
 
 class ArtikelFragment() : Fragment() {
 
     private lateinit var adapter: ArtikelAdapter
     private lateinit var recyclerView: RecyclerView
-    private lateinit var viewModel: ArtikelViewModel
+    var newData : ArrayList<Artikel> = ArrayList()
+    lateinit var sharedPref: SharedPrefLogin
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -38,28 +37,16 @@ class ArtikelFragment() : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(requireActivity()).get(ArtikelViewModel::class.java)
         val layoutManager = LinearLayoutManager(context)
         recyclerView = view.findViewById(R.id.rv_artikel)
         recyclerView.layoutManager = layoutManager
         recyclerView.setHasFixedSize(true)
-
-        if (viewModel.newData == null) {
-            beritaView()
-        } else {
-            // Gunakan data yang sudah ada dalam ViewModel
-            adapter = ArtikelAdapter(viewModel.newData!!)
-            recyclerView.adapter = adapter
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        viewModel.newData?.clear()
+        sharedPref = SharedPrefLogin(requireActivity())
         beritaView()
-        Log.e("isi ulang", "on resume")
-
+        adapter = ArtikelAdapter(newData)
+        recyclerView.adapter = adapter
     }
+
 
     fun formatTanggal(waktu: String): String {
         try {
@@ -79,14 +66,13 @@ class ArtikelFragment() : Fragment() {
 
     private fun beritaView() {
         val retro = Retro().getRetroClientInstance().create(BeritaAPI::class.java)
-        retro.allBerita().enqueue(object : Callback<List<BeritaResponse>> {
+        retro.allBerita("Bearer ${sharedPref.getString("token")}").enqueue(object : Callback<List<BeritaResponse>> {
             override fun onResponse(
                 call: Call<List<BeritaResponse>>,
                 response: Response<List<BeritaResponse>>
             ) {
                 if (response.isSuccessful) {
                     val res = response.body()
-                    viewModel.newData = ArrayList()
                     for (i in res!!) {
                         val data = Artikel(
                             i.gambar.toString(),
@@ -94,10 +80,9 @@ class ArtikelFragment() : Fragment() {
                             i.deskripsi.toString(),
                             formatTanggal(i.update_at.toString()),
                         )
-                        viewModel.newData?.add(data)
+                        newData.add(data)
                     }
-                    adapter = ArtikelAdapter(viewModel.newData!!)
-                    recyclerView.adapter = adapter
+                    adapter.notifyDataSetChanged()
                 }
             }
 

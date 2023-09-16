@@ -7,7 +7,7 @@ import retrofit2.http.Body
 import retrofit2.http.POST
 
 interface PendonorLoginAPI {
-    @POST("api/pendonor/login")
+    @POST("api/login")
     fun login(@Body req: PendonorLoginRequest): Call<PendonorLoginResponse>
 
 }

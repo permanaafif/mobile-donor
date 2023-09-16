@@ -8,7 +8,7 @@ class DaftarJadwalDonorRequest {
     @Expose
     var id_pendonor : Int? = null
 
-    @SerializedName("id_jadwal_pendonor")
+    @SerializedName("id_jadwal_donor_darah")
     @Expose
     var id_jadwal_pendonor : Int? = null
 }
