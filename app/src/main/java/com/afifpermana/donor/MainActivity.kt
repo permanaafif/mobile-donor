@@ -117,15 +117,15 @@ class MainActivity : AppCompatActivity() {
                     Log.e("Status response" , sharedPref.getString("token").toString())
                     if (resCode == 200){
                         if (res != null){
-                            sharedPref.setIdPendonor(res.user.id!!)
-                            nama.text = res.user.nama
-                            kodePendonor.text = res.user.kode_pendonor
-                            goldar.text = res.user.id_golongan_darah.nama
-                            beratBadan.text = "${res.user.berat_badan} KG"
-                            if (res.user.jadwal_terdekat != null){
-                                jadwalTerdekat.text = res.user.jadwal_terdekat.tanggal_donor
+                            sharedPref.setIdPendonor(res.user!!.id!!)
+                            nama.text = res.user!!.nama
+                            kodePendonor.text = res.user!!.kode_pendonor
+                            goldar.text = res.user!!.id_golongan_darah.nama
+                            beratBadan.text = "${res.user!!.berat_badan} KG"
+                            if (res.user?.jadwal_terdekat == null){
+                                jadwalTerdekat.text = "-"
                             }else{
-                                jadwalTerdekat.text = "Belum ada Jadwal"
+                                jadwalTerdekat.text = res.user?.jadwal_terdekat?.tanggal_donor
                             }
                         }
                     }

@@ -15,6 +15,7 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.Toast
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -40,6 +41,7 @@ class LocationFragment : Fragment() {
 
     private lateinit var adapter: JadwalAdapter
     private lateinit var recyclerView: RecyclerView
+    private lateinit var cl_jadwal : ConstraintLayout
     private var newData: MutableList<Jadwal> = mutableListOf()
     lateinit var sharedPref: SharedPrefLogin
 
@@ -72,6 +74,7 @@ class LocationFragment : Fragment() {
         lokasiView()
         val layoutManager = LinearLayoutManager(context)
         recyclerView = view.findViewById(R.id.rv_jadwal)
+        cl_jadwal = view.findViewById(R.id.cl_jadwal)
         recyclerView.layoutManager = layoutManager
         recyclerView.setHasFixedSize(true)
         adapter = JadwalAdapter(newData)
@@ -169,6 +172,8 @@ class LocationFragment : Fragment() {
                 response: Response<List<LokasiDonorResponse>>
             ) {
                 if (response.isSuccessful) {
+                    cl_jadwal.visibility = View.GONE
+                    recyclerView.visibility = View.VISIBLE
                     val res = response.body()
                     Log.e("lokasinya","success")
                     for(i in res!!){
@@ -192,7 +197,8 @@ class LocationFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<List<LokasiDonorResponse>>, t: Throwable) {
-                TODO("Not yet implemented")
+                cl_jadwal.visibility = View.VISIBLE
+                recyclerView.visibility = View.GONE
             }
 
         })

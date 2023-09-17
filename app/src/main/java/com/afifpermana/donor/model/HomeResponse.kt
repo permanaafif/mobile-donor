@@ -51,7 +51,7 @@ class HomeResponse {
 
         @SerializedName("jadwal_terdekat")
         @Expose
-        lateinit var jadwal_terdekat : JadwalTerdekat
+        var jadwal_terdekat : JadwalTerdekat? = null
 
         class JadwalTerdekat{
             @SerializedName("id")

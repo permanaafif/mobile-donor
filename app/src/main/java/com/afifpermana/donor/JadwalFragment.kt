@@ -6,6 +6,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.afifpermana.donor.adapter.JadwalAdapter
@@ -23,6 +25,7 @@ class JadwalFragment : Fragment() {
 
     private lateinit var adapter : JadwalAdapter
     private lateinit var recyclerView: RecyclerView
+    private lateinit var cl_jadwal : ConstraintLayout
     var newData : ArrayList<Jadwal> = ArrayList()
     lateinit var sharedPref: SharedPrefLogin
 
@@ -51,6 +54,7 @@ class JadwalFragment : Fragment() {
 //        initView()
         val layoutManager = LinearLayoutManager(context)
         recyclerView = view.findViewById(R.id.rv_jadwal_donor)
+        cl_jadwal = view.findViewById(R.id.cl_jadwal)
         recyclerView.layoutManager = layoutManager
         recyclerView.setHasFixedSize(true)
         adapter = JadwalAdapter(newData)
@@ -76,29 +80,33 @@ class JadwalFragment : Fragment() {
                 response: Response<List<LokasiDonorResponse>>
             ) {
                 if (response.isSuccessful) {
+                    cl_jadwal.visibility = View.GONE
+                    recyclerView.visibility = View.VISIBLE
                     val res = response.body()
-                    Log.e("lokasinya2","success")
-                    for(i in res!!){
-                        id += i.id!!
-                        tanggal += i.tanggal_donor!!
-                        jamMulai += extractJamMenit(i.jam_mulai!!)
-                        jamSelesai += extractJamMenit(i.jam_selesai!!)
-                        lokasi += i.lokasi!!
-                        alamat += i.alamat!!
-                        kontak += i.kontak!!
-                        latitude += i.latitude!!
-                        longitude += i.longitude!!
-                    }
-                    for (x in tanggal.indices){
-                        val data = Jadwal(id[x],tanggal[x], jamMulai[x], jamSelesai[x], lokasi[x], alamat[x], kontak[x], latitude[x], longitude[x])
-                        newData.add(data)
-                    }
-                    adapter.notifyDataSetChanged()
+                    Log.e("jadwal terdekat",res.toString())
+                        for(i in res!!){
+                            id += i.id!!
+                            tanggal += i.tanggal_donor!!
+                            jamMulai += extractJamMenit(i.jam_mulai!!)
+                            jamSelesai += extractJamMenit(i.jam_selesai!!)
+                            lokasi += i.lokasi!!
+                            alamat += i.alamat!!
+                            kontak += i.kontak!!
+                            latitude += i.latitude!!
+                            longitude += i.longitude!!
+                        }
+                        for (x in tanggal.indices){
+                            val data = Jadwal(id[x],tanggal[x], jamMulai[x], jamSelesai[x], lokasi[x], alamat[x], kontak[x], latitude[x], longitude[x])
+                            newData.add(data)
+                        }
+                        adapter.notifyDataSetChanged()
                 }
             }
 
             override fun onFailure(call: Call<List<LokasiDonorResponse>>, t: Throwable) {
-                TODO("Not yet implemented")
+                cl_jadwal.visibility = View.VISIBLE
+                recyclerView.visibility = View.GONE
+
             }
         })
     }
