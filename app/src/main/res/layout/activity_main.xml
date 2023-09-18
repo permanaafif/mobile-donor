@@ -67,15 +67,16 @@
                         android:maxLines="1"/>
                 </LinearLayout>
 
-                <ImageView
+                <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/foto_profile"
                     android:layout_marginRight="40dp"
                     android:layout_marginTop="40dp"
                     android:layout_toRightOf="@id/ln_nama"
                     android:layout_width="72dp"
                     android:layout_height="72dp"
-                    android:src="@drawable/ic_launcher_foreground"
-                    android:background="@drawable/style_rounded_profile"/>
+                    android:src="@drawable/baseline_person_24"
+                    android:background="@drawable/bulet"/>
+
             </RelativeLayout>
 
             <LinearLayout

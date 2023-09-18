@@ -2,6 +2,7 @@ package com.afifpermana.donor
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -9,10 +10,16 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.afifpermana.donor.model.HomeResponse
 import com.afifpermana.donor.model.PendonorLogoutResponse
+import com.afifpermana.donor.model.ProfileResponse
+import com.afifpermana.donor.service.HomeAPI
 import com.afifpermana.donor.service.PendonorLogoutAPI
+import com.afifpermana.donor.service.ProfileAPI
 import com.afifpermana.donor.util.Retro
 import com.afifpermana.donor.util.SharedPrefLogin
+import com.squareup.picasso.Picasso
+import de.hdodenhof.circleimageview.CircleImageView
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -22,6 +29,16 @@ class ProfileFragment : Fragment() {
     private lateinit var edit : TextView
     private lateinit var logout : TextView
     private lateinit var sharedPref: SharedPrefLogin
+
+    private lateinit var fotoProfile : CircleImageView
+    private lateinit var nama : TextView
+    private lateinit var namaUser : TextView
+    private lateinit var kode_pendonor : TextView
+    private lateinit var alamat : TextView
+    private lateinit var jenis_kelamin : TextView
+    private lateinit var kontak : TextView
+    private lateinit var goldar : TextView
+    private lateinit var berat_badan : TextView
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -33,11 +50,22 @@ class ProfileFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        sharedPref = SharedPrefLogin(requireActivity())
+        profileView()
         val layoutManager = LinearLayoutManager(context)
         edit = view.findViewById(R.id.btnEdit)
         logout = view.findViewById(R.id.btnLogOut)
 
-        sharedPref = SharedPrefLogin(requireActivity())
+        fotoProfile = view.findViewById(R.id.foto)
+        nama = view.findViewById(R.id.nama)
+        namaUser = view.findViewById(R.id.namauser)
+        kode_pendonor = view.findViewById(R.id.kode)
+        alamat = view.findViewById(R.id.alamat)
+        jenis_kelamin = view.findViewById(R.id.jekel)
+        kontak = view.findViewById(R.id.notelp)
+        goldar = view.findViewById(R.id.goldar)
+        berat_badan = view.findViewById(R.id.bb)
+
         edit.setOnClickListener{
             val intent = Intent(context, ProfileEdit::class.java)
             startActivity(intent)
@@ -47,6 +75,45 @@ class ProfileFragment : Fragment() {
         logout.setOnClickListener{
             pendonorLogout()
         }
+    }
+
+    private fun profileView() {
+        val retro = Retro().getRetroClientInstance().create(ProfileAPI::class.java)
+        retro.profile("Bearer ${sharedPref.getString("token")}").enqueue(object : Callback<ProfileResponse> {
+            override fun onResponse(
+                call: Call<ProfileResponse>,
+                response: Response<ProfileResponse>
+            ) {
+                val resCode = response.code()
+                if (resCode == 200){
+                    Log.e("profilecaliak","success")
+                    val res = response.body()!!
+                    if(res.user.gambar.isNullOrEmpty()){
+                        fotoProfile.setImageResource(R.drawable.baseline_person_24)
+                    }else{
+                        Picasso.get().load(res.user.gambar).into(fotoProfile)
+                    }
+                    nama.text = res.user.nama
+                    namaUser.text = res.user.nama
+                    kode_pendonor.text = res.user.kode_pendonor
+                    alamat.text = res.user.alamat_pendonor
+                    jenis_kelamin.text = res.user.jenis_kelamin
+                    kontak.text = res.user.kontak_pendonor
+                    goldar.text = res.user.id_golongan_darah.nama
+                    berat_badan.text = "${res.user.berat_badan} KG"
+                }
+                else{
+                    sharedPref.setStatusLogin(false)
+                    sharedPref.logOut()
+                    val intent = Intent(context, LoginActivity::class.java)
+                    startActivity(intent)
+                }
+            }
+
+            override fun onFailure(call: Call<ProfileResponse>, t: Throwable) {
+                Toast.makeText(requireActivity(),"Gagal", Toast.LENGTH_LONG).show()
+            }
+        })
     }
 
     private fun pendonorLogout() {

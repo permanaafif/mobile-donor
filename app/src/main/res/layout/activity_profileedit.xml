@@ -72,8 +72,10 @@
 
 
             <EditText
+                android:stateListAnimator="@animator/edittext_elevation"
                 android:layout_marginTop="20dp"
                 android:layout_width="314dp"
+
                 android:layout_height="45dp"
                 android:layout_below="@id/gantifoto"
                 android:layout_centerHorizontal="true"
@@ -97,6 +99,7 @@
                 android:layout_below="@id/namauser"
                 android:layout_centerHorizontal="true"
                 android:hint="Password"
+                android:enabled="false"
                 android:textColor="@color/black"
                 android:textColorHint="@color/black"
                 android:background="@drawable/borderinput"
@@ -122,6 +125,7 @@
         />
 
             <EditText
+                android:stateListAnimator="@animator/edittext_elevation"
                 android:layout_width="314dp"
                 android:layout_height="45dp"
                 android:layout_below="@id/password"
@@ -169,7 +173,8 @@
     </com.google.android.material.textfield.TextInputLayout>
 
 
-    <EditText
+            <EditText
+                android:stateListAnimator="@animator/edittext_elevation"
                 android:id="@+id/notelp"
                 android:hint="Nomor Telepon"
                 android:layout_width="314dp"
@@ -189,6 +194,7 @@
                 />
 
             <EditText
+                android:stateListAnimator="@animator/edittext_elevation"
                 android:id="@+id/goldar"
                 android:hint="Golongan Darah"
                 android:layout_width="314dp"
@@ -206,7 +212,8 @@
                 android:drawablePadding="10dp"
                 />
 
-            <TextView
+            <EditText
+                android:stateListAnimator="@animator/edittext_elevation"
                 android:id="@+id/bb"
                 android:hint="Berat Badan"
                 android:layout_width="314dp"
@@ -221,7 +228,6 @@
                 android:layout_marginBottom="10dp"
                 android:paddingLeft="20dp"
                 android:paddingRight="20dp"
-                android:paddingVertical="12dp"
                 android:textSize="14sp"
                 android:drawablePadding="10dp"
                 />

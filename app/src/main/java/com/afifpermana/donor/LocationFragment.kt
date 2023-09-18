@@ -81,7 +81,7 @@ class LocationFragment : Fragment() {
         recyclerView.adapter = adapter
 
         val dropdownJadwal: AutoCompleteTextView = view.findViewById(R.id.dropdown_filter_jadwal)
-        val items = listOf("Tanggal Terbaru", "Lokasi Terdekat")
+        val items = listOf("Tanggal", "Lokasi Terdekat")
         val adapterDropdown = ArrayAdapter(requireActivity(), R.layout.list_item, items)
         dropdownJadwal.setAdapter(adapterDropdown)
 
@@ -90,7 +90,7 @@ class LocationFragment : Fragment() {
 //            Toast.makeText(requireActivity(), "$itemSelected", Toast.LENGTH_LONG).show()
 
             when (itemSelected) {
-                "Tanggal Terbaru" -> {
+                "Tanggal" -> {
                     // Urutkan data sumber berdasarkan tanggal terbesar/ terbaru
                     val sortedIndices = tanggal.indices.sortedByDescending { parseDate(tanggal[it]) }
                     // Mengisi newData dengan data yang sudah diurutkan

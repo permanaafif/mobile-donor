@@ -20,6 +20,8 @@ import com.afifpermana.donor.util.Retro
 import com.afifpermana.donor.util.SharedPrefLogin
 import com.example.belajarapi.model.PendonorLoginResponse
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.squareup.picasso.Picasso
+import de.hdodenhof.circleimageview.CircleImageView
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -38,6 +40,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var goldar : TextView
     private lateinit var beratBadan : TextView
     private lateinit var jadwalTerdekat : TextView
+    private lateinit var fotoProfile : CircleImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,6 +62,7 @@ class MainActivity : AppCompatActivity() {
             goldar = findViewById(R.id.text_goldar)
             beratBadan = findViewById(R.id.text_berat_badan)
             jadwalTerdekat = findViewById(R.id.text_jadwal_terdekat)
+            fotoProfile = findViewById(R.id.foto_profile)
 
             radioGroup = findViewById(R.id.rg)
             radioGroup.setOnCheckedChangeListener { group, checkedId ->
@@ -119,6 +123,11 @@ class MainActivity : AppCompatActivity() {
                         if (res != null){
                             sharedPref.setIdPendonor(res.user!!.id!!)
                             nama.text = res.user!!.nama
+                            if(res.user!!.gambar.isNullOrEmpty()){
+                                fotoProfile.setImageResource(R.drawable.baseline_person_24)
+                            }else{
+                                Picasso.get().load(res.user!!.gambar).into(fotoProfile)
+                            }
                             kodePendonor.text = res.user!!.kode_pendonor
                             goldar.text = res.user!!.id_golongan_darah.nama
                             beratBadan.text = "${res.user!!.berat_badan} KG"
