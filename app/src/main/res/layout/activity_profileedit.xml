@@ -45,17 +45,26 @@
 
     </androidx.appcompat.widget.Toolbar>
 
+    <ScrollView
+        android:layout_below="@id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
             <de.hdodenhof.circleimageview.CircleImageView
                 android:layout_marginTop="20dp"
                 android:layout_centerHorizontal="true"
-                android:layout_below="@id/toolbar"
                 android:id="@+id/foto"
                 android:layout_width="96dp"
                 android:layout_height="94dp"
                 android:src="@drawable/baseline_person_24"
                 android:background="@drawable/bulet" />
 
-            <TextView
+            <Button
+                android:stateListAnimator="@animator/edittext_elevation"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/foto"
@@ -63,19 +72,17 @@
                 android:id="@+id/gantifoto"
                 android:layout_centerHorizontal="true"
                 android:text="Ganti Foto"
-                android:textColor="@color/black"
+                android:background="@android:color/transparent"
+                android:textColor="@color/blue"
                 android:textStyle="bold"
                 android:layout_marginTop="10dp"
-                android:textSize="18sp"
-                android:clickable="true"
-                android:onClick="selectImageFromGallery" />
+                android:textSize="14sp"/>
 
 
             <EditText
                 android:stateListAnimator="@animator/edittext_elevation"
                 android:layout_marginTop="20dp"
                 android:layout_width="314dp"
-
                 android:layout_height="45dp"
                 android:layout_below="@id/gantifoto"
                 android:layout_centerHorizontal="true"
@@ -93,17 +100,19 @@
                 android:drawablePadding="10dp"
                 />
 
-            <EditText
+            <TextView
+                android:stateListAnimator="@animator/edittext_elevation"
                 android:layout_width="314dp"
                 android:layout_height="45dp"
                 android:layout_below="@id/namauser"
                 android:layout_centerHorizontal="true"
-                android:hint="Password"
-                android:enabled="false"
+                android:hint="**********"
+                android:paddingVertical="13dp"
                 android:textColor="@color/black"
                 android:textColorHint="@color/black"
                 android:background="@drawable/borderinput"
                 android:drawableLeft="@drawable/baseline_key_24"
+                android:drawableRight="@drawable/baseline_arrow_forward_ios_24"
                 android:layout_marginBottom="18dp"
                 android:id="@+id/password"
                 android:paddingLeft="20dp"
@@ -111,18 +120,7 @@
                 android:textSize="14sp"
                 android:drawablePadding="10dp"
                 />
-
-    <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/namauser"
-        android:src="@drawable/baseline_arrow_forward_ios_24"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="58dp"
-        android:background="@android:color/transparent"
-        android:layout_marginTop="10dp"
-        android:id="@+id/btnGantiPassword"
-        />
+            />
 
             <EditText
                 android:stateListAnimator="@animator/edittext_elevation"
@@ -144,33 +142,33 @@
                 android:drawablePadding="10dp"
                 />
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:layout_centerHorizontal="true"
-        android:layout_width="314dp"
-        android:layout_height="45dp"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-        android:layout_below="@id/alamat"
-        android:id="@+id/pilihjeniskelamin"
-        app:hintEnabled="false"
-        android:layout_marginBottom="18dp"
-        >
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_centerHorizontal="true"
+                android:layout_width="314dp"
+                android:layout_height="45dp"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                android:layout_below="@id/alamat"
+                android:id="@+id/pilihjeniskelamin"
+                app:hintEnabled="false"
+                android:layout_marginBottom="18dp"
+                >
 
-        <AutoCompleteTextView
-            android:paddingVertical="1dp"
-            android:id="@+id/jekel"
-            android:text="Jenis Kelamin"
-            android:layout_width="314dp"
-            android:layout_height="45dp"
-            android:drawableStart="@drawable/baseline_group_24"
-            android:background="@drawable/borderinput"
-            android:layout_marginBottom="20dp"
-            android:textSize="14sp"
-            android:textColor="@color/black"
-            android:drawablePadding="10dp"
-            android:inputType="none"
-            android:paddingStart="20dp"
-            />
-    </com.google.android.material.textfield.TextInputLayout>
+                <AutoCompleteTextView
+                    android:paddingVertical="1dp"
+                    android:id="@+id/jekel"
+                    android:text="Jenis Kelamin"
+                    android:layout_width="314dp"
+                    android:layout_height="45dp"
+                    android:drawableStart="@drawable/baseline_group_24"
+                    android:background="@drawable/borderinput"
+                    android:layout_marginBottom="20dp"
+                    android:textSize="14sp"
+                    android:textColor="@color/black"
+                    android:drawablePadding="10dp"
+                    android:inputType="none"
+                    android:paddingStart="20dp"
+                    />
+            </com.google.android.material.textfield.TextInputLayout>
 
 
             <EditText
@@ -193,10 +191,11 @@
                 android:drawablePadding="10dp"
                 />
 
-            <EditText
+            <TextView
                 android:stateListAnimator="@animator/edittext_elevation"
                 android:id="@+id/goldar"
-                android:hint="Golongan Darah"
+                android:text="Golongan Darah"
+                android:paddingVertical="13dp"
                 android:layout_width="314dp"
                 android:layout_height="45dp"
                 android:layout_below="@id/notelp"
@@ -232,18 +231,21 @@
                 android:drawablePadding="10dp"
                 />
 
-<Button
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_below="@id/bb"
-    android:backgroundTint="@color/button"
-    android:layout_centerHorizontal="true"
-    android:layout_marginTop="15dp"
-    android:textStyle="bold"
-    android:fontFamily="@font/poppins"
-    android:text="Simpan"
-    android:textAllCaps="false"
-    />
+            <Button
+                android:layout_marginBottom="20dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/bb"
+                android:backgroundTint="@color/button"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="15dp"
+                android:textStyle="bold"
+                android:fontFamily="@font/poppins"
+                android:text="Simpan"
+                android:textAllCaps="false"
+                />
+        </RelativeLayout>
+    </ScrollView>
 
 
 </RelativeLayout>

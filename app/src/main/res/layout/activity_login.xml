@@ -39,6 +39,7 @@
         />
 
     <EditText
+        android:stateListAnimator="@animator/edittext_elevation"
         android:layout_width="314dp"
         android:layout_height="48dp"
         android:layout_below="@id/slogan"
@@ -58,6 +59,7 @@
         />
 
     <EditText
+        android:stateListAnimator="@animator/edittext_elevation"
         android:textColorHint="@color/black"
         android:textColor="@color/black"
         android:id="@+id/password"

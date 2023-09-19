@@ -107,7 +107,7 @@
                             android:fontFamily="@font/poppins"
                             android:maxLines="2"/>
                         <TextView
-                            android:layout_width="50dp"
+                            android:layout_width="70dp"
                             android:layout_marginRight="20dp"
                             android:layout_height="wrap_content"
                             android:textSize="14sp"
@@ -148,7 +148,7 @@
                         android:maxLines="2"/>
                     <TextView
                         android:id="@+id/text_berat_badan"
-                        android:layout_width="50dp"
+                        android:layout_width="70dp"
                         android:layout_marginRight="20dp"
                         android:layout_height="wrap_content"
                         android:textSize="17sp"

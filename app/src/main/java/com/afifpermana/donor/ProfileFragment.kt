@@ -39,6 +39,7 @@ class ProfileFragment : Fragment() {
     private lateinit var kontak : TextView
     private lateinit var goldar : TextView
     private lateinit var berat_badan : TextView
+    var pathFoto : String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -67,8 +68,16 @@ class ProfileFragment : Fragment() {
         berat_badan = view.findViewById(R.id.bb)
 
         edit.setOnClickListener{
-            val intent = Intent(context, ProfileEdit::class.java)
-            startActivity(intent)
+            val i = Intent(context, ProfileEdit::class.java)
+            i.putExtra("gambar", pathFoto.toString())
+            i.putExtra("nama", nama.text)
+            i.putExtra("alamat", alamat.text)
+            i.putExtra("jenis_kelamin", jenis_kelamin.text)
+            i.putExtra("kontak", kontak.text)
+            i.putExtra("kode_pendonor", kode_pendonor.text)
+            i.putExtra("goldar", goldar.text)
+            i.putExtra("berat_badan", berat_badan.text)
+            startActivity(i)
 
         }
 
@@ -91,16 +100,17 @@ class ProfileFragment : Fragment() {
                     if(res.user.gambar.isNullOrEmpty()){
                         fotoProfile.setImageResource(R.drawable.baseline_person_24)
                     }else{
-                        Picasso.get().load(res.user.gambar).into(fotoProfile)
+                        Picasso.get().load("http://10.0.2.2:8000/images/${res.user!!.gambar}").into(fotoProfile)
+                        pathFoto = "http://10.0.2.2:8000/images/${res.user!!.gambar}"
                     }
                     nama.text = res.user.nama
                     namaUser.text = res.user.nama
                     kode_pendonor.text = res.user.kode_pendonor
                     alamat.text = res.user.alamat_pendonor
-                    jenis_kelamin.text = res.user.jenis_kelamin
+                    jenis_kelamin.text = res.user.jenis_kelamin.toString().capitalize()
                     kontak.text = res.user.kontak_pendonor
                     goldar.text = res.user.id_golongan_darah.nama
-                    berat_badan.text = "${res.user.berat_badan} KG"
+                    berat_badan.text = "${res.user.berat_badan}"
                 }
                 else{
                     sharedPref.setStatusLogin(false)

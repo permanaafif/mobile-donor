@@ -175,25 +175,50 @@ class LocationFragment : Fragment() {
                     cl_jadwal.visibility = View.GONE
                     recyclerView.visibility = View.VISIBLE
                     val res = response.body()
-                    Log.e("lokasinya","success")
-                    for(i in res!!){
-                        id += i.id!!
-                        tanggal += i.tanggal_donor!!
-                        jamMulai += extractJamMenit(i.jam_mulai!!)
-                        jamSelesai += extractJamMenit(i.jam_selesai!!)
-                        lokasi += i.lokasi!!
-                        alamat += i.alamat!!
-                        kontak += i.kontak!!
-                        latitude += i.latitude!!
-                        longitude += i.longitude!!
+
+                    if (res != null) {
+                        // Respons JSON tidak null
+
+                        if (res.isNotEmpty()) {
+                            // Respons JSON berisi elemen
+
+                            for (i in res) {
+                                id += i.id ?: 0
+                                tanggal += i.tanggal_donor ?: ""
+                                jamMulai += extractJamMenit(i.jam_mulai ?: "")
+                                jamSelesai += extractJamMenit(i.jam_selesai ?: "")
+                                lokasi += i.lokasi ?: ""
+                                alamat += i.alamat ?: ""
+                                kontak += i.kontak ?: ""
+                                latitude += i.latitude ?: 0.0
+                                longitude += i.longitude ?: 0.0
+                            }
+
+                            for (x in tanggal.indices) {
+                                val data = Jadwal(
+                                    id[x],
+                                    tanggal[x],
+                                    jamMulai[x],
+                                    jamSelesai[x],
+                                    lokasi[x],
+                                    alamat[x],
+                                    kontak[x],
+                                    latitude[x],
+                                    longitude[x]
+                                )
+                                newData.add(data)
+                            }
+                            adapter.notifyDataSetChanged()
+                        } else {
+                            // Respons JSON kosong
+                            // Mungkin ada pesan atau tindakan yang perlu Anda lakukan di sini
+                        }
+                    } else {
+                        // Respons JSON null
+                        // Mungkin ada pesan atau tindakan yang perlu Anda lakukan di sini
                     }
-                    Log.e("lokasinya", alamat[1].toString())
-                    for (x in tanggal.indices){
-                        val data = Jadwal(id[x],tanggal[x], jamMulai[x], jamSelesai[x], lokasi[x], alamat[x], kontak[x], latitude[x], longitude[x])
-                        newData.add(data)
-                    }
-                    adapter.notifyDataSetChanged()
                 }
+
             }
 
             override fun onFailure(call: Call<List<LokasiDonorResponse>>, t: Throwable) {
