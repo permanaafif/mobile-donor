@@ -34,7 +34,6 @@ class ProfileEdit : AppCompatActivity(), UploadRequestBody.UploadCallback {
     private lateinit var namaUser : TextView
     private lateinit var alamat : TextView
     private lateinit var kontak : TextView
-    private lateinit var goldar : TextView
     private lateinit var berat_badan : TextView
     private lateinit var jenis_kelamin : String
     private lateinit var btn_simpan : Button
@@ -52,7 +51,6 @@ class ProfileEdit : AppCompatActivity(), UploadRequestBody.UploadCallback {
         alamat = findViewById(R.id.alamat)
 
         kontak = findViewById(R.id.notelp)
-        goldar = findViewById(R.id.goldar)
         berat_badan = findViewById(R.id.bb)
         btn_simpan = findViewById(R.id.btn_simpan)
         progressBar = findViewById(R.id.progress_bar)
@@ -62,7 +60,6 @@ class ProfileEdit : AppCompatActivity(), UploadRequestBody.UploadCallback {
         alamat.text = b!!.getString("alamat")
         kontak.text = b!!.getString("kontak")
         jenis_kelamin = b!!.getString("jenis_kelamin").toString()
-        goldar.text = b!!.getString("goldar")
         berat_badan.text = b!!.getString("berat_badan")
 
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
@@ -98,12 +95,10 @@ class ProfileEdit : AppCompatActivity(), UploadRequestBody.UploadCallback {
             AdapterView.OnItemClickListener{
                     adapterView, view, i, l ->
                 val itemSelected = adapterView.getItemAtPosition(i)
+                jenis_kelamin = itemSelected.toString().lowercase()
 
                 Toast.makeText(this, "$itemSelected",Toast.LENGTH_LONG).show()
             }
-
-        goldar.setOnClickListener {
-            Toast.makeText(this,"Tidak Boleh Tukar Golongan Darah", Toast.LENGTH_LONG).show() }
 
         btn_simpan.setOnClickListener {
             doSimpanGambar()
@@ -113,7 +108,11 @@ class ProfileEdit : AppCompatActivity(), UploadRequestBody.UploadCallback {
 
     private fun doSimpanData() {
         val data = UpdateProfileRequestData()
-        data.nama = namaUser.text.toString()
+        data.nama = namaUser.text.toString().trim()
+        data.alamat_pendonor = alamat.text.toString().trim()
+        data.jenis_kelamin = jenis_kelamin
+        data.kontak_pendonor = kontak.text.toString().trim()
+        data.berat_badan = berat_badan.text.toString().toInt()
         Log.e("doSmipanData", data.nama.toString())
         val retro = Retro().getRetroClientInstance().create(UpdateProfileAPI::class.java)
         retro.updateProfileData("Bearer ${sharedPref.getString("token")}",data).enqueue(object : Callback<UpdateProfileEditDataResponse> {
@@ -122,7 +121,7 @@ class ProfileEdit : AppCompatActivity(), UploadRequestBody.UploadCallback {
                 response: Response<UpdateProfileEditDataResponse>
             ) {
                 if (response.isSuccessful){
-                    Log.e("doSmipanData", "berhasil")
+                    Toast.makeText(applicationContext,"Simpan Berhasil",Toast.LENGTH_LONG).show()
                 }
             }
 
