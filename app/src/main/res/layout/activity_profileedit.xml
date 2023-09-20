@@ -54,29 +54,48 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:layout_marginTop="20dp"
+            <LinearLayout
+                android:id="@+id/ll_pp"
                 android:layout_centerHorizontal="true"
-                android:id="@+id/foto"
-                android:layout_width="96dp"
-                android:layout_height="94dp"
-                android:src="@drawable/baseline_person_24"
-                android:background="@drawable/bulet" />
-
-            <Button
-                android:stateListAnimator="@animator/edittext_elevation"
-                android:layout_width="wrap_content"
+                android:gravity="center_horizontal"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/foto"
-                android:fontFamily="@font/poppins"
-                android:id="@+id/gantifoto"
-                android:layout_centerHorizontal="true"
-                android:text="Ganti Foto"
-                android:background="@android:color/transparent"
-                android:textColor="@color/blue"
-                android:textStyle="bold"
-                android:layout_marginTop="10dp"
-                android:textSize="14sp"/>
+                android:orientation="vertical">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:layout_marginTop="20dp"
+                    android:layout_centerHorizontal="true"
+                    android:id="@+id/foto"
+                    android:layout_width="96dp"
+                    android:layout_height="94dp"
+                    android:src="@drawable/baseline_person_24"
+                    android:background="@drawable/bulet" />
+
+                <ProgressBar
+                    android:id="@+id/progress_bar"
+                    android:layout_width="100dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_height="wrap_content"
+                    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                    android:max="100"
+                    android:layout_marginHorizontal="30dp"
+                    android:progress="10" />
+
+                <Button
+                    android:stateListAnimator="@animator/edittext_elevation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins"
+                    android:id="@+id/gantifoto"
+                    android:layout_centerHorizontal="true"
+                    android:text="Ganti Foto"
+                    android:background="@android:color/transparent"
+                    android:textColor="@color/blue"
+                    android:textStyle="bold"
+                    android:layout_marginTop="10dp"
+                    android:textSize="14sp"/>
+
+            </LinearLayout>
 
 
             <EditText
@@ -84,7 +103,7 @@
                 android:layout_marginTop="20dp"
                 android:layout_width="314dp"
                 android:layout_height="45dp"
-                android:layout_below="@id/gantifoto"
+                android:layout_below="@id/ll_pp"
                 android:layout_centerHorizontal="true"
                 android:hint="Nama User"
                 android:textColor="@color/black"
@@ -232,6 +251,7 @@
                 />
 
             <Button
+                android:id="@+id/btn_simpan"
                 android:layout_marginBottom="20dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

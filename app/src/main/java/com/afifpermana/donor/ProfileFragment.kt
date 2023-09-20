@@ -10,10 +10,8 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.afifpermana.donor.model.HomeResponse
 import com.afifpermana.donor.model.PendonorLogoutResponse
 import com.afifpermana.donor.model.ProfileResponse
-import com.afifpermana.donor.service.HomeAPI
 import com.afifpermana.donor.service.PendonorLogoutAPI
 import com.afifpermana.donor.service.ProfileAPI
 import com.afifpermana.donor.util.Retro
