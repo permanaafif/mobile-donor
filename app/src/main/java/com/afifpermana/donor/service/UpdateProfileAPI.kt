@@ -1,6 +1,7 @@
 package com.afifpermana.donor.service
 
 import com.afifpermana.donor.model.ProfileResponse
+import com.afifpermana.donor.model.UpdateProfileEditDataResponse
 import com.afifpermana.donor.model.UpdateProfileRequestData
 import okhttp3.MultipartBody
 import retrofit2.Call
@@ -23,5 +24,5 @@ interface UpdateProfileAPI {
     fun updateProfileData(
         @Header("Authorization") auth_token : String,
         @Body req: UpdateProfileRequestData
-    ):Call<ProfileResponse>
+    ):Call<UpdateProfileEditDataResponse>
 }

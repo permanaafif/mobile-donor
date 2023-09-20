@@ -12,6 +12,7 @@ import android.widget.*
 import android.widget.ArrayAdapter
 import androidx.appcompat.widget.Toolbar
 import com.afifpermana.donor.model.ProfileResponse
+import com.afifpermana.donor.model.UpdateProfileEditDataResponse
 import com.afifpermana.donor.model.UpdateProfileRequestData
 import com.afifpermana.donor.service.ProfileAPI
 import com.afifpermana.donor.service.UpdateProfileAPI
@@ -105,8 +106,8 @@ class ProfileEdit : AppCompatActivity(), UploadRequestBody.UploadCallback {
             Toast.makeText(this,"Tidak Boleh Tukar Golongan Darah", Toast.LENGTH_LONG).show() }
 
         btn_simpan.setOnClickListener {
-            doSimpanData()
             doSimpanGambar()
+            doSimpanData()
         }
     }
 
@@ -115,17 +116,17 @@ class ProfileEdit : AppCompatActivity(), UploadRequestBody.UploadCallback {
         data.nama = namaUser.text.toString()
         Log.e("doSmipanData", data.nama.toString())
         val retro = Retro().getRetroClientInstance().create(UpdateProfileAPI::class.java)
-        retro.updateProfileData("Bearer ${sharedPref.getString("token")}",data).enqueue(object : Callback<ProfileResponse> {
+        retro.updateProfileData("Bearer ${sharedPref.getString("token")}",data).enqueue(object : Callback<UpdateProfileEditDataResponse> {
             override fun onResponse(
-                call: Call<ProfileResponse>,
-                response: Response<ProfileResponse>
+                call: Call<UpdateProfileEditDataResponse>,
+                response: Response<UpdateProfileEditDataResponse>
             ) {
                 if (response.isSuccessful){
                     Log.e("doSmipanData", "berhasil")
                 }
             }
 
-            override fun onFailure(call: Call<ProfileResponse>, t: Throwable) {
+            override fun onFailure(call: Call<UpdateProfileEditDataResponse>, t: Throwable) {
                 Log.e("doSmipanData", t.message.toString())
             }
         })
