@@ -77,32 +77,43 @@
         android:drawablePadding="10dp"
         />
 
-    <Button
-        android:id="@+id/tentangdara"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Tentang DARA?"
-        android:background="@android:color/transparent"
-        android:textColor="@color/blue"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl"
+        android:layout_marginTop="5dp"
+        android:layout_centerHorizontal="true"
         android:layout_below="@id/password"
-        android:textAllCaps="false"
-        android:layout_marginLeft="54dp"
-        android:textSize="14dp"
+        android:layout_width="314dp"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="29dp"
-        />
+        android:orientation="horizontal">
 
-    <Button
-        android:id="@+id/lupapassword"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Lupa Password?"
-        android:background="@android:color/transparent"
-        android:textColor="@color/blue"
-        android:layout_below="@id/password"
-        android:textAllCaps="false"
-        android:layout_marginLeft="200dp"
-        android:textSize="14dp"
-        />
+        <Button
+            android:id="@+id/tentangdara"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:text="Tentang DARA?"
+            android:textAllCaps="false"
+            android:textColor="@color/blue"
+            android:textSize="14dp"
+
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/lupapassword"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:text="Lupa Password?"
+            android:textAllCaps="false"
+            android:textColor="@color/blue"
+            android:textSize="14dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <Button
         android:id="@+id/btnLogin"
@@ -110,7 +121,7 @@
         android:layout_height="wrap_content"
         android:text="LOGIN"
         android:textColor="@color/white"
-        android:layout_below="@id/tentangdara"
+        android:layout_below="@id/cl"
         android:layout_centerHorizontal="true"
         android:textSize="14dp"
         android:backgroundTint="@color/button"

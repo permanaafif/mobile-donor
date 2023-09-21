@@ -86,6 +86,11 @@ class ProfileFragment : Fragment() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        profileView()
+    }
+
     private fun profileView() {
         val retro = Retro().getRetroClientInstance().create(ProfileAPI::class.java)
         retro.profile("Bearer ${sharedPref.getString("token")}").enqueue(object : Callback<ProfileResponse> {
