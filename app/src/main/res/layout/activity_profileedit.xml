@@ -72,6 +72,7 @@
                     android:background="@drawable/bulet" />
 
                 <ProgressBar
+                    android:visibility="gone"
                     android:id="@+id/progress_bar"
                     android:layout_width="100dp"
                     android:layout_marginTop="10dp"
@@ -141,11 +142,32 @@
                 />
             />
 
-            <EditText
+            <TextView
                 android:stateListAnimator="@animator/edittext_elevation"
                 android:layout_width="314dp"
                 android:layout_height="45dp"
                 android:layout_below="@id/password"
+                android:paddingVertical="13dp"
+                android:layout_centerHorizontal="true"
+                android:hint="Tanggal Lahir"
+                android:textColor="@color/black"
+                android:textColorHint="@color/black"
+                android:background="@drawable/borderinput"
+                android:fontFamily="@font/poppins"
+                android:drawableLeft="@drawable/baseline_date_range_24"
+                android:layout_marginBottom="18dp"
+                android:id="@+id/tanggal_lahir"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:textSize="14sp"
+                android:drawablePadding="10dp"
+                />
+
+            <EditText
+                android:stateListAnimator="@animator/edittext_elevation"
+                android:layout_width="314dp"
+                android:layout_height="45dp"
+                android:layout_below="@id/tanggal_lahir"
                 android:layout_centerHorizontal="true"
                 android:hint="Alamat"
                 android:textColor="@color/black"
@@ -210,33 +232,13 @@
                 android:drawablePadding="10dp"
                 />
 
-            <TextView
-                android:stateListAnimator="@animator/edittext_elevation"
-                android:id="@+id/goldar"
-                android:text="Golongan Darah"
-                android:paddingVertical="13dp"
-                android:layout_width="314dp"
-                android:layout_height="45dp"
-                android:layout_below="@id/notelp"
-                android:layout_centerHorizontal="true"
-                android:textColor="@color/black"
-                android:textColorHint="@color/black"
-                android:background="@drawable/borderinput"
-                android:drawableLeft="@drawable/baseline_bloodtype_24"
-                android:layout_marginBottom="18dp"
-                android:paddingLeft="20dp"
-                android:paddingRight="20dp"
-                android:textSize="14sp"
-                android:drawablePadding="10dp"
-                />
-
             <EditText
                 android:stateListAnimator="@animator/edittext_elevation"
                 android:id="@+id/bb"
                 android:hint="Berat Badan"
                 android:layout_width="314dp"
                 android:layout_height="45dp"
-                android:layout_below="@id/goldar"
+                android:layout_below="@id/notelp"
                 android:layout_centerHorizontal="true"
                 android:textColor="@color/black"
                 android:textColorHint="@color/black"

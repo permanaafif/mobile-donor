@@ -1,6 +1,7 @@
 package com.afifpermana.donor
 
 import android.app.Activity
+import android.app.DatePickerDialog
 import android.content.ContentResolver
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -8,6 +9,7 @@ import android.content.Intent
 import android.net.Uri
 import android.provider.OpenableColumns
 import android.util.Log
+import android.view.View
 import android.widget.*
 import android.widget.ArrayAdapter
 import androidx.appcompat.widget.Toolbar
@@ -27,12 +29,16 @@ import retrofit2.Response
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 class ProfileEdit : AppCompatActivity(), UploadRequestBody.UploadCallback {
     var b : Bundle? = null
     private lateinit var fotoProfile : CircleImageView
     private lateinit var namaUser : TextView
     private lateinit var alamat : TextView
+    private lateinit var tanggal_lahir : TextView
     private lateinit var kontak : TextView
     private lateinit var berat_badan : TextView
     private lateinit var jenis_kelamin : String
@@ -49,6 +55,7 @@ class ProfileEdit : AppCompatActivity(), UploadRequestBody.UploadCallback {
         fotoProfile = findViewById(R.id.foto)
         namaUser = findViewById(R.id.namauser)
         alamat = findViewById(R.id.alamat)
+        tanggal_lahir = findViewById(R.id.tanggal_lahir)
 
         kontak = findViewById(R.id.notelp)
         berat_badan = findViewById(R.id.bb)
@@ -57,6 +64,7 @@ class ProfileEdit : AppCompatActivity(), UploadRequestBody.UploadCallback {
 
         Picasso.get().load(b!!.getString("gambar")).into(fotoProfile)
         namaUser.text = b!!.getString("nama")
+        tanggal_lahir.text = b!!.getString("tanggal_lahir")
         alamat.text = b!!.getString("alamat")
         kontak.text = b!!.getString("kontak")
         jenis_kelamin = b!!.getString("jenis_kelamin").toString()
@@ -77,6 +85,19 @@ class ProfileEdit : AppCompatActivity(), UploadRequestBody.UploadCallback {
         buttongantipassword.setOnClickListener{
             val intent = Intent(this,GantiPassword::class.java)
             startActivity(intent)
+        }
+
+        val myCalender = Calendar.getInstance()
+        val datePicker = DatePickerDialog.OnDateSetListener{view, year, month, dayOfMonth ->
+            myCalender.set(Calendar.YEAR, year)
+            myCalender.set(Calendar.MONTH, month)
+            myCalender.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+            updateLable(myCalender)
+        }
+
+        tanggal_lahir.setOnClickListener {
+            DatePickerDialog(this, datePicker, myCalender.get(Calendar.YEAR), myCalender.get(Calendar.MONTH),
+                myCalender.get(Calendar.DAY_OF_MONTH)).show()
         }
 
         val dropdownJekel : AutoCompleteTextView =
@@ -106,9 +127,16 @@ class ProfileEdit : AppCompatActivity(), UploadRequestBody.UploadCallback {
         }
     }
 
+    private fun updateLable(myCalender: Calendar) {
+        val myFormat = "yyyy-MM-dd"
+        val sdf = SimpleDateFormat(myFormat, Locale.UK)
+        tanggal_lahir.setText(sdf.format(myCalender.time))
+    }
+
     private fun doSimpanData() {
         val data = UpdateProfileRequestData()
         data.nama = namaUser.text.toString().trim()
+        data.tanggal_lahir = tanggal_lahir.text.toString().trim()
         data.alamat_pendonor = alamat.text.toString().trim()
         data.jenis_kelamin = jenis_kelamin
         data.kontak_pendonor = kontak.text.toString().trim()
@@ -140,6 +168,7 @@ class ProfileEdit : AppCompatActivity(), UploadRequestBody.UploadCallback {
             val outputStream = FileOutputStream(file)
             inputStream.copyTo(outputStream)
 
+            progressBar.visibility = View.VISIBLE
             progressBar.progress = 0
             val gambar = UploadRequestBody(file,"image",this)
 
@@ -155,10 +184,14 @@ class ProfileEdit : AppCompatActivity(), UploadRequestBody.UploadCallback {
                     if (response.isSuccessful){
 //                        Toast.makeText(applicationContext,"${response.body()?.succes}", Toast.LENGTH_LONG).show()
 //                    finish()
+                        progressBar.progress = 100
                     }else{
                         Log.e("nonSuccess", "non succcess")
                     }
-                    progressBar.progress = 100
+
+                    if (progressBar.progress == 100){
+                        progressBar.visibility = View.GONE
+                    }
                 }
 
                 override fun onFailure(call: Call<ProfileResponse>, t: Throwable) {
