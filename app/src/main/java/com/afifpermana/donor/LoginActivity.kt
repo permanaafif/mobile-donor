@@ -3,9 +3,11 @@ package com.afifpermana.donor
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import com.afifpermana.donor.service.PendonorLoginAPI
 import com.afifpermana.donor.util.Retro
 import com.afifpermana.donor.util.SharedPrefLogin
@@ -41,14 +43,22 @@ class LoginActivity : AppCompatActivity() {
         }
 
         login.setOnClickListener{
-            if(kodeDonor.text.isNullOrEmpty()){
-                Toast.makeText(this@LoginActivity,"Isi Kode Pendonor", Toast.LENGTH_LONG).show()
-            }else if(password.text.isNullOrEmpty()){
-                Toast.makeText(this@LoginActivity,"Isi Password", Toast.LENGTH_LONG).show()
-            }else{
+            if (validateInput()){
                 loginPendonor()
             }
         }
+    }
+    // Validasi input
+    public fun validateInput(): Boolean {
+        if (kodeDonor.text.trim().isNullOrEmpty()) {
+            kodeDonor.error = "Kode Pendonor tidak boleh kosong"
+            return false
+        }
+        if (password.text.trim().isNullOrEmpty()) {
+            password.error = "Password tidak boleh kosong"
+            return false
+        }
+        return true
     }
 
     private fun loginPendonor() {
@@ -62,27 +72,36 @@ class LoginActivity : AppCompatActivity() {
                 response: Response<PendonorLoginResponse>
             ) {
                 val res = response.body()
-                if (res != null){
-                    if(res.success == true){
+                if (response.code() == 200){
+                    if(res!!.success == true){
+                        Log.e("Login", res.message.toString())
                         sharedPref.setStatusLogin(true)
                         sharedPref.setToken(
-//                            res.user.id!!.toInt(),
-//                            res.user.nama.toString(),
-//                            res.user.kode_pendonor.toString(),
-//                            res.golongan_darah.nama.toString(),
-//                            res.user.berat_badan!!.toInt(),
                             res.token.toString()
                         )
                         sharedPref.setStatusLogin(true)
                         startActivity(Intent(this@LoginActivity, MainActivity::class.java))
-                    }else{
-                        Toast.makeText(this@LoginActivity,"Kode Pendonor atau password salah", Toast.LENGTH_LONG).show()
                     }
+                }else{
+                    // Jika status false, tampilkan pesan kesalahan
+                    showAlertDialog("Login Gagal", "Kombinasi kode pendonor dan password salah.")
                 }
             }
 
             override fun onFailure(call: Call<PendonorLoginResponse>, t: Throwable) {
             }
         })
+    }
+    // Fungsi untuk menampilkan AlertDialog
+    private fun showAlertDialog(title: String, message: String) {
+        val builder = AlertDialog.Builder(this@LoginActivity)
+        builder.setTitle(title)
+        builder.setMessage(message)
+        builder.setPositiveButton("OK") { dialog, which ->
+            // Tindakan setelah pengguna menekan tombol OK
+            dialog.dismiss()
+        }
+        val dialog = builder.create()
+        dialog.show()
     }
 }

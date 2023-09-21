@@ -121,10 +121,59 @@ class ProfileEdit : AppCompatActivity(), UploadRequestBody.UploadCallback {
                 Toast.makeText(this, "$itemSelected",Toast.LENGTH_LONG).show()
             }
 
-        btn_simpan.setOnClickListener {
-            doSimpanGambar()
-            doSimpanData()
+        // Validasi input
+        fun validateInput(): Boolean {
+            val nama = namaUser.text.toString().trim()
+            val almt = alamat.text.toString().trim()
+            val kt = kontak.text.toString().trim()
+            val bb = berat_badan.text.toString().trim()
+
+            if (nama.isEmpty()) {
+                namaUser.error = "Nama tidak boleh kosong"
+                return false
+            }
+            if (nama.length < 3) {
+                namaUser.error = "Nama harus lebih dari 3 karakter"
+                return false
+            }
+            if (almt.isEmpty()) {
+                alamat.error = "Alamat tidak boleh kosong"
+                return false
+            }
+            if (almt.length < 5) {
+                alamat.error = "Alamat harus lebih dari 5 karakter"
+                return false
+            }
+            if (kt.isEmpty()) {
+                kontak.error = "Kontak tidak boleh kosong"
+                return false
+            }
+            if (kt.length < 11) {
+                kontak.error = "kontak harus lebih dari 10 karakter"
+                return false
+            }
+            if (bb.isEmpty()) {
+                berat_badan.error = "Berat Badan tidak boleh kosong"
+                return false
+            }
+            // Validasi berat badan harus berupa angka
+            val beratBadanInt = bb.toIntOrNull()
+            if (beratBadanInt == null) {
+                berat_badan.error = "Berat Badan harus berupa angka"
+                return false
+            }
+            return true
         }
+
+        // Tombol simpan diklik
+        btn_simpan.setOnClickListener {
+            if (validateInput()) {
+                // Validasi sukses, lanjutkan dengan tindakan penyimpanan data
+                doSimpanGambar()
+                doSimpanData()
+            }
+        }
+
     }
 
     private fun updateLable(myCalender: Calendar) {
