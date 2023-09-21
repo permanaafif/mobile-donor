@@ -1,5 +1,7 @@
 package com.afifpermana.donor.service
 
+import com.afifpermana.donor.model.GantiPasswordRequest
+import com.afifpermana.donor.model.GantiPasswordResponse
 import com.afifpermana.donor.model.ProfileResponse
 import com.afifpermana.donor.model.UpdateProfileEditDataResponse
 import com.afifpermana.donor.model.UpdateProfileRequestData
@@ -25,4 +27,9 @@ interface UpdateProfileAPI {
         @Header("Authorization") auth_token : String,
         @Body req: UpdateProfileRequestData
     ):Call<UpdateProfileEditDataResponse>
+
+    @POST("api/profile-edit-password")
+    fun gantiPassword(
+        @Header("Authorization") auth_token : String,
+        @Body req:GantiPasswordRequest): Call<GantiPasswordResponse>
 }
