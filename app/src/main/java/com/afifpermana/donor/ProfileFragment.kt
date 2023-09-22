@@ -30,6 +30,7 @@ class ProfileFragment : Fragment() {
 
     private lateinit var fotoProfile : CircleImageView
     private lateinit var nama : TextView
+    private lateinit var email : TextView
     private lateinit var namaUser : TextView
     private lateinit var tanggal_lahir : TextView
     private lateinit var kode_pendonor : TextView
@@ -58,6 +59,7 @@ class ProfileFragment : Fragment() {
 
         fotoProfile = view.findViewById(R.id.foto)
         nama = view.findViewById(R.id.nama)
+        email = view.findViewById(R.id.email)
         namaUser = view.findViewById(R.id.namauser)
         tanggal_lahir = view.findViewById(R.id.tanggal_lahir)
         kode_pendonor = view.findViewById(R.id.kode)
@@ -71,6 +73,7 @@ class ProfileFragment : Fragment() {
             val i = Intent(context, ProfileEdit::class.java)
             i.putExtra("gambar", pathFoto.toString())
             i.putExtra("nama", nama.text)
+            i.putExtra("email", email.text)
             i.putExtra("tanggal_lahir", tanggal_lahir.text)
             i.putExtra("alamat", alamat.text)
             i.putExtra("jenis_kelamin", jenis_kelamin.text)
@@ -109,6 +112,7 @@ class ProfileFragment : Fragment() {
                         pathFoto = "http://10.0.2.2:8000/images/${res.user!!.gambar}"
                     }
                     nama.text = res.user.nama
+                    email.text = res.user.email
                     namaUser.text = res.user.nama
                     kode_pendonor.text = res.user.kode_pendonor
                     tanggal_lahir.text = res.user.tanggal_lahir

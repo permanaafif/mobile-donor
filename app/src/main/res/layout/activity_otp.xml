@@ -49,7 +49,7 @@
         android:src="@drawable/otp"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="40dp"
-        android:layout_marginBottom="50dp"
+        android:layout_marginBottom="40dp"
         android:id="@+id/logootp"
         />
 
@@ -74,7 +74,7 @@
         android:layout_centerHorizontal="true"
         android:gravity="center"
         android:fontFamily="@font/poppins"
-        android:text="Kami telah mengirimkan kode OTP ke nomor telepon anda"
+        android:text="Kami telah mengirimkan kode OTP ke email anda"
         android:textColor="@color/black"
         android:textSize="14dp"
         android:id="@+id/otp2"
@@ -82,6 +82,7 @@
 
 
     <EditText
+        android:maxLength="1"
         android:layout_width="66dp"
         android:layout_height="59dp"
         android:layout_below="@id/otp2"
@@ -98,6 +99,7 @@
         />
 
     <EditText
+        android:maxLength="1"
         android:layout_width="66dp"
         android:layout_height="59dp"
         android:layout_below="@id/otp2"
@@ -115,6 +117,7 @@
 
 
     <EditText
+        android:maxLength="1"
         android:layout_width="66dp"
         android:layout_height="59dp"
         android:layout_below="@id/otp2"
@@ -131,6 +134,7 @@
         />
 
     <EditText
+        android:maxLength="1"
         android:layout_width="66dp"
         android:layout_height="59dp"
         android:layout_below="@id/otp2"

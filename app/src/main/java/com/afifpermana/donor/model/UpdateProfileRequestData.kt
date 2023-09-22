@@ -9,6 +9,10 @@ class UpdateProfileRequestData {
     @Expose
     var nama : String? =null
 
+    @SerializedName("email")
+    @Expose
+    var email : String? =null
+
     @SerializedName("berat_badan")
     @Expose
     var berat_badan : Int? =null

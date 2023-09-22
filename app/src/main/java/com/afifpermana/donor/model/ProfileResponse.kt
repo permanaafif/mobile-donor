@@ -25,6 +25,10 @@ class ProfileResponse {
         @Expose
         var nama : String? =null
 
+        @SerializedName("email")
+        @Expose
+        var email : String? =null
+
         @SerializedName("kode_pendonor")
         @Expose
         var kode_pendonor : String? =null

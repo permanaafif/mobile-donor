@@ -37,6 +37,7 @@ class ProfileEdit : AppCompatActivity(), UploadRequestBody.UploadCallback {
     var b : Bundle? = null
     private lateinit var fotoProfile : CircleImageView
     private lateinit var namaUser : TextView
+    private lateinit var email : TextView
     private lateinit var alamat : TextView
     private lateinit var tanggal_lahir : TextView
     private lateinit var kontak : TextView
@@ -54,6 +55,7 @@ class ProfileEdit : AppCompatActivity(), UploadRequestBody.UploadCallback {
         b = intent.extras
         fotoProfile = findViewById(R.id.foto)
         namaUser = findViewById(R.id.namauser)
+        email = findViewById(R.id.email)
         alamat = findViewById(R.id.alamat)
         tanggal_lahir = findViewById(R.id.tanggal_lahir)
 
@@ -64,6 +66,7 @@ class ProfileEdit : AppCompatActivity(), UploadRequestBody.UploadCallback {
 
         Picasso.get().load(b!!.getString("gambar")).into(fotoProfile)
         namaUser.text = b!!.getString("nama")
+        email.text = b!!.getString("email")
         tanggal_lahir.text = b!!.getString("tanggal_lahir")
         alamat.text = b!!.getString("alamat")
         kontak.text = b!!.getString("kontak")
@@ -127,6 +130,7 @@ class ProfileEdit : AppCompatActivity(), UploadRequestBody.UploadCallback {
             val almt = alamat.text.toString().trim()
             val kt = kontak.text.toString().trim()
             val bb = berat_badan.text.toString().trim()
+            val em = email.text.toString().trim()
 
             if (nama.isEmpty()) {
                 namaUser.error = "Nama tidak boleh kosong"
@@ -162,6 +166,12 @@ class ProfileEdit : AppCompatActivity(), UploadRequestBody.UploadCallback {
                 berat_badan.error = "Berat Badan harus berupa angka"
                 return false
             }
+            // Validasi kontak (alamat email) harus valid
+            if (!isValidEmail(em)) {
+                email.error = "Alamat Email tidak valid"
+                return false
+            }
+
             return true
         }
 
@@ -176,6 +186,12 @@ class ProfileEdit : AppCompatActivity(), UploadRequestBody.UploadCallback {
 
     }
 
+    // Fungsi untuk memeriksa apakah sebuah string adalah alamat email yang valid
+    private fun isValidEmail(email: String): Boolean {
+        val emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+"
+        return email.matches(emailPattern.toRegex())
+    }
+
     private fun updateLable(myCalender: Calendar) {
         val myFormat = "yyyy-MM-dd"
         val sdf = SimpleDateFormat(myFormat, Locale.UK)
@@ -185,6 +201,7 @@ class ProfileEdit : AppCompatActivity(), UploadRequestBody.UploadCallback {
     private fun doSimpanData() {
         val data = UpdateProfileRequestData()
         data.nama = namaUser.text.toString().trim()
+        data.email = email.text.toString().trim()
         data.tanggal_lahir = tanggal_lahir.text.toString().trim()
         data.alamat_pendonor = alamat.text.toString().trim()
         data.jenis_kelamin = jenis_kelamin
