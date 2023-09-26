@@ -42,126 +42,143 @@
 
     </androidx.appcompat.widget.Toolbar>
 
-    <ImageView
+    <ScrollView
         android:layout_below="@id/toolbar"
-        android:layout_width="356dp"
-        android:layout_height="272dp"
-        android:src="@drawable/otp"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="40dp"
-        android:layout_marginBottom="40dp"
-        android:id="@+id/logootp"
-        />
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@id/logootp"
-        android:text="Verifikasi OTP"
-        android:textSize="24dp"
-        android:textStyle="bold"
-        android:fontFamily="@font/poppins"
-        android:textColor="@color/black"
-        android:id="@+id/otp1"
-        android:layout_marginBottom="12dp"
-        />
+        <RelativeLayout
+            android:layout_gravity="center_vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-    <TextView
-        android:layout_width="304dp"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/otp1"
-        android:layout_centerHorizontal="true"
-        android:gravity="center"
-        android:fontFamily="@font/poppins"
-        android:text="Kami telah mengirimkan kode OTP ke email anda"
-        android:textColor="@color/black"
-        android:textSize="14dp"
-        android:id="@+id/otp2"
-        />
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/animation_otp"
+                android:layout_width="wrap_content"
+                android:layout_height="250dp"
+                android:layout_centerHorizontal="true"
+                app:lottie_rawRes="@raw/animation_otp"
+                app:lottie_loop="true"
+                app:lottie_autoPlay="true" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/animation_otp"
+                android:text="Verifikasi OTP"
+                android:textSize="24dp"
+                android:layout_marginTop="40dp"
+                android:textStyle="bold"
+                android:fontFamily="@font/poppins"
+                android:textColor="@color/black"
+                android:id="@+id/otp1"
+                android:layout_marginBottom="12dp"
+                />
+
+            <TextView
+                android:layout_width="304dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/otp1"
+                android:layout_centerHorizontal="true"
+                android:gravity="center"
+                android:fontFamily="@font/poppins"
+                android:text="Kami telah mengirimkan kode OTP ke email anda"
+                android:textColor="@color/black"
+                android:textSize="14dp"
+                android:id="@+id/otp2"
+                />
+
+            <LinearLayout
+                android:id="@+id/ll_otp"
+                android:layout_marginTop="40dp"
+                android:layout_below="@id/otp2"
+                android:layout_marginStart="40dp"
+                android:layout_marginEnd="40dp"
+                android:layout_centerHorizontal="true"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:maxLength="1"
+                    android:layout_width="66dp"
+                    android:layout_height="59dp"
+                    android:layout_below="@id/otp2"
+                    android:background="@drawable/borderotp"
+                    android:hint="#"
+                    android:layout_marginRight="5dp"
+                    android:textColorHint="@color/grey"
+                    android:textColor="@color/white"
+                    android:fontFamily="@font/poppins"
+                    android:textSize="30dp"
+                    android:gravity="center"
+                    android:id="@+id/kode1"
+                    />
+
+                <EditText
+                    android:maxLength="1"
+                    android:layout_width="66dp"
+                    android:layout_height="59dp"
+                    android:layout_below="@id/otp2"
+                    android:background="@drawable/borderotp"
+                    android:hint="#"
+                    android:layout_marginRight="5dp"
+                    android:textColorHint="@color/white"
+                    android:textColor="@color/white"
+                    android:fontFamily="@font/poppins"
+                    android:textSize="30dp"
+                    android:gravity="center"
+                    android:id="@+id/kode2"
+                    />
 
 
-    <EditText
-        android:maxLength="1"
-        android:layout_width="66dp"
-        android:layout_height="59dp"
-        android:layout_below="@id/otp2"
-        android:layout_marginTop="45dp"
-        android:background="@drawable/borderotp"
-        android:hint="#"
-        android:textColorHint="@color/white"
-        android:textColor="@color/white"
-        android:fontFamily="@font/poppins"
-        android:textSize="30dp"
-        android:layout_marginLeft="40dp"
-        android:gravity="center"
-        android:id="@+id/kode1"
-        />
+                <EditText
+                    android:maxLength="1"
+                    android:layout_width="66dp"
+                    android:layout_height="59dp"
+                    android:layout_below="@id/otp2"
+                    android:background="@drawable/borderotp"
+                    android:hint="#"
+                    android:layout_marginRight="5dp"
+                    android:textColorHint="@color/white"
+                    android:textColor="@color/white"
+                    android:fontFamily="@font/poppins"
+                    android:textSize="30dp"
+                    android:gravity="center"
+                    android:id="@+id/kode3"
+                    />
 
-    <EditText
-        android:maxLength="1"
-        android:layout_width="66dp"
-        android:layout_height="59dp"
-        android:layout_below="@id/otp2"
-        android:layout_marginTop="45dp"
-        android:background="@drawable/borderotp"
-        android:hint="#"
-        android:textColorHint="@color/white"
-        android:textColor="@color/white"
-        android:fontFamily="@font/poppins"
-        android:textSize="30dp"
-        android:layout_marginLeft="120dp"
-        android:gravity="center"
-        android:id="@+id/kode2"
-        />
+                <EditText
+                    android:maxLength="1"
+                    android:layout_width="66dp"
+                    android:layout_height="59dp"
+                    android:layout_below="@id/otp2"
+                    android:background="@drawable/borderotp"
+                    android:hint="#"
+                    android:fontFamily="@font/poppins"
+                    android:textColorHint="@color/white"
+                    android:textColor="@color/white"
+                    android:textSize="30dp"
+                    android:gravity="center"
+                    android:id="@+id/kode4"
+                    />
+            </LinearLayout>
 
-
-    <EditText
-        android:maxLength="1"
-        android:layout_width="66dp"
-        android:layout_height="59dp"
-        android:layout_below="@id/otp2"
-        android:layout_marginTop="45dp"
-        android:background="@drawable/borderotp"
-        android:hint="#"
-        android:textColorHint="@color/white"
-        android:textColor="@color/white"
-        android:fontFamily="@font/poppins"
-        android:textSize="30dp"
-        android:layout_marginLeft="200dp"
-        android:gravity="center"
-        android:id="@+id/kode3"
-        />
-
-    <EditText
-        android:maxLength="1"
-        android:layout_width="66dp"
-        android:layout_height="59dp"
-        android:layout_below="@id/otp2"
-        android:layout_marginTop="45dp"
-        android:background="@drawable/borderotp"
-        android:hint="#"
-        android:fontFamily="@font/poppins"
-        android:textColorHint="@color/white"
-        android:textColor="@color/white"
-        android:textSize="30dp"
-        android:layout_marginLeft="280dp"
-        android:gravity="center"
-        android:id="@+id/kode4"
-        />
-    
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@id/kode4"
-        android:layout_marginTop="40dp"
-        android:text="VERIFIKASI"
-        android:textStyle="bold"
-        android:fontFamily="@font/poppins"
-        android:backgroundTint="@color/button"
-        android:gravity="center"
-        android:id="@+id/btnOTP"
-        />
-
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/ll_otp"
+                android:layout_marginTop="40dp"
+                android:text="VERIFIKASI"
+                android:textStyle="bold"
+                android:fontFamily="@font/poppins"
+                android:backgroundTint="@color/button"
+                android:gravity="center"
+                android:id="@+id/btnOTP"
+                />
+        </RelativeLayout>
+    </ScrollView>
 </RelativeLayout>

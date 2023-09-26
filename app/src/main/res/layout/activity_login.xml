@@ -1,28 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    >
+
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center_vertical"
     tools:context=".LoginActivity">
 
-    <ImageView
-        android:layout_marginTop="120dp"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:src="@drawable/logo"
-        android:layout_centerHorizontal="true"
-        android:id="@+id/logo"/>
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/animation_view_people_donor"
+        android:layout_width="wrap_content"
+        android:layout_height="300dp"
+        app:lottie_rawRes="@raw/animation_vector_people_donor"
+        app:lottie_loop="true"
+        app:lottie_autoPlay="true" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="DARA"
         android:textStyle="bold"
+        android:layout_below="@id/animation_view_people_donor"
         android:textSize="40dp"
         android:textColor="@color/dara"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="250dp"
+
         android:id="@+id/dara"
         />
 
@@ -31,11 +39,11 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/dara"
         android:layout_centerHorizontal="true"
-        android:textSize="14dp"
+        android:textSize="12dp"
         android:text="Setetes Darah Akan Sangat Berarti"
         android:id="@+id/slogan"
         android:layout_marginBottom="20dp"
-        android:textColor="@color/black"
+        android:textColor="@color/background_donor"
         />
 
     <EditText
@@ -46,6 +54,7 @@
         android:layout_centerHorizontal="true"
         android:hint="Kode Donor"
         android:textColor="@color/black"
+        android:maxLines="1"
         android:textColorHint="@color/black"
         android:background="@drawable/borderinput"
         android:drawableLeft="@drawable/baseline_person_24"
@@ -69,6 +78,7 @@
         android:textSize="14dp"
         android:layout_centerHorizontal="true"
         android:hint="Password"
+        android:maxLines="1"
         android:background="@drawable/borderinput"
         android:drawableLeft="@drawable/baseline_lock_24"
         android:paddingLeft="20dp"
@@ -127,7 +137,5 @@
         android:backgroundTint="@color/button"
         android:textStyle="bold"
         />
-
-
-
 </RelativeLayout>
+</ScrollView>
