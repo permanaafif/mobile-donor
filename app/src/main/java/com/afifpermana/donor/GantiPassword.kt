@@ -2,9 +2,11 @@ package com.afifpermana.donor
 
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -64,7 +66,7 @@ class GantiPassword : AppCompatActivity() {
                         finish()
                     }else{
                         // Jika status false, tampilkan pesan kesalahan
-                        showAlertDialog("Ganti Password Gagal", response.body()!!.message.toString())
+                        showAlertDialog("Ganti Password Gagal, Password lama anda salah!!")
                     }
                 }
             }
@@ -100,15 +102,20 @@ class GantiPassword : AppCompatActivity() {
         return true
     }
 
-    private fun showAlertDialog(title: String, message: String) {
-        val builder = AlertDialog.Builder(this@GantiPassword)
-        builder.setTitle(title)
-        builder.setMessage(message)
-        builder.setPositiveButton("OK") { dialog, which ->
-            // Tindakan setelah pengguna menekan tombol OK
+    private fun showAlertDialog(message: String) {
+        val builder = AlertDialog.Builder(this)
+        val customeView = LayoutInflater.from(this).inflate(R.layout.alert_gagal,null)
+        builder.setView(customeView)
+        val dialog = builder.create()
+
+        val tv_alert = customeView.findViewById<TextView>(R.id.tv_alert_gagal)
+        tv_alert.text = message
+        val btnOke = customeView.findViewById<Button>(R.id.btn_oke)
+
+        btnOke.setOnClickListener {
             dialog.dismiss()
         }
-        val dialog = builder.create()
         dialog.show()
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
     }
 }

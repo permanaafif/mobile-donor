@@ -58,7 +58,7 @@
         android:textColorHint="@color/black"
         android:background="@drawable/borderinput"
         android:drawableLeft="@drawable/baseline_person_24"
-        android:layout_marginBottom="28dp"
+        android:layout_marginBottom="20dp"
         android:id="@+id/kodedonor"
         android:paddingLeft="20dp"
         android:paddingRight="20dp"
@@ -87,11 +87,25 @@
         android:drawablePadding="10dp"
         />
 
+    <Button
+        android:id="@+id/btnLogin"
+        android:layout_width="314dp"
+        android:layout_height="wrap_content"
+        android:text="LOGIN"
+        android:layout_marginTop="20dp"
+        android:textColor="@color/white"
+        android:layout_below="@id/password"
+        android:layout_centerHorizontal="true"
+        android:textSize="14dp"
+        android:backgroundTint="@color/button"
+        android:textStyle="bold"
+        />
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/cl"
         android:layout_marginTop="5dp"
         android:layout_centerHorizontal="true"
-        android:layout_below="@id/password"
+        android:layout_below="@id/btnLogin"
         android:layout_width="314dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="29dp"
@@ -104,8 +118,9 @@
             android:background="@android:color/transparent"
             android:text="Tentang DARA?"
             android:textAllCaps="false"
+            android:textStyle="normal"
             android:textColor="@color/blue"
-            android:textSize="14dp"
+            android:textSize="12dp"
 
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -118,24 +133,13 @@
             android:background="@android:color/transparent"
             android:text="Lupa Password?"
             android:textAllCaps="false"
+            android:textStyle="normal"
             android:textColor="@color/blue"
-            android:textSize="14dp"
+            android:textSize="12dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <Button
-        android:id="@+id/btnLogin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="LOGIN"
-        android:textColor="@color/white"
-        android:layout_below="@id/cl"
-        android:layout_centerHorizontal="true"
-        android:textSize="14dp"
-        android:backgroundTint="@color/button"
-        android:textStyle="bold"
-        />
 </RelativeLayout>
 </ScrollView>

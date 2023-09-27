@@ -4,8 +4,11 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.afifpermana.donor.service.PendonorLoginAPI
@@ -84,7 +87,7 @@ class LoginActivity : AppCompatActivity() {
                     }
                 }else{
                     // Jika status false, tampilkan pesan kesalahan
-                    showAlertDialog("Login Gagal", "Kombinasi kode pendonor dan password salah.")
+                    showAlertDialog("Kombinasi kode pendonor dan password salah.")
                 }
             }
 
@@ -93,15 +96,20 @@ class LoginActivity : AppCompatActivity() {
         })
     }
     // Fungsi untuk menampilkan AlertDialog
-    private fun showAlertDialog(title: String, message: String) {
-        val builder = AlertDialog.Builder(this@LoginActivity)
-        builder.setTitle(title)
-        builder.setMessage(message)
-        builder.setPositiveButton("OK") { dialog, which ->
-            // Tindakan setelah pengguna menekan tombol OK
+    private fun showAlertDialog(message: String) {
+        val builder = AlertDialog.Builder(this)
+        val customeView = LayoutInflater.from(this).inflate(R.layout.alert_gagal,null)
+        builder.setView(customeView)
+        val dialog = builder.create()
+
+        val tv_alert = customeView.findViewById<TextView>(R.id.tv_alert_gagal)
+        tv_alert.text = message
+        val btnOke = customeView.findViewById<Button>(R.id.btn_oke)
+
+        btnOke.setOnClickListener {
             dialog.dismiss()
         }
-        val dialog = builder.create()
         dialog.show()
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
     }
 }

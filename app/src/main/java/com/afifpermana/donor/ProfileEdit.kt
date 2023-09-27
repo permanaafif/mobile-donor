@@ -216,6 +216,7 @@ class ProfileEdit : AppCompatActivity(), UploadRequestBody.UploadCallback {
             ) {
                 if (response.isSuccessful){
                     Toast.makeText(applicationContext,"Simpan Berhasil",Toast.LENGTH_LONG).show()
+                    finish()
                 }
             }
 

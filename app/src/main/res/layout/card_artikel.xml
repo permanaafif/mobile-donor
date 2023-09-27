@@ -3,11 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/card_artikel"
     app:cardCornerRadius="15dp"
-    android:layout_marginBottom="20dp"
+    android:layout_marginLeft="10dp"
+    android:layout_marginRight="10dp"
+    android:layout_marginBottom="10dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <RelativeLayout
+
         android:layout_width="match_parent"
         android:layout_height="135dp">
 

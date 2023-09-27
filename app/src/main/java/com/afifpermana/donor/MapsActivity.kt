@@ -7,7 +7,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.PersistableBundle
+import android.os.Handler
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -28,16 +28,13 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.afifpermana.donor.databinding.ActivityMapsBinding
-import com.afifpermana.donor.model.BeritaResponse
 import com.afifpermana.donor.model.DaftarJadwalDonorRequest
 import com.afifpermana.donor.model.DaftarJadwalDonorResponse
-import com.afifpermana.donor.service.BeritaAPI
 import com.afifpermana.donor.service.JadwalUserAPI
 import com.afifpermana.donor.util.Retro
 import com.afifpermana.donor.util.SharedPrefLogin
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -167,12 +164,27 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             btnDaftar.visibility = View.GONE
             daftar(x)
             dialog.dismiss()
+            showCostumeAlertDialogSuccess()
         }
 
         btnNo.setOnClickListener {
             dialog.dismiss()
         }
         dialog.show()
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+    }
+
+    private fun showCostumeAlertDialogSuccess() {
+        val builder = AlertDialog.Builder(this)
+        val customeView = LayoutInflater.from(this).inflate(R.layout.alert_success,null)
+        builder.setView(customeView)
+        val dialog = builder.create()
+        dialog.show()
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        val handler = Handler()
+        handler.postDelayed({
+            dialog.dismiss()
+        }, 3000)
     }
 
     private fun daftar(x: Int) {
