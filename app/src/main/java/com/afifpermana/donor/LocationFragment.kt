@@ -138,11 +138,12 @@ class LocationFragment : Fragment() {
                     Toast.LENGTH_SHORT
                 ).show()
             } else {
-                Toast.makeText(
+//               // Jika izin tidak diberikan, Anda dapat meminta izin di sini
+                ActivityCompat.requestPermissions(
                     requireActivity(),
-                    "Lokasi tidak tersedia",
-                    Toast.LENGTH_LONG
-                ).show()
+                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                    LOCATION_PERMISSION_REQUEST_CODE
+                )
             }
         } else {
             // Jika izin tidak diberikan, Anda dapat meminta izin di sini

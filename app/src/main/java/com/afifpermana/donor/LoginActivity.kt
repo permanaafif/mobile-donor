@@ -3,11 +3,13 @@ package com.afifpermana.donor
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.InputType
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -23,6 +25,8 @@ import retrofit2.Response
 class LoginActivity : AppCompatActivity() {
     private lateinit var kodeDonor : EditText
     private lateinit var password : EditText
+    private lateinit var iv_icon_pwd : ImageView
+
     lateinit var sharedPref : SharedPrefLogin
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,6 +35,7 @@ class LoginActivity : AppCompatActivity() {
         sharedPref = SharedPrefLogin(this)
         kodeDonor=findViewById(R.id.kodedonor)
         password=findViewById(R.id.password)
+        iv_icon_pwd=findViewById(R.id.iv_eyes_visible)
         val info=findViewById<Button>(R.id.tentangdara)
         val lupa=findViewById<Button>(R.id.lupapassword)
         val login=findViewById<Button>(R.id.btnLogin)
@@ -50,9 +55,23 @@ class LoginActivity : AppCompatActivity() {
                 loginPendonor()
             }
         }
+
+        iv_icon_pwd.setOnClickListener{
+            if (password.inputType == (InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD)) {
+                // Jika sedang dalam mode tersembunyi, ubah ke tampilan karakter terlihat
+                password.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+                iv_icon_pwd.setImageResource(R.drawable.baseline_visibility_24)
+            } else {
+                // Jika sedang dalam mode tampilan karakter terlihat, ubah ke tersembunyi
+                password.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+                iv_icon_pwd.setImageResource(R.drawable.baseline_visibility_off_24)
+            }
+            // Setelah mengubah inputType, Anda mungkin perlu memindahkan kursor ke akhir teks
+            password.setSelection(password.text.length)
+        }
     }
     // Validasi input
-    public fun validateInput(): Boolean {
+    private fun validateInput(): Boolean {
         if (kodeDonor.text.trim().isNullOrEmpty()) {
             kodeDonor.error = "Kode Pendonor tidak boleh kosong"
             return false

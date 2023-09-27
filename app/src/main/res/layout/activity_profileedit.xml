@@ -158,9 +158,7 @@
                 android:paddingLeft="20dp"
                 android:paddingRight="20dp"
                 android:textSize="14sp"
-                android:drawablePadding="10dp"
-                />
-            />
+                android:drawablePadding="10dp"/>
 
             <TextView
                 android:stateListAnimator="@animator/edittext_elevation"
