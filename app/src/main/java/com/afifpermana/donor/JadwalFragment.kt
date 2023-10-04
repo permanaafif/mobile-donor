@@ -1,6 +1,8 @@
 package com.afifpermana.donor
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -10,6 +12,7 @@ import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.afifpermana.donor.adapter.JadwalAdapter
 import com.afifpermana.donor.model.Jadwal
 import com.afifpermana.donor.model.LokasiDonorResponse
@@ -23,6 +26,7 @@ import retrofit2.Response
 
 class JadwalFragment : Fragment() {
 
+    private lateinit var sw_layout : SwipeRefreshLayout
     private lateinit var adapter : JadwalAdapter
     private lateinit var recyclerView: RecyclerView
     private lateinit var cl_jadwal : ConstraintLayout
@@ -52,6 +56,9 @@ class JadwalFragment : Fragment() {
         sharedPref = SharedPrefLogin(requireActivity())
         jadwalView()
 //        initView()
+        sw_layout = view.findViewById(R.id.swlayout)
+        // Mengeset properti warna yang berputar pada SwipeRefreshLayout
+        sw_layout.setColorSchemeResources(R.color.blue,R.color.red)
         val layoutManager = LinearLayoutManager(context)
         recyclerView = view.findViewById(R.id.rv_jadwal_donor)
         cl_jadwal = view.findViewById(R.id.cl_jadwal)
@@ -59,6 +66,28 @@ class JadwalFragment : Fragment() {
         recyclerView.setHasFixedSize(true)
         adapter = JadwalAdapter(newData)
         recyclerView.adapter = adapter
+        sw_layout.setOnRefreshListener{
+            val Handler = Handler(Looper.getMainLooper())
+            Handler().postDelayed(Runnable {
+                clearData()
+                jadwalView()
+                sw_layout.isRefreshing = false
+            }, 1000)
+        }
+    }
+
+    private fun clearData() {
+        newData.clear()
+        id = emptyArray()
+        tanggal = emptyArray()
+        jamMulai = emptyArray()
+        jamSelesai = emptyArray()
+        lokasi = emptyArray()
+        alamat = emptyArray()
+        kontak = emptyArray()
+        latitude = emptyArray()
+        longitude = emptyArray()
+        adapter.notifyDataSetChanged()
     }
 
     fun extractJamMenit(waktu: String): String {

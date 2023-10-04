@@ -46,6 +46,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/item_label"
+            android:textColorHint="@color/bluedark"
+            android:background="@drawable/borderinput"
             style="@style/CustomAutoCompleteTextView"
             android:inputType="none"/>
 
@@ -55,6 +57,10 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swlayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_jadwal"
                 android:layout_width="match_parent"
@@ -62,24 +68,30 @@
                 tools:itemCount="15"
                 tools:listitem="@layout/card_location" />
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/cl_jadwal"
-                android:visibility="gone"
+            <ScrollView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/cl_jadwal"
+                    android:visibility="gone"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
 
-                <com.airbnb.lottie.LottieAnimationView
-                    android:id="@+id/animation_view_people_donor"
-                    android:layout_width="150dp"
-                    android:layout_height="150dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:lottie_autoPlay="true"
-                    app:lottie_loop="true"
-                    app:lottie_rawRes="@raw/animation_not_jadwal" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                    <com.airbnb.lottie.LottieAnimationView
+                        android:id="@+id/animation_view_people_donor"
+                        android:layout_width="150dp"
+                        android:layout_height="150dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:lottie_autoPlay="true"
+                        app:lottie_loop="true"
+                        app:lottie_rawRes="@raw/animation_not_jadwal" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </ScrollView>
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
     </FrameLayout>
 
 </LinearLayout>

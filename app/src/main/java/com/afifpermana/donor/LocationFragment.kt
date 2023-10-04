@@ -7,6 +7,8 @@ import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -21,6 +23,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.afifpermana.donor.adapter.ArtikelAdapter
 import com.afifpermana.donor.adapter.JadwalAdapter
 import com.afifpermana.donor.model.Artikel
@@ -39,6 +42,7 @@ import java.util.Date
 
 class LocationFragment : Fragment() {
 
+    private lateinit var sw_layout : SwipeRefreshLayout
     private lateinit var adapter: JadwalAdapter
     private lateinit var recyclerView: RecyclerView
     private lateinit var cl_jadwal : ConstraintLayout
@@ -73,12 +77,24 @@ class LocationFragment : Fragment() {
         sharedPref = SharedPrefLogin(requireActivity())
         lokasiView()
         val layoutManager = LinearLayoutManager(context)
+        sw_layout = view.findViewById(R.id.swlayout)
+        // Mengeset properti warna yang berputar pada SwipeRefreshLayout
+        sw_layout.setColorSchemeResources(R.color.blue,R.color.red)
         recyclerView = view.findViewById(R.id.rv_jadwal)
         cl_jadwal = view.findViewById(R.id.cl_jadwal)
         recyclerView.layoutManager = layoutManager
         recyclerView.setHasFixedSize(true)
         adapter = JadwalAdapter(newData)
         recyclerView.adapter = adapter
+
+        sw_layout.setOnRefreshListener{
+            val Handler = Handler(Looper.getMainLooper())
+            Handler().postDelayed(Runnable {
+                clearData()
+                lokasiView()
+                sw_layout.isRefreshing = false
+            }, 1000)
+        }
 
         val dropdownJadwal: AutoCompleteTextView = view.findViewById(R.id.dropdown_filter_jadwal)
         val items = listOf("Tanggal", "Lokasi Terdekat")
@@ -155,6 +171,19 @@ class LocationFragment : Fragment() {
         }
     }
 
+    private fun clearData() {
+        newData.clear()
+        id = emptyArray()
+        tanggal = emptyArray()
+        jamMulai = emptyArray()
+        jamSelesai = emptyArray()
+        lokasi = emptyArray()
+        alamat = emptyArray()
+        kontak = emptyArray()
+        latitude = emptyArray()
+        longitude = emptyArray()
+        adapter.notifyDataSetChanged()
+    }
     fun extractJamMenit(waktu: String): String {
         val bagianWaktu = waktu.split(":")
         return if (bagianWaktu.size >= 2) {

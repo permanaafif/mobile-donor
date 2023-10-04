@@ -1,6 +1,8 @@
 package com.afifpermana.donor
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -8,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.afifpermana.donor.adapter.ArtikelAdapter
 import com.afifpermana.donor.model.Artikel
 import com.afifpermana.donor.model.BeritaResponse
@@ -22,6 +25,7 @@ import java.text.SimpleDateFormat
 
 class ArtikelFragment() : Fragment() {
 
+    private lateinit var sw_layout : SwipeRefreshLayout
     private lateinit var adapter: ArtikelAdapter
     private lateinit var recyclerView: RecyclerView
     var newData : ArrayList<Artikel> = ArrayList()
@@ -38,6 +42,8 @@ class ArtikelFragment() : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val layoutManager = LinearLayoutManager(context)
+        sw_layout = view.findViewById(R.id.swlayout)
+        sw_layout.setColorSchemeResources(R.color.blue,R.color.red)
         recyclerView = view.findViewById(R.id.rv_artikel)
         recyclerView.layoutManager = layoutManager
         recyclerView.setHasFixedSize(true)
@@ -45,8 +51,21 @@ class ArtikelFragment() : Fragment() {
         beritaView()
         adapter = ArtikelAdapter(newData)
         recyclerView.adapter = adapter
+
+        sw_layout.setOnRefreshListener{
+            val Handler = Handler(Looper.getMainLooper())
+            Handler().postDelayed(Runnable {
+                clearData()
+                beritaView()
+                sw_layout.isRefreshing = false
+            }, 1000)
+        }
     }
 
+    private fun clearData() {
+        newData.clear()
+        adapter.notifyDataSetChanged()
+    }
 
     fun formatTanggal(waktu: String): String {
         try {

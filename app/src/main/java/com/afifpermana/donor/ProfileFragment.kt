@@ -2,6 +2,8 @@ package com.afifpermana.donor
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -10,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.afifpermana.donor.model.PendonorLogoutResponse
 import com.afifpermana.donor.model.ProfileResponse
 import com.afifpermana.donor.service.PendonorLogoutAPI
@@ -24,6 +27,7 @@ import retrofit2.Response
 
 class ProfileFragment : Fragment() {
 
+    private lateinit var sw_layout : SwipeRefreshLayout
     private lateinit var edit : TextView
     private lateinit var logout : TextView
     private lateinit var sharedPref: SharedPrefLogin
@@ -54,6 +58,18 @@ class ProfileFragment : Fragment() {
         sharedPref = SharedPrefLogin(requireActivity())
         profileView()
         val layoutManager = LinearLayoutManager(context)
+
+        sw_layout = view.findViewById(R.id.swlayout)
+        // Mengeset properti warna yang berputar pada SwipeRefreshLayout
+        sw_layout.setColorSchemeResources(R.color.blue,R.color.red)
+        sw_layout.setOnRefreshListener{
+            val Handler = Handler(Looper.getMainLooper())
+            Handler().postDelayed(Runnable {
+                profileView()
+                sw_layout.isRefreshing = false
+            }, 1000)
+        }
+
         edit = view.findViewById(R.id.btnEdit)
         logout = view.findViewById(R.id.btnLogOut)
 
