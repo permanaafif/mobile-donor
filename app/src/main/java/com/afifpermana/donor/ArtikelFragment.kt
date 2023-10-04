@@ -82,7 +82,6 @@ class ArtikelFragment() : Fragment() {
         return "Format waktu tidak valid"
     }
 
-
     private fun beritaView() {
         val retro = Retro().getRetroClientInstance().create(BeritaAPI::class.java)
         retro.allBerita("Bearer ${sharedPref.getString("token")}").enqueue(object : Callback<List<BeritaResponse>> {
@@ -92,7 +91,9 @@ class ArtikelFragment() : Fragment() {
             ) {
                 if (response.isSuccessful) {
                     val res = response.body()
-                    for (i in res!!) {
+                    // Menggunakan sortedByDescending untuk mengurutkan berdasarkan tanggal terbaru
+                    val sortedData = res?.sortedByDescending { it.update_at }
+                    for (i in sortedData!!) {
                         val data = Artikel(
                             i.gambar.toString(),
                             i.judul.toString(),
@@ -110,4 +111,5 @@ class ArtikelFragment() : Fragment() {
             }
         })
     }
+
 }
