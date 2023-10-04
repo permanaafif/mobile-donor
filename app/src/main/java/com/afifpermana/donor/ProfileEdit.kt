@@ -47,6 +47,8 @@ class ProfileEdit : AppCompatActivity(), UploadRequestBody.UploadCallback {
     private lateinit var progressBar : ProgressBar
     private lateinit var sharedPref: SharedPrefLogin
 
+    var status_simpan : Boolean = true
+
     private var selectedImageUri : Uri? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -180,7 +182,10 @@ class ProfileEdit : AppCompatActivity(), UploadRequestBody.UploadCallback {
             if (validateInput()) {
                 // Validasi sukses, lanjutkan dengan tindakan penyimpanan data
                 doSimpanGambar()
-                doSimpanData()
+                if (status_simpan){
+                    doSimpanData()
+                    finish()
+                }
             }
         }
 
@@ -216,7 +221,7 @@ class ProfileEdit : AppCompatActivity(), UploadRequestBody.UploadCallback {
             ) {
                 if (response.isSuccessful){
                     Toast.makeText(applicationContext,"Simpan Berhasil",Toast.LENGTH_LONG).show()
-                    finish()
+                    status_simpan = true
                 }
             }
 
@@ -227,46 +232,75 @@ class ProfileEdit : AppCompatActivity(), UploadRequestBody.UploadCallback {
     }
 
     private fun doSimpanGambar() {
-        if (selectedImageUri != null){
+        if (selectedImageUri != null) {
+            val fileSize = getFileSize(selectedImageUri!!)
+            val maxSizeInBytes = 1 * 1024 * 1024 // Ukuran maksimum 1 MB
+
+            if (fileSize > maxSizeInBytes) {
+                // Ukuran gambar terlalu besar
+                Toast.makeText(this, "Ukuran gambar terlalu besar, Max 1MB", Toast.LENGTH_SHORT).show()
+                status_simpan = false
+                return
+            }
+
+            status_simpan = true
+
+            // Lanjutkan dengan mengunggah gambar jika ukurannya sesuai
             val parcelFileDescriptor = contentResolver.openFileDescriptor(
-                selectedImageUri!!, "r",null)?:return
+                selectedImageUri!!, "r", null
+            ) ?: return
             val inputStream = FileInputStream(parcelFileDescriptor.fileDescriptor)
-            val file = File(cacheDir,contentResolver.getFileName(selectedImageUri!!))
+            val file = File(cacheDir, contentResolver.getFileName(selectedImageUri!!))
             val outputStream = FileOutputStream(file)
             inputStream.copyTo(outputStream)
 
             progressBar.visibility = View.VISIBLE
             progressBar.progress = 0
-            val gambar = UploadRequestBody(file,"image",this)
+            val gambar = UploadRequestBody(file, "image", this)
 
             val retro = Retro().getRetroClientInstance().create(UpdateProfileAPI::class.java)
-            retro.updateProfileGambar("Bearer ${sharedPref.getString("token")}",
-                MultipartBody.Part.createFormData("gambar",file.name,gambar)
+            retro.updateProfileGambar(
+                "Bearer ${sharedPref.getString("token")}",
+                MultipartBody.Part.createFormData("gambar", file.name, gambar)
             ).enqueue(object :
                 Callback<ProfileResponse> {
                 override fun onResponse(
                     call: Call<ProfileResponse>,
                     response: Response<ProfileResponse>
                 ) {
-                    if (response.isSuccessful){
-//                        Toast.makeText(applicationContext,"${response.body()?.succes}", Toast.LENGTH_LONG).show()
-//                    finish()
+                    if (response.isSuccessful) {
                         progressBar.progress = 100
-                    }else{
+                        Toast.makeText(applicationContext, "Simpan Berhasil", Toast.LENGTH_LONG).show()
+                        finish()
+                    } else {
                         Log.e("nonSuccess", "non succcess")
                     }
 
-                    if (progressBar.progress == 100){
+                    if (progressBar.progress == 100) {
                         progressBar.visibility = View.GONE
                     }
                 }
 
                 override fun onFailure(call: Call<ProfileResponse>, t: Throwable) {
-
+                    Log.e("doSimpanGambar", t.message.toString())
                 }
             })
         }
     }
+
+    // Fungsi untuk mendapatkan ukuran file dari Uri
+    private fun getFileSize(uri: Uri): Long {
+        val cursor = contentResolver.query(uri, null, null, null, null)
+        cursor?.use {
+            it.moveToFirst()
+            val sizeIndex = it.getColumnIndex(OpenableColumns.SIZE)
+            if (sizeIndex != -1) {
+                return it.getLong(sizeIndex)
+            }
+        }
+        return 0
+    }
+
 
     private fun getImage() {
         val intent = Intent(Intent.ACTION_PICK)

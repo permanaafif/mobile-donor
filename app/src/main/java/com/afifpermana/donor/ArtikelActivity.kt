@@ -36,8 +36,8 @@ class ArtikelActivity : AppCompatActivity() {
         judul = findViewById(R.id.judul_artikel)
         tanggal = findViewById(R.id.tanggal_artikel)
         deskripsi = findViewById(R.id.deskripsi_artikel)
-
-        Picasso.get().load(b!!.getString("gambar")).into(gambar)
+        val urlgambar = b!!.getString("gambar")
+        Picasso.get().load("http://213.35.121.183/assets/img/${urlgambar}").into(gambar)
 //        gambar.setImageResource(b!!.getInt("gambar"))
         judul.text = b!!.getString("judul")
         tanggal.text = b!!.getString("tanggal")
