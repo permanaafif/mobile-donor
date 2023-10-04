@@ -47,8 +47,6 @@ class ProfileEdit : AppCompatActivity(), UploadRequestBody.UploadCallback {
     private lateinit var progressBar : ProgressBar
     private lateinit var sharedPref: SharedPrefLogin
 
-    var status_simpan : Boolean = true
-
     private var selectedImageUri : Uri? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -182,10 +180,7 @@ class ProfileEdit : AppCompatActivity(), UploadRequestBody.UploadCallback {
             if (validateInput()) {
                 // Validasi sukses, lanjutkan dengan tindakan penyimpanan data
                 doSimpanGambar()
-                if (status_simpan){
-                    doSimpanData()
-                    finish()
-                }
+                doSimpanData()
             }
         }
 
@@ -219,14 +214,17 @@ class ProfileEdit : AppCompatActivity(), UploadRequestBody.UploadCallback {
                 call: Call<UpdateProfileEditDataResponse>,
                 response: Response<UpdateProfileEditDataResponse>
             ) {
-                if (response.isSuccessful){
-                    Toast.makeText(applicationContext,"Simpan Berhasil",Toast.LENGTH_LONG).show()
-                    status_simpan = true
+                val resCode = response.code()
+//                Log.e("emaill",resCode.toString())
+                if (resCode == 200){
+                    Toast.makeText(applicationContext,"Simpan Berhasil",Toast.LENGTH_SHORT).show()
+                    finish()
                 }
             }
 
             override fun onFailure(call: Call<UpdateProfileEditDataResponse>, t: Throwable) {
                 Log.e("doSmipanData", t.message.toString())
+                email.error = "Email Sudah Digunakan"
             }
         })
     }
@@ -239,11 +237,8 @@ class ProfileEdit : AppCompatActivity(), UploadRequestBody.UploadCallback {
             if (fileSize > maxSizeInBytes) {
                 // Ukuran gambar terlalu besar
                 Toast.makeText(this, "Ukuran gambar terlalu besar, Max 1MB", Toast.LENGTH_SHORT).show()
-                status_simpan = false
                 return
             }
-
-            status_simpan = true
 
             // Lanjutkan dengan mengunggah gambar jika ukurannya sesuai
             val parcelFileDescriptor = contentResolver.openFileDescriptor(
@@ -270,8 +265,7 @@ class ProfileEdit : AppCompatActivity(), UploadRequestBody.UploadCallback {
                 ) {
                     if (response.isSuccessful) {
                         progressBar.progress = 100
-                        Toast.makeText(applicationContext, "Simpan Berhasil", Toast.LENGTH_LONG).show()
-                        finish()
+                        Toast.makeText(applicationContext, "Simpan Gambar Berhasil", Toast.LENGTH_SHORT).show()
                     } else {
                         Log.e("nonSuccess", "non succcess")
                     }

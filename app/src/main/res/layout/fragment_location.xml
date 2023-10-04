@@ -36,7 +36,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:hint=" "
-        app:hintTextColor="@color/white"
+        app:hintTextColor="@color/bluedark"
+        android:textColor="@color/bluedark"
         android:layout_marginLeft="20dp"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
         >
@@ -46,6 +47,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/item_label"
+            android:textColor="@color/bluedark"
             android:textColorHint="@color/bluedark"
             android:background="@drawable/borderinput"
             style="@style/CustomAutoCompleteTextView"
