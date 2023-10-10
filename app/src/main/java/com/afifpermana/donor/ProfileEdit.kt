@@ -219,11 +219,14 @@ class ProfileEdit : AppCompatActivity(), UploadRequestBody.UploadCallback {
                 if (resCode == 200){
                     Toast.makeText(applicationContext,"Simpan Berhasil",Toast.LENGTH_SHORT).show()
                     finish()
+                }else{
+                    email.error = "Email Sudah Digunakan"
                 }
             }
 
             override fun onFailure(call: Call<UpdateProfileEditDataResponse>, t: Throwable) {
                 Log.e("doSmipanData", t.message.toString())
+                Toast.makeText(applicationContext,"Email Sudah Digunakan",Toast.LENGTH_SHORT).show()
                 email.error = "Email Sudah Digunakan"
             }
         })

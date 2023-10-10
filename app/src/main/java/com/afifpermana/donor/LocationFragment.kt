@@ -272,8 +272,8 @@ class LocationFragment : Fragment() {
             distancesAndLocations.add(Pair(distance, lokasi[i]))
         }
 
-        // Mengurutkan daftar berdasarkan jarak (ascending)
-        distancesAndLocations.sortBy { it.first }
+        // Mengurutkan daftar berdasarkan jarak (des)
+        distancesAndLocations.sortByDescending { it.first }
 
         // Mengambil lokasi yang sudah diurutkan
         val sortedLocations = distancesAndLocations.map { it.second }
