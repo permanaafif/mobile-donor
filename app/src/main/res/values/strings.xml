@@ -3,6 +3,7 @@
     <string name="home">Home</string>
     <string name="location_donor">Location Donor</string>
     <string name="profile">Profile</string>
+    <string name="riwayat">Riwayat Donor</string>
 
     <string name="item_label">Filter</string>
     <string name="title_activity_maps">MapsActivity</string>

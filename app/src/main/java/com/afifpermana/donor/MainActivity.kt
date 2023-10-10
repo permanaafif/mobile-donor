@@ -97,6 +97,11 @@ class MainActivity : AppCompatActivity() {
                         linearLayout.visibility = View.GONE
                         frameLayout.visibility = View.VISIBLE
                         true
+                    }R.id.btn_riwayat -> {
+                        replaceFragment(RiwayatDonorFragment())
+                        linearLayout.visibility = View.GONE
+                        frameLayout.visibility = View.VISIBLE
+                        true
                     }
                     R.id.btn_profile -> {
                         replaceFragment(ProfileFragment())

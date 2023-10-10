@@ -141,7 +141,7 @@ class ProfileFragment : Fragment() {
                 else{
                     sharedPref.setStatusLogin(false)
                     sharedPref.logOut()
-                    val intent = Intent(context, LoginActivity::class.java)
+                    val intent = Intent(requireActivity(), LoginActivity::class.java)
                     startActivity(intent)
                 }
             }

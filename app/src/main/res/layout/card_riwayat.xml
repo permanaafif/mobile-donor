@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/card_location"
+    app:cardCornerRadius="10dp"
+    android:layout_marginTop="10dp"
+    android:layout_marginLeft="10dp"
+    android:layout_marginRight="10dp"
+    android:backgroundTint="@color/nama_pendonor"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_margin="10dp"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:id="@+id/icon_tanggal"
+                android:layout_width="30dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="5dp"
+                android:src="@drawable/baseline_calendar_today_24" />
+            <TextView
+                android:layout_gravity="center_vertical"
+                android:id="@+id/tanggal_donor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="28/09/2023"
+                android:textColor="@color/black"
+                android:fontFamily="@font/poppins"
+                android:textSize="14sp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:id="@+id/icon_lokasi"
+                android:layout_width="30dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="5dp"
+                android:src="@drawable/outline_location_on_24" />
+            <TextView
+                android:layout_gravity="center_vertical"
+                android:id="@+id/lokasi_donor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="lokasi"
+                android:textColor="@color/black"
+                android:fontFamily="@font/poppins"
+                android:textSize="14sp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:id="@+id/icon_jumlah_donor"
+                android:layout_width="30dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="5dp"
+                android:src="@drawable/baseline_bloodtype_24" />
+            <TextView
+                android:layout_gravity="center_vertical"
+                android:id="@+id/jumlah_donor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="jumlah donor"
+                android:textColor="@color/black"
+                android:fontFamily="@font/poppins"
+                android:textSize="14sp"/>
+        </LinearLayout>
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>
