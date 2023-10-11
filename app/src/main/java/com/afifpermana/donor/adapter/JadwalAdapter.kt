@@ -4,6 +4,7 @@ import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
@@ -25,6 +26,11 @@ class JadwalAdapter(
         holder.tanggal.text = jadwal.tanggal
         holder.jam.text = "${jadwal.jam_mulai} - ${jadwal.jam_selesai}"
         holder.lokasi.text = jadwal.lokasi
+        if (jadwal.status == true){
+            holder.status.visibility = View.VISIBLE
+        }else{
+            holder.status.visibility = View.GONE
+        }
 
         holder.card_location.setOnClickListener {
             val context = it.context
@@ -37,6 +43,7 @@ class JadwalAdapter(
             i.putExtra("kontak",jadwal.kontak)
             i.putExtra("latitude",jadwal.latitude)
             i.putExtra("longitude",jadwal.langitude)
+            i.putExtra("status",jadwal.status)
             context.startActivity(i)
         }
     }
@@ -47,6 +54,7 @@ class JadwalAdapter(
         val tanggal = view.findViewById<TextView>(R.id.tanggal_jadwal_donor)
         val jam = view.findViewById<TextView>(R.id.jam)
         val lokasi = view.findViewById<TextView>(R.id.lokasi)
+        val status = view.findViewById<LinearLayout>(R.id.status)
         val card_location = view.findViewById<CardView>(R.id.card_location)
     }
 

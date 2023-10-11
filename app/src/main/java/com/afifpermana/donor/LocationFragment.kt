@@ -58,6 +58,7 @@ class LocationFragment : Fragment() {
      var kontak: Array<String> = arrayOf()
      var latitude: Array<Double> = arrayOf()
      var longitude: Array<Double> = arrayOf()
+     var status: Array<Boolean> = arrayOf()
 
     var lat : Double = 0.0
     var long : Double = 0.0
@@ -112,19 +113,19 @@ class LocationFragment : Fragment() {
                     // Mengisi newData dengan data yang sudah diurutkan
                     newData.clear()
                     for (i in sortedIndices) {
-                        val data = Jadwal(id[i],tanggal[i], jamMulai[i], jamSelesai[i], lokasi[i], alamat[i], kontak[i], latitude[i], longitude[i])
+                        val data = Jadwal(id[i],tanggal[i], jamMulai[i], jamSelesai[i], lokasi[i], alamat[i], kontak[i], latitude[i], longitude[i],status[i])
                         newData.add(data)
                     }
                     // Memperbarui adapter dengan data yang sudah diurutkan
                     adapter.notifyDataSetChanged()
-                    Toast.makeText(requireActivity(), "tanggal", Toast.LENGTH_LONG).show()
+//                    Toast.makeText(requireActivity(), "tanggal", Toast.LENGTH_LONG).show()
                 }
                 "Lokasi Terdekat" -> {
                     // Tambahkan logika untuk mengurutkan berdasarkan lokasi terdekat di sini
                     // Jika diperlukan
                     sortLocationsByNearestLocation(lat,long)
-                    println("LatAfif: $lat, Long: $long")
-                    Toast.makeText(requireActivity(), "Lokasi Terdekat", Toast.LENGTH_LONG).show()
+//                    println("LatAfif: $lat, Long: $long")
+//                    Toast.makeText(requireActivity(), "Lokasi Terdekat", Toast.LENGTH_LONG).show()
                 }
             }
 
@@ -148,11 +149,11 @@ class LocationFragment : Fragment() {
                 lat = location.latitude
                 long = location.longitude
                 // Tampilkan lokasi dalam Toast
-                Toast.makeText(
-                    requireActivity(),
-                    "Latitude: $latitude, Longitude: $longitude",
-                    Toast.LENGTH_SHORT
-                ).show()
+//                Toast.makeText(
+//                    requireActivity(),
+//                    "Latitude: $latitude, Longitude: $longitude",
+//                    Toast.LENGTH_SHORT
+//                ).show()
             } else {
 //               // Jika izin tidak diberikan, Anda dapat meminta izin di sini
                 ActivityCompat.requestPermissions(
@@ -182,6 +183,7 @@ class LocationFragment : Fragment() {
         kontak = emptyArray()
         latitude = emptyArray()
         longitude = emptyArray()
+        status = emptyArray()
         adapter.notifyDataSetChanged()
     }
     fun extractJamMenit(waktu: String): String {
@@ -222,6 +224,7 @@ class LocationFragment : Fragment() {
                                 kontak += i.kontak ?: ""
                                 latitude += i.latitude ?: 0.0
                                 longitude += i.longitude ?: 0.0
+                                status += i.status ?: false
                             }
 
                             for (x in tanggal.indices) {
@@ -234,7 +237,8 @@ class LocationFragment : Fragment() {
                                     alamat[x],
                                     kontak[x],
                                     latitude[x],
-                                    longitude[x]
+                                    longitude[x],
+                                    status[x]
                                 )
                                 newData.add(data)
                             }
@@ -285,7 +289,7 @@ class LocationFragment : Fragment() {
         for (sortedLocation in sortedLocations) {
             val index = lokasi.indexOf(sortedLocation)
             if (index != -1) {
-                val data = Jadwal(id[index],tanggal[index], jamMulai[index], jamSelesai[index], lokasi[index], alamat[index], kontak[index], latitude[index], longitude[index])
+                val data = Jadwal(id[index],tanggal[index], jamMulai[index], jamSelesai[index], lokasi[index], alamat[index], kontak[index], latitude[index], longitude[index],status[index])
                 newData.add(data)
             }
         }

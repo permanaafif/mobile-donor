@@ -136,7 +136,7 @@ class ProfileFragment : Fragment() {
                     jenis_kelamin.text = res.user.jenis_kelamin.toString().capitalize()
                     kontak.text = res.user.kontak_pendonor
                     goldar.text = res.user.id_golongan_darah.nama
-                    berat_badan.text = "${res.user.berat_badan}"
+                    berat_badan.text = "${res.user.berat_badan} Kg"
                 }
                 else{
                     sharedPref.setStatusLogin(false)

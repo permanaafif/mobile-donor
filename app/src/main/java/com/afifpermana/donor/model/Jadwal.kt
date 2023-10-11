@@ -9,5 +9,6 @@ data class Jadwal (
     val alamat : String,
     val kontak : String,
     val latitude : Double,
-    val langitude : Double
+    val langitude : Double,
+    val status : Boolean
 )

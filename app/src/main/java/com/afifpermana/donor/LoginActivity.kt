@@ -111,6 +111,7 @@ class LoginActivity : AppCompatActivity() {
             }
 
             override fun onFailure(call: Call<PendonorLoginResponse>, t: Throwable) {
+                Log.e("Loginn", t.message.toString())
             }
         })
     }

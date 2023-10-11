@@ -131,7 +131,7 @@ class MainActivity : AppCompatActivity() {
                             if(res.user!!.gambar.isNullOrEmpty()){
                                 fotoProfile.setImageResource(R.drawable.baseline_person_24)
                             }else{
-                                Picasso.get().load("http://213.35.121.183/images/${res.user!!.gambar}").into(fotoProfile)
+                                Picasso.get().load("http://10.0.2.2:8000/images/${res.user!!.gambar}").into(fotoProfile)
                             }
                             kodePendonor.text = res.user!!.kode_pendonor
                             goldar.text = res.user!!.id_golongan_darah.nama

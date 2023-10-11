@@ -11,4 +11,6 @@ class DaftarJadwalDonorResponse {
     @SerializedName("message")
     @Expose
     var message : Boolean? = false
+
+
 }

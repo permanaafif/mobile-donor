@@ -36,6 +36,7 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/cl_riwayat"
+                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
@@ -59,6 +60,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
             <androidx.recyclerview.widget.RecyclerView
+                android:padding="10dp"
                 android:id="@+id/rv_riwayat_donor"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

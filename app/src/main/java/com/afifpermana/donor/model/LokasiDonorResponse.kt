@@ -39,4 +39,8 @@ class LokasiDonorResponse {
     @SerializedName("longitude")
     @Expose
     val longitude : Double? = null
+
+    @SerializedName("status")
+    @Expose
+    val status : Boolean? = null
 }

@@ -42,6 +42,7 @@ class JadwalFragment : Fragment() {
     var kontak: Array<String> = arrayOf()
     var latitude: Array<Double> = arrayOf()
     var longitude: Array<Double> = arrayOf()
+    var status: Array<Boolean> = arrayOf()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -87,6 +88,7 @@ class JadwalFragment : Fragment() {
         kontak = emptyArray()
         latitude = emptyArray()
         longitude = emptyArray()
+        status = emptyArray()
         adapter.notifyDataSetChanged()
     }
 
@@ -111,8 +113,9 @@ class JadwalFragment : Fragment() {
                 if (response.isSuccessful) {
                     cl_jadwal.visibility = View.GONE
                     recyclerView.visibility = View.VISIBLE
+                    Log.e("lokasinya2","test")
                     val res = response.body()
-                    Log.e("jadwal terdekat",res.toString())
+                    Log.e("jadwal",res.toString())
                         for(i in res!!){
                             id += i.id!!
                             tanggal += i.tanggal_donor!!
@@ -123,9 +126,10 @@ class JadwalFragment : Fragment() {
                             kontak += i.kontak!!
                             latitude += i.latitude!!
                             longitude += i.longitude!!
+                            status += false
                         }
                         for (x in tanggal.indices){
-                            val data = Jadwal(id[x],tanggal[x], jamMulai[x], jamSelesai[x], lokasi[x], alamat[x], kontak[x], latitude[x], longitude[x])
+                            val data = Jadwal(id[x],tanggal[x], jamMulai[x], jamSelesai[x], lokasi[x], alamat[x], kontak[x], latitude[x], longitude[x],status[x])
                             newData.add(data)
                         }
                         adapter.notifyDataSetChanged()
