@@ -36,6 +36,14 @@ class SharedPrefLogin (context: Context){
         editor.apply()
     }
 
+    fun notification_set(notif:Boolean){
+        editor.putBoolean("notification_set",notif).apply()
+        editor.apply()
+    }
+
+    fun getBoolean(key:String): Boolean{
+        return sharedPreferences.getBoolean(key,false)
+    }
     fun setIdPendonor(id:Int){
         editor.putInt("id", id)
         editor.apply()
@@ -43,6 +51,11 @@ class SharedPrefLogin (context: Context){
 
     fun getInt(key:String): Int{
         return sharedPreferences.getInt(key,0)
+    }
+
+    fun setString(string:String, value:String){
+        editor.putString(string,value)
+        editor.apply()
     }
     fun getString(key: String): String?{
         return sharedPreferences.getString(key, null)

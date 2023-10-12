@@ -1,6 +1,9 @@
 package com.afifpermana.donor
 
 import android.annotation.SuppressLint
+import android.app.AlarmManager
+import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -25,6 +28,9 @@ import de.hdodenhof.circleimageview.CircleImageView
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 import kotlin.math.log
 
 class MainActivity : AppCompatActivity() {
@@ -138,8 +144,24 @@ class MainActivity : AppCompatActivity() {
                             beratBadan.text = "${res.user!!.berat_badan} KG"
                             if (res.user?.jadwal_terdekat == null){
                                 jadwalTerdekat.text = "-"
-                            }else{
-                                jadwalTerdekat.text = res.user?.jadwal_terdekat?.tanggal_donor
+                            }else {
+                                val jadwalTerdekatDate = res.user?.jadwal_terdekat?.tanggal_donor
+                                val waktu = res.user?.jadwal_terdekat?.jam_mulai
+                                jadwalTerdekat.text = jadwalTerdekatDate
+
+                                // Cek apakah tanggal berubah
+                                val previousJadwal = sharedPref.getString("previous_jadwal")
+                                val previousWaktu = sharedPref.getString("previous_waktu")
+                                if (jadwalTerdekatDate != previousJadwal || waktu != previousWaktu) {
+                                    // Tanggal berubah, atur ulang status notifikasi
+                                    sharedPref.notification_set(false)
+                                }
+
+                                notif(jadwalTerdekatDate!!,waktu!!)
+
+                                // Simpan tanggal terbaru ke SharedPreferences
+                                sharedPref.setString("previous_jadwal", jadwalTerdekatDate!!)
+                                sharedPref.setString("previous_waktu", waktu!!)
                             }
                         }
                     }
@@ -157,6 +179,50 @@ class MainActivity : AppCompatActivity() {
             })
 
     }
+
+    private fun notif(tanggal: String, waktu: String) {
+        val notifAlreadySet = sharedPref.getBoolean("notification_set")
+
+        if (!notifAlreadySet) {
+            // Tanggal dan waktu dalam format yang diberikan
+            val inputDate = tanggal
+            val inputTime = waktu
+            val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+            val time = timeFormat.parse(inputTime)
+            val formattedTime = timeFormat.format(time) // Mengonversi ke format "HH:mm"
+            val title = "Jadwal Donor Darah"
+            val content = "Jadwal donor kamu pukul $formattedTime cek segera"
+
+            // Buat format SimpleDateFormat
+            val dateTimeFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+            val date = dateTimeFormat.parse("$inputDate $inputTime")
+
+            // Tentukan waktu notifikasi 1 jam sebelum tanggal dan waktu yang diberikan
+            val calendar = Calendar.getInstance()
+            calendar.time = date
+            calendar.add(Calendar.HOUR_OF_DAY, -1)
+
+            // Periksa apakah tanggal dan waktu masih lebih besar dari waktu saat ini
+            val currentTime = Calendar.getInstance()
+            if (calendar.timeInMillis > currentTime.timeInMillis) {
+                // Inisialisasi AlarmManager
+                val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                val intent = Intent(this, AlarmReceiver::class.java)
+                // Menambahkan data tambahan ke Intent
+                intent.putExtra("title", title)
+                intent.putExtra("content", content)
+                val pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+
+                // Set alarm untuk notifikasi 1 jam sebelum tanggal dan waktu
+                alarmManager.set(AlarmManager.RTC, calendar.timeInMillis, pendingIntent)
+
+                // Set status notifikasi sudah ditetapkan
+                sharedPref.notification_set(true)
+            }
+        }
+    }
+
+
 
     private fun replaceFragment(fragment: Fragment){
         supportFragmentManager.beginTransaction().replace(R.id.frame_container, fragment).commit()
