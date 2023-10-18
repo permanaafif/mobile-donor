@@ -72,35 +72,10 @@ class LocationFragment : Fragment() {
     ): View? {
         return inflater.inflate(R.layout.fragment_location, container, false)
     }
-    override fun onStart() {
-        super.onStart()
-        Log.e("life","start")
-    }
-    override fun onResume() {
-        super.onResume()
-        Log.e("life","resume")
-        clearData()
-        lokasiView()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        Log.e("life","pause")
-    }
-
-    override fun onStop() {
-        super.onStop()
-        Log.e("life","stop")
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        Log.e("life","onDestroyView")
-    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         sharedPref = SharedPrefLogin(requireActivity())
-//        lokasiView()
+        lokasiView()
         val layoutManager = LinearLayoutManager(context)
         sw_layout = view.findViewById(R.id.swlayout)
         // Mengeset properti warna yang berputar pada SwipeRefreshLayout

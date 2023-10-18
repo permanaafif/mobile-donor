@@ -3,9 +3,11 @@ package com.afifpermana.donor
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -28,6 +30,7 @@ class GantiPassword : AppCompatActivity() {
     private lateinit var confirm_password_baru : EditText
     private lateinit var btn_simpan : Button
     lateinit var sharedPref: SharedPrefLogin
+    private lateinit var loadingProgressBar : ProgressBar
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         sharedPref = SharedPrefLogin(this)
@@ -36,6 +39,7 @@ class GantiPassword : AppCompatActivity() {
         password_baru = findViewById(R.id.password_baru)
         confirm_password_baru = findViewById(R.id.confirm_password_baru)
         btn_simpan = findViewById(R.id.btn_simpan)
+        loadingProgressBar=findViewById(R.id.loadingProgressBar)
 
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
@@ -51,6 +55,8 @@ class GantiPassword : AppCompatActivity() {
     }
 
     private fun gantiPassword() {
+        loadingProgressBar.visibility = View.VISIBLE
+        btn_simpan.visibility = View.GONE
         val data = GantiPasswordRequest()
         data.password_lama = password_lama.text.toString().trim()
         data.password_baru = password_baru.text.toString().trim()
@@ -67,6 +73,8 @@ class GantiPassword : AppCompatActivity() {
                     }else{
                         // Jika status false, tampilkan pesan kesalahan
                         showAlertDialog("Ganti Password Gagal, Password lama anda salah!!")
+                        loadingProgressBar.visibility = View.GONE
+                        btn_simpan.visibility = View.VISIBLE
                     }
                 }
             }

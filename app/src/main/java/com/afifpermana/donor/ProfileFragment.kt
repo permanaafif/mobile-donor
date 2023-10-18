@@ -101,6 +101,7 @@ class ProfileFragment : Fragment() {
         }
 
         logout.setOnClickListener{
+            activity?.finish()
             pendonorLogout()
         }
     }

@@ -7,10 +7,12 @@
     android:layout_height="match_parent"
     >
 
-<RelativeLayout
+<LinearLayout
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="center_vertical"
+    android:gravity="center"
     tools:context=".LoginActivity">
 
     <com.airbnb.lottie.LottieAnimationView
@@ -66,41 +68,43 @@
         android:drawablePadding="10dp"
         />
 
-    <EditText
-        android:textColorHint="@color/black"
-        android:textColor="@color/black"
-        android:id="@+id/password"
-        android:layout_width="314dp"
-        android:layout_height="48dp"
-        android:layout_below="@id/kodedonor"
-        android:textSize="14dp"
-        android:layout_centerHorizontal="true"
-        android:hint="Password"
-        android:maxLines="1"
-        android:inputType="textPassword"
-        android:background="@drawable/borderinput"
-        android:drawableLeft="@drawable/baseline_lock_24"
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp"
-        android:paddingVertical="10dp"
-        android:drawablePadding="10dp"
-        />
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <EditText
+            android:textColorHint="@color/black"
+            android:textColor="@color/black"
+            android:id="@+id/password"
+            android:layout_width="314dp"
+            android:layout_height="48dp"
+            android:textSize="14dp"
+            android:layout_centerHorizontal="true"
+            android:hint="Password"
+            android:maxLines="1"
+            android:inputType="textPassword"
+            android:background="@drawable/borderinput"
+            android:drawableLeft="@drawable/baseline_lock_24"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:paddingVertical="10dp"
+            android:drawablePadding="10dp"
+            />
 
-    <LinearLayout
-        android:layout_centerHorizontal="true"
-        android:gravity="center_vertical|end"
-        android:layout_below="@id/kodedonor"
-        android:layout_width="314dp"
-        android:layout_height="48dp">
-        <ImageView
-            android:id="@+id/iv_eyes_visible"
-            android:layout_marginRight="15dp"
-            android:minWidth="30dp"
-            android:minHeight="30dp"
-            android:src="@drawable/baseline_visibility_off_24"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-    </LinearLayout>
+        <LinearLayout
+            android:layout_centerHorizontal="true"
+            android:gravity="center_vertical|end"
+            android:layout_width="314dp"
+            android:layout_height="48dp">
+            <ImageView
+                android:id="@+id/iv_eyes_visible"
+                android:layout_marginRight="15dp"
+                android:minWidth="30dp"
+                android:minHeight="30dp"
+                android:src="@drawable/baseline_visibility_off_24"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+    </RelativeLayout>
 
     <Button
         android:id="@+id/btnLogin"
@@ -115,6 +119,16 @@
         android:backgroundTint="@color/button"
         android:textStyle="bold"
         />
+
+    <ProgressBar
+        android:id="@+id/loadingProgressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_below="@id/password"
+        android:layout_marginTop="20dp"
+        android:visibility="gone"
+         />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/cl"
@@ -156,5 +170,5 @@
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-</RelativeLayout>
+</LinearLayout>
 </ScrollView>

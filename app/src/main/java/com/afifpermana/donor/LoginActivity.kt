@@ -10,6 +10,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -26,6 +27,10 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var kodeDonor : EditText
     private lateinit var password : EditText
     private lateinit var iv_icon_pwd : ImageView
+    private lateinit var info : Button
+    private lateinit var lupa : Button
+    private lateinit var login : Button
+    private lateinit var loadingProgressBar : ProgressBar
 
     lateinit var sharedPref : SharedPrefLogin
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,9 +41,10 @@ class LoginActivity : AppCompatActivity() {
         kodeDonor=findViewById(R.id.kodedonor)
         password=findViewById(R.id.password)
         iv_icon_pwd=findViewById(R.id.iv_eyes_visible)
-        val info=findViewById<Button>(R.id.tentangdara)
-        val lupa=findViewById<Button>(R.id.lupapassword)
-        val login=findViewById<Button>(R.id.btnLogin)
+        loadingProgressBar=findViewById(R.id.loadingProgressBar)
+        info=findViewById(R.id.tentangdara)
+        lupa=findViewById(R.id.lupapassword)
+        login=findViewById(R.id.btnLogin)
 
         info.setOnClickListener{
             val intent = Intent(this,TentangDaraActivity::class.java)
@@ -84,6 +90,8 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun loginPendonor() {
+        login.visibility = View.GONE
+        loadingProgressBar.visibility = View.VISIBLE
         var form = PendonorLoginRequest()
         form.kode_pendonor = kodeDonor.text.toString().trim()
         form.password = password.text.toString().trim()
@@ -103,10 +111,13 @@ class LoginActivity : AppCompatActivity() {
                         )
                         sharedPref.setStatusLogin(true)
                         startActivity(Intent(this@LoginActivity, MainActivity::class.java))
+                        finish()
                     }
                 }else{
                     // Jika status false, tampilkan pesan kesalahan
                     showAlertDialog("Kombinasi kode pendonor dan password salah.")
+                    loadingProgressBar.visibility = View.GONE
+                    login.visibility = View.VISIBLE
                 }
             }
 

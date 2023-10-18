@@ -81,20 +81,25 @@ class RiwayatDonorFragment : Fragment() {
             ) {
                 val resCode = response.code()
                 if (resCode == 200){
-                    cl_riwayat.visibility = View.GONE
-                    recyclerView.visibility = View.VISIBLE
-                    val res = response.body()!!
-                    for (i in res){
-                        tanggal_donor += i.tanggal_donor.toString()
-                        lokasi_donor += i.lokasi_donor.toString()
-                        jumlah_donor += i.jumlah_donor.toString().toInt()
-                    }
+                    val res = response.body()
+                    if (res!!.isNotEmpty()){
+                        cl_riwayat.visibility = View.GONE
+                        recyclerView.visibility = View.VISIBLE
+                        for (i in res){
+                            tanggal_donor += i.tanggal_donor.toString()
+                            lokasi_donor += i.lokasi_donor.toString()
+                            jumlah_donor += i.jumlah_donor.toString().toInt()
+                        }
 
-                    for (x in tanggal_donor.indices){
-                        val data = RiwayatDonor(tanggal_donor[x],lokasi_donor[x],jumlah_donor[x])
-                        newData.add(data)
+                        for (x in tanggal_donor.indices){
+                            val data = RiwayatDonor(tanggal_donor[x],lokasi_donor[x],jumlah_donor[x])
+                            newData.add(data)
+                        }
+                        adapter.notifyDataSetChanged()
+                    }else{
+                        cl_riwayat.visibility = View.VISIBLE
+                        recyclerView.visibility = View.GONE
                     }
-                    adapter.notifyDataSetChanged()
                 }else{
                     sharedPref.logOut()
                     sharedPref.setStatusLogin(false)

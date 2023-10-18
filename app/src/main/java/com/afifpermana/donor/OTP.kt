@@ -3,10 +3,14 @@ package com.afifpermana.donor
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
+import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import com.afifpermana.donor.model.lupa_password.checkOtpRequest
@@ -26,6 +30,7 @@ class OTP : AppCompatActivity() {
     private lateinit var kode4 : EditText
     private lateinit var btn_verifikasi : Button
     private lateinit var otp : String
+    private lateinit var loadingProgressBar : ProgressBar
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_otp)
@@ -35,12 +40,22 @@ class OTP : AppCompatActivity() {
         kode3 = findViewById(R.id.kode3)
         kode4 = findViewById(R.id.kode4)
         btn_verifikasi = findViewById(R.id.btnOTP)
+        loadingProgressBar=findViewById(R.id.loadingProgressBar)
 
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
 
         val backButton = findViewById<ImageButton>(R.id.backButton)
         backButton.setOnClickListener { onBackPressed() }
+
+        // Menambahkan TextWatcher ke setiap EditText
+        kode1.addTextChangedListener(OTPTextWatcher(kode1, kode2))
+        kode2.addTextChangedListener(OTPTextWatcher(kode2, kode3))
+        kode3.addTextChangedListener(OTPTextWatcher(kode3, kode4))
+        kode4.addTextChangedListener(OTPTextWatcher(kode4, null)) // Tidak ada EditText berikutnya
+
+        // Pengaturan fokus awal pada kode1
+        kode1.requestFocus()
 
         btn_verifikasi.setOnClickListener {
             if(valisasiInputOtp()){
@@ -52,6 +67,8 @@ class OTP : AppCompatActivity() {
     }
 
     private fun checkOtp() {
+        loadingProgressBar.visibility = View.VISIBLE
+        btn_verifikasi.visibility = View.GONE
         val data = checkOtpRequest()
         data.email = b!!.getString("email")
         data.token = b!!.getString("token")
@@ -72,8 +89,12 @@ class OTP : AppCompatActivity() {
                         i.putExtra("email",res.email.toString())
                         i.putExtra("token",res.token.toString())
                         startActivity(i)
+                        loadingProgressBar.visibility = View.GONE
+                        btn_verifikasi.visibility = View.VISIBLE
                     }else{
                         Toast.makeText(this@OTP, res.message.toString(), Toast.LENGTH_LONG).show()
+                        loadingProgressBar.visibility = View.GONE
+                        btn_verifikasi.visibility = View.VISIBLE
                     }
                 }
             }
@@ -102,5 +123,23 @@ class OTP : AppCompatActivity() {
             return false
         }
         return true
+    }
+
+    // TextWatcher kustom untuk mengatur fokus ke EditText berikutnya
+    private inner class OTPTextWatcher(private val currentEditText: EditText, private val nextEditText: EditText?) :
+        TextWatcher {
+        override fun afterTextChanged(s: Editable) {
+            if (s.length == 1 && nextEditText != null) {
+                nextEditText.requestFocus()
+            }
+        }
+
+        override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
+            // Tidak diperlukan
+        }
+
+        override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+            // Tidak diperlukan
+        }
     }
 }

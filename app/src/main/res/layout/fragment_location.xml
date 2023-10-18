@@ -59,9 +59,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/cl_jadwal"
                 android:visibility="gone"
@@ -80,7 +78,6 @@
                     app:lottie_loop="true"
                     app:lottie_rawRes="@raw/animation_not_jadwal" />
             </androidx.constraintlayout.widget.ConstraintLayout>
-        </ScrollView>
 
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/swlayout"

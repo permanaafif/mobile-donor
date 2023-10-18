@@ -200,7 +200,7 @@
                 <RadioButton
                     android:checked="true"
                     android:id="@+id/btn_artikel"
-                    android:layout_width="70dp"
+                    android:layout_width="100dp"
                     android:layout_height="wrap_content"
                     android:text="Artikel"
                     android:button="@android:color/transparent"
@@ -214,7 +214,7 @@
 
                 <RadioButton
                     android:id="@+id/btn_faq"
-                    android:layout_width="70dp"
+                    android:layout_width="100dp"
                     android:layout_height="wrap_content"
                     android:text="FAQ"
                     android:button="@android:color/transparent"
@@ -226,23 +226,23 @@
                     android:layout_marginLeft="5dp"
                     android:layout_marginRight="5dp"/>
 
-                <RadioButton
-                    android:id="@+id/btn_call"
-                    android:layout_width="70dp"
-                    android:layout_height="wrap_content"
-                    android:text="Call"
-                    android:button="@android:color/transparent"
-                    android:background="@drawable/radio_selector"
-                    android:textColor="@drawable/text_color_radio"
-                    android:elevation="4dp"
-                    android:gravity="center"
-                    android:padding="10dp"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginRight="5dp"/>
+<!--                <RadioButton-->
+<!--                    android:id="@+id/btn_call"-->
+<!--                    android:layout_width="70dp"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:text="Call"-->
+<!--                    android:button="@android:color/transparent"-->
+<!--                    android:background="@drawable/radio_selector"-->
+<!--                    android:textColor="@drawable/text_color_radio"-->
+<!--                    android:elevation="4dp"-->
+<!--                    android:gravity="center"-->
+<!--                    android:padding="10dp"-->
+<!--                    android:layout_marginLeft="5dp"-->
+<!--                    android:layout_marginRight="5dp"/>-->
 
                 <RadioButton
                     android:id="@+id/btn_jadwal"
-                    android:layout_width="70dp"
+                    android:layout_width="100dp"
                     android:layout_height="wrap_content"
                     android:text="Jadwal"
                     android:button="@android:color/transparent"

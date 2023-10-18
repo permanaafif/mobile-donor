@@ -56,7 +56,6 @@ class JadwalFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         sharedPref = SharedPrefLogin(requireActivity())
         jadwalView()
-//        initView()
         sw_layout = view.findViewById(R.id.swlayout)
         // Mengeset properti warna yang berputar pada SwipeRefreshLayout
         sw_layout.setColorSchemeResources(R.color.blue,R.color.red)

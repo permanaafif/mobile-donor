@@ -46,6 +46,7 @@ class ProfileEdit : AppCompatActivity(), UploadRequestBody.UploadCallback {
     private lateinit var btn_simpan : Button
     private lateinit var progressBar : ProgressBar
     private lateinit var sharedPref: SharedPrefLogin
+    private lateinit var loadingProgressBar : ProgressBar
 
     private var selectedImageUri : Uri? = null
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -63,6 +64,7 @@ class ProfileEdit : AppCompatActivity(), UploadRequestBody.UploadCallback {
         berat_badan = findViewById(R.id.bb)
         btn_simpan = findViewById(R.id.btn_simpan)
         progressBar = findViewById(R.id.progress_bar)
+        loadingProgressBar=findViewById(R.id.loadingProgressBar)
 
         Picasso.get().load(b!!.getString("gambar")).into(fotoProfile)
         namaUser.text = b!!.getString("nama")
@@ -71,7 +73,7 @@ class ProfileEdit : AppCompatActivity(), UploadRequestBody.UploadCallback {
         alamat.text = b!!.getString("alamat")
         kontak.text = b!!.getString("kontak")
         jenis_kelamin = b!!.getString("jenis_kelamin").toString()
-        berat_badan.text = b!!.getString("berat_badan")
+        berat_badan.text = b!!.getString("berat_badan").toString().replace(" Kg","")
 
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
@@ -179,6 +181,8 @@ class ProfileEdit : AppCompatActivity(), UploadRequestBody.UploadCallback {
         btn_simpan.setOnClickListener {
             if (validateInput()) {
                 // Validasi sukses, lanjutkan dengan tindakan penyimpanan data
+                loadingProgressBar.visibility = View.VISIBLE
+                btn_simpan.visibility = View.GONE
                 doSimpanGambar()
                 doSimpanData()
             }
@@ -221,6 +225,8 @@ class ProfileEdit : AppCompatActivity(), UploadRequestBody.UploadCallback {
                     finish()
                 }else{
                     email.error = "Email Sudah Digunakan"
+                    loadingProgressBar.visibility = View.GONE
+                    btn_simpan.visibility = View.VISIBLE
                 }
             }
 
@@ -228,6 +234,8 @@ class ProfileEdit : AppCompatActivity(), UploadRequestBody.UploadCallback {
                 Log.e("doSmipanData", t.message.toString())
                 Toast.makeText(applicationContext,"Email Sudah Digunakan",Toast.LENGTH_SHORT).show()
                 email.error = "Email Sudah Digunakan"
+                loadingProgressBar.visibility = View.GONE
+                btn_simpan.visibility = View.VISIBLE
             }
         })
     }

@@ -79,9 +79,9 @@ class MainActivity : AppCompatActivity() {
                     R.id.btn_faq -> {
                         replaceFragmentHome(FaqFragment())
                     }
-                    R.id.btn_call -> {
-                        replaceFragmentHome(CallFragment())
-                    }
+//                    R.id.btn_call -> {
+//                        replaceFragmentHome(CallFragment())
+//                    }
                     R.id.btn_jadwal -> {
                         replaceFragmentHome(JadwalFragment())
                     }
@@ -201,10 +201,6 @@ class MainActivity : AppCompatActivity() {
             val calendar = Calendar.getInstance()
             calendar.time = date
             calendar.add(Calendar.HOUR_OF_DAY, -1)
-
-            // Periksa apakah tanggal dan waktu masih lebih besar dari waktu saat ini
-            val currentTime = Calendar.getInstance()
-            if (calendar.timeInMillis > currentTime.timeInMillis) {
                 // Inisialisasi AlarmManager
                 val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
                 val intent = Intent(this, AlarmReceiver::class.java)
@@ -218,7 +214,6 @@ class MainActivity : AppCompatActivity() {
 
                 // Set status notifikasi sudah ditetapkan
                 sharedPref.notification_set(true)
-            }
         }
     }
 

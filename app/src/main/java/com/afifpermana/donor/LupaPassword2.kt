@@ -2,9 +2,11 @@ package com.afifpermana.donor
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
+import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -19,6 +21,8 @@ import retrofit2.Response
 class LupaPassword2 : AppCompatActivity() {
     private lateinit var password: EditText
     private lateinit var confirmpassword: EditText
+    private lateinit var loadingProgressBar : ProgressBar
+    private lateinit var ganti : Button
     var b : Bundle? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,8 +30,9 @@ class LupaPassword2 : AppCompatActivity() {
         b = intent.extras
         password = findViewById(R.id.passwordbaru)
         confirmpassword = findViewById(R.id.passwordbaru1)
+        loadingProgressBar=findViewById(R.id.loadingProgressBar)
 
-        val ganti = findViewById<Button>(R.id.btnUbah)
+        ganti = findViewById(R.id.btnUbah)
         ganti.setOnClickListener{
            if(validasiPasswdor()){
                 resetPassword()
@@ -42,6 +47,8 @@ class LupaPassword2 : AppCompatActivity() {
     }
 
     private fun resetPassword() {
+        loadingProgressBar.visibility = View.VISIBLE
+        ganti.visibility = View.GONE
         val data = resetPasswordRequest()
         data.email = b!!.getString("email")
         data.token = b!!.getString("token")
@@ -61,6 +68,8 @@ class LupaPassword2 : AppCompatActivity() {
                         finish()
                     }else{
                         Toast.makeText(this@LupaPassword2, res.message.toString(),Toast.LENGTH_LONG).show()
+                        loadingProgressBar.visibility = View.GONE
+                        ganti.visibility = View.VISIBLE
                     }
                 }
             }
