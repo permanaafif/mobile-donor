@@ -2,8 +2,10 @@
     <string name="app_name">DARA</string>
     <string name="home">Home</string>
     <string name="location_donor">Location Donor</string>
+    <string name="forum">Forum</string>
     <string name="profile">Profile</string>
     <string name="riwayat">Riwayat Donor</string>
+    <string name="add_post">Tambah Postingan</string>
 
     <string name="item_label">Filter</string>
     <string name="title_activity_maps">MapsActivity</string>

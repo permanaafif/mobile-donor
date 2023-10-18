@@ -11,6 +11,12 @@
         tools:layout="@layout/fragment_location"/>
 
     <fragment
+        android:id="@+id/navi_forum"
+        android:name="com.afifpermana.donor.DiskusiFragment"
+        android:label="Forum"
+        tools:layout="@layout/fragment_diskusi"/>
+
+    <fragment
         android:id="@+id/navi_riwayat_donor"
         android:name="com.afifpermana.donor.RiwayatDonorFragment"
         android:label="Riwayat Donor"
