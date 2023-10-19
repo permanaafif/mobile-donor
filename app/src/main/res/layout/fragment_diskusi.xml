@@ -8,7 +8,7 @@
     tools:context=".DiskusiFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/cl_riwayat"
+        android:id="@+id/cl_post"
         android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -33,8 +33,8 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent">
         <androidx.recyclerview.widget.RecyclerView
-            android:padding="10dp"
-            android:id="@+id/rv_riwayat_donor"
+
+            android:id="@+id/rv_post"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             tools:itemCount="2"
