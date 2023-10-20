@@ -7,7 +7,10 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.ImageView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -21,6 +24,7 @@ import com.afifpermana.donor.service.BeritaAPI
 import com.afifpermana.donor.service.PostAPI
 import com.afifpermana.donor.util.Retro
 import com.afifpermana.donor.util.SharedPrefLogin
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -29,6 +33,7 @@ class DiskusiFragment : Fragment() {
 
     private lateinit var sw_layout : SwipeRefreshLayout
     private lateinit var adapter: PostAdapter
+    private lateinit var add_post: FloatingActionButton
     private lateinit var recyclerView: RecyclerView
     var newData : ArrayList<Post> = ArrayList()
     lateinit var sharedPref: SharedPrefLogin
@@ -38,7 +43,30 @@ class DiskusiFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_diskusi, container, false)
+        val view = inflater.inflate(R.layout.fragment_diskusi, container, false)
+
+        recyclerView = view.findViewById(R.id.rv_post)
+        sw_layout = view.findViewById(R.id.swlayout)
+        add_post = view.findViewById(R.id.add_post)
+
+        // Set up your RecyclerView and other functionality here
+        recyclerView.layoutManager = LinearLayoutManager(context)
+        recyclerView.setHasFixedSize(true)
+
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+
+                // Mengubah visibilitas dan elevation FAB berdasarkan arah scroll
+                if (dy > 0 && add_post.isShown) {
+                    add_post.hide()
+                } else if (dy < 0 && !add_post.isShown) {
+                    add_post.show()
+                }
+            }
+        })
+
+        return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -47,6 +75,7 @@ class DiskusiFragment : Fragment() {
         sw_layout = view.findViewById(R.id.swlayout)
         sw_layout.setColorSchemeResources(R.color.blue,R.color.red)
         recyclerView = view.findViewById(R.id.rv_post)
+        add_post = view.findViewById(R.id.add_post)
         recyclerView.layoutManager = layoutManager
         recyclerView.setHasFixedSize(true)
         sharedPref = SharedPrefLogin(requireActivity())
@@ -62,8 +91,30 @@ class DiskusiFragment : Fragment() {
                 sw_layout.isRefreshing = false
             }, 1000)
         }
+
+        add_post.setOnClickListener {
+            showCostumeAlertDialog()
+        }
     }
 
+    private fun showCostumeAlertDialog() {
+        val builder = AlertDialog.Builder(requireContext())
+        val customeView = LayoutInflater.from(requireContext()).inflate(R.layout.alert_add_post,null)
+        builder.setView(customeView)
+        val dialog = builder.create()
+        // Tambahkan ini untuk menghindari menutup dialog saat menekan di luar area dialog
+        dialog.setCanceledOnTouchOutside(false)
+        val close = customeView.findViewById<ImageView>(R.id.close)
+        close.setOnClickListener {
+            dialog.dismiss()
+        }
+
+//        val btnYes = customeView.findViewById<Button>(R.id.btn_yes)
+//        val btnNo = customeView.findViewById<Button>(R.id.btn_no)
+
+        dialog.show()
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+    }
     private fun postView() {
         val retro = Retro().getRetroClientInstance().create(PostAPI::class.java)
         retro.post("Bearer ${sharedPref.getString("token")}").enqueue(object :
