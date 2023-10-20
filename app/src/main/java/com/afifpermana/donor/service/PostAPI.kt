@@ -22,10 +22,18 @@ interface PostAPI {
 
     @Multipart
     @POST("api/post/add")
-    fun addPost(
+    fun addPostWithImage(
         @Header("Authorization") auth_token: String,
         @Part gambar: MultipartBody.Part,
         @Part("text") text: RequestBody
     ): Call<AddPostResponse>
+
+    @FormUrlEncoded
+    @POST("api/post/add")
+    fun addPostWithoutImage(
+        @Header("Authorization") auth_token: String,
+        @Field("text") text: String
+    ): Call<AddPostResponse>
+
 
 }

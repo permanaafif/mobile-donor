@@ -167,63 +167,93 @@ class DiskusiFragment : Fragment() {
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
     }
 
-    private fun addPost(text : String, dialog: AlertDialog) {
-        val fileSize = getFileSize(selectedImageUri!!)
-        val maxSizeInBytes = 1 * 1024 * 1024 // Ukuran maksimum 1 MB
-
-        if (fileSize > maxSizeInBytes) {
-            // Ukuran gambar terlalu besar
-            Toast.makeText(requireActivity(), "Ukuran gambar terlalu besar, Max 1MB", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        // Lanjutkan dengan mengunggah gambar jika ukurannya sesuai
-        val parcelFileDescriptor = requireActivity().contentResolver.openFileDescriptor(
-            selectedImageUri!!, "r", null
-        ) ?: return
-        val inputStream = FileInputStream(parcelFileDescriptor.fileDescriptor)
-        val file = File(requireActivity().cacheDir, requireActivity().contentResolver.getFileName(selectedImageUri!!))
-        val outputStream = FileOutputStream(file)
-        inputStream.copyTo(outputStream)
-
-        val gambar = UploadRequestBodyFragment(file, "image", requireActivity())
-        val textValue = text
-        Log.e("sampai3", file.name.toString())
+    private fun addPost(text: String, dialog: AlertDialog) {
         try {
-            // Kode yang mungkin menghasilkan pengecualian
+            val textValue = text
             val retro = Retro().getRetroClientInstance().create(PostAPI::class.java)
-            retro.addPost(
-                "Bearer ${sharedPref.getString("token")}",
-                MultipartBody.Part.createFormData("gambar", file.name, gambar),
-                RequestBody.create(MediaType.parse("text/plain"), textValue)
-            ).enqueue(object :
-                Callback<AddPostResponse> {
-                override fun onResponse(
-                    call: Call<AddPostResponse>,
-                    response: Response<AddPostResponse>
-                ) {
-                    Log.e("sampai", "gambarden2")
-                    var res = response.body()
-                    if (response.isSuccessful) {
-                        if (res?.success == true) {
-                            dialog.dismiss()
-                            Toast.makeText(requireActivity(), "Berhasil Upload", Toast.LENGTH_SHORT).show()
-                        } else {
-                            Toast.makeText(requireActivity(), "terjadi kesalahan", Toast.LENGTH_SHORT).show()
+
+            if (selectedImageUri != null) {
+                val fileSize = getFileSize(selectedImageUri!!)
+                val maxSizeInBytes = 1 * 1024 * 1024 // Ukuran maksimum 1 MB
+
+                if (fileSize > maxSizeInBytes) {
+                    // Ukuran gambar terlalu besar
+                    Toast.makeText(requireActivity(), "Ukuran gambar terlalu besar, Max 1MB", Toast.LENGTH_SHORT).show()
+                    return
+                }
+
+                // Lanjutkan dengan mengunggah gambar jika ukurannya sesuai
+                val parcelFileDescriptor = requireActivity().contentResolver.openFileDescriptor(
+                    selectedImageUri!!, "r", null
+                ) ?: return
+                val inputStream = FileInputStream(parcelFileDescriptor.fileDescriptor)
+                var file = File(requireActivity().cacheDir, requireActivity().contentResolver.getFileName(selectedImageUri!!))
+                val outputStream = FileOutputStream(file)
+                inputStream.copyTo(outputStream)
+
+                var gambar = UploadRequestBodyFragment(file, "image", requireActivity())
+
+                retro.addPostWithImage(
+                    "Bearer ${sharedPref.getString("token")}",
+                    MultipartBody.Part.createFormData("gambar", file.name, gambar),
+                    RequestBody.create(MediaType.parse("text/plain"), textValue)
+                ).enqueue(object : Callback<AddPostResponse> {
+                    override fun onResponse(
+                        call: Call<AddPostResponse>,
+                        response: Response<AddPostResponse>
+                    ) {
+                        Log.e("sampai", "gambarden2")
+                        val res = response.body()
+                        if (response.isSuccessful) {
+                            if (res?.success == true) {
+                                dialog.dismiss()
+                                selectedImageUri = null
+                                Toast.makeText(requireActivity(), "Berhasil Upload", Toast.LENGTH_SHORT).show()
+                            } else {
+                                Toast.makeText(requireActivity(), "terjadi kesalahan", Toast.LENGTH_SHORT).show()
+                            }
                         }
                     }
-                }
 
-                override fun onFailure(call: Call<AddPostResponse>, t: Throwable) {
-                    Toast.makeText(requireActivity(), t.message.toString(), Toast.LENGTH_SHORT).show()
-                    Log.e("sampai", "gambarden3")
-                }
-            })
+                    override fun onFailure(call: Call<AddPostResponse>, t: Throwable) {
+                        Toast.makeText(requireActivity(), t.message.toString(), Toast.LENGTH_SHORT).show()
+                        Log.e("sampai", "gambarden3")
+                    }
+                })
+            } else {
+                // Jika selectedImageUri == null, kirim tanpa gambar
+                retro.addPostWithoutImage(
+                    "Bearer ${sharedPref.getString("token")}",
+                    text
+                ).enqueue(object : Callback<AddPostResponse> {
+                    override fun onResponse(
+                        call: Call<AddPostResponse>,
+                        response: Response<AddPostResponse>
+                    ) {
+                        Log.e("sampai", "gambarden2")
+                        val res = response.body()
+                        if (response.isSuccessful) {
+                            if (res?.success == true) {
+                                dialog.dismiss()
+                                Toast.makeText(requireActivity(), "Berhasil Upload", Toast.LENGTH_SHORT).show()
+                            } else {
+                                Toast.makeText(requireActivity(), "terjadi kesalahan", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    }
+
+                    override fun onFailure(call: Call<AddPostResponse>, t: Throwable) {
+                        Toast.makeText(requireActivity(), t.message.toString(), Toast.LENGTH_SHORT).show()
+                        Log.e("sampai", "gambarden3")
+                    }
+                })
+            }
         } catch (e: Exception) {
-            e.printStackTrace() // Tampilkan kesalahan di Logcat
+            e.printStackTrace()
             Log.e("salahden", e.toString())
         }
     }
+
 
     private fun postView() {
         val retro = Retro().getRetroClientInstance().create(PostAPI::class.java)
