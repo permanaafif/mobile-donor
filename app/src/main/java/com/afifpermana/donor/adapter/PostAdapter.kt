@@ -2,6 +2,10 @@ package com.afifpermana.donor.adapter
 
 import android.content.Context
 import android.content.Intent
+import android.content.res.ColorStateList
+import android.text.Editable
+import android.text.TextUtils
+import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +15,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.afifpermana.donor.ArtikelActivity
 import com.afifpermana.donor.CommentsActivity
@@ -46,6 +51,24 @@ class PostAdapter(
                 } else {
                     holder.textButton.visibility = View.GONE
                 }
+            }
+        }
+
+        var isExpanded = false // Status awal adalah teks dipotong
+
+        holder.textButton.setOnClickListener {
+            isExpanded = !isExpanded // Toggle status
+
+            if (isExpanded) {
+                // Jika saat ini dipotong, tampilkan seluruh teks
+                holder.text.maxLines = Int.MAX_VALUE
+                holder.text.ellipsize = null
+                holder.textButton.text = "Sembunyikan"
+            } else {
+                // Jika saat ini ditampilkan secara penuh, potong teks
+                holder.text.maxLines = 4
+                holder.text.ellipsize = TextUtils.TruncateAt.END
+                holder.textButton.text = "Selengkapnya"
             }
         }
 
@@ -100,9 +123,28 @@ class PostAdapter(
             dialog.dismiss()
         }
 
-//        val btnYes = customeView.findViewById<Button>(R.id.btn_yes)
-//        val btnNo = customeView.findViewById<Button>(R.id.btn_no)
+        val text = customeView.findViewById<TextView>(R.id.pesan)
+        val post = customeView.findViewById<ImageView>(R.id.send)
+        text.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
 
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+                val textLength = s?.length ?: 0
+                if (textLength > 0) {
+                    // Panjang teks lebih dari 0, atur backgroundTint ke warna yang Anda inginkan
+                    post.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.green))
+                } else {
+                    // Panjang teks 0, atur backgroundTint ke warna lain atau null (kembalikan ke default)
+                    post.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.grey))
+                }
+            }
+        })
         dialog.show()
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
     }

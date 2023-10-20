@@ -1,33 +1,47 @@
 package com.afifpermana.donor
 
+import android.app.Activity
+import android.content.ContentResolver
+import android.content.Intent
+import android.content.res.ColorStateList
+import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.provider.OpenableColumns
+import android.text.Editable
+import android.text.TextWatcher
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.afifpermana.donor.adapter.ArtikelAdapter
 import com.afifpermana.donor.adapter.PostAdapter
-import com.afifpermana.donor.model.Artikel
-import com.afifpermana.donor.model.BeritaResponse
+import com.afifpermana.donor.model.AddPostResponse
+import com.afifpermana.donor.model.AddPostTextRequest
 import com.afifpermana.donor.model.Post
 import com.afifpermana.donor.model.PostRespone
-import com.afifpermana.donor.service.BeritaAPI
 import com.afifpermana.donor.service.PostAPI
 import com.afifpermana.donor.util.Retro
 import com.afifpermana.donor.util.SharedPrefLogin
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import okhttp3.MediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
 
 class DiskusiFragment : Fragment() {
 
@@ -37,6 +51,10 @@ class DiskusiFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     var newData : ArrayList<Post> = ArrayList()
     lateinit var sharedPref: SharedPrefLogin
+    private lateinit var show_image : ImageView
+    private lateinit var post : ImageView
+
+    private var selectedImageUri : Uri? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -109,12 +127,104 @@ class DiskusiFragment : Fragment() {
             dialog.dismiss()
         }
 
-//        val btnYes = customeView.findViewById<Button>(R.id.btn_yes)
-//        val btnNo = customeView.findViewById<Button>(R.id.btn_no)
+        show_image = customeView.findViewById(R.id.show_image)
+        val img = customeView.findViewById<ImageView>(R.id.image)
+        val text = customeView.findViewById<EditText>(R.id.pesan)
+        post = customeView.findViewById(R.id.send)
+        text.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+                val textLength = s?.length ?: 0
+                if (textLength > 0) {
+                    // Panjang teks lebih dari 0, atur backgroundTint ke warna yang Anda inginkan
+                    post.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.green))
+                } else {
+                    // Panjang teks 0, atur backgroundTint ke warna lain atau null (kembalikan ke default)
+                    post.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.grey))
+                }
+            }
+        })
+
+        img.setOnClickListener {
+            getImage()
+        }
+
+        post.setOnClickListener {
+            val textValue = text.text.toString()
+            if (textValue.isNotBlank() || selectedImageUri != null) {
+                addPost(textValue, dialog)
+            }
+        }
 
         dialog.show()
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
     }
+
+    private fun addPost(text : String, dialog: AlertDialog) {
+        val fileSize = getFileSize(selectedImageUri!!)
+        val maxSizeInBytes = 1 * 1024 * 1024 // Ukuran maksimum 1 MB
+
+        if (fileSize > maxSizeInBytes) {
+            // Ukuran gambar terlalu besar
+            Toast.makeText(requireActivity(), "Ukuran gambar terlalu besar, Max 1MB", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        // Lanjutkan dengan mengunggah gambar jika ukurannya sesuai
+        val parcelFileDescriptor = requireActivity().contentResolver.openFileDescriptor(
+            selectedImageUri!!, "r", null
+        ) ?: return
+        val inputStream = FileInputStream(parcelFileDescriptor.fileDescriptor)
+        val file = File(requireActivity().cacheDir, requireActivity().contentResolver.getFileName(selectedImageUri!!))
+        val outputStream = FileOutputStream(file)
+        inputStream.copyTo(outputStream)
+
+        val gambar = UploadRequestBodyFragment(file, "image", requireActivity())
+        val textValue = text
+        Log.e("sampai3", file.name.toString())
+        try {
+            // Kode yang mungkin menghasilkan pengecualian
+            val retro = Retro().getRetroClientInstance().create(PostAPI::class.java)
+            retro.addPost(
+                "Bearer ${sharedPref.getString("token")}",
+                MultipartBody.Part.createFormData("gambar", file.name, gambar),
+                RequestBody.create(MediaType.parse("text/plain"), textValue)
+            ).enqueue(object :
+                Callback<AddPostResponse> {
+                override fun onResponse(
+                    call: Call<AddPostResponse>,
+                    response: Response<AddPostResponse>
+                ) {
+                    Log.e("sampai", "gambarden2")
+                    var res = response.body()
+                    if (response.isSuccessful) {
+                        if (res?.success == true) {
+                            dialog.dismiss()
+                            Toast.makeText(requireActivity(), "Berhasil Upload", Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(requireActivity(), "terjadi kesalahan", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+
+                override fun onFailure(call: Call<AddPostResponse>, t: Throwable) {
+                    Toast.makeText(requireActivity(), t.message.toString(), Toast.LENGTH_SHORT).show()
+                    Log.e("sampai", "gambarden3")
+                }
+            })
+        } catch (e: Exception) {
+            e.printStackTrace() // Tampilkan kesalahan di Logcat
+            Log.e("salahden", e.toString())
+        }
+    }
+
     private fun postView() {
         val retro = Retro().getRetroClientInstance().create(PostAPI::class.java)
         retro.post("Bearer ${sharedPref.getString("token")}").enqueue(object :
@@ -144,6 +254,7 @@ class DiskusiFragment : Fragment() {
 
             override fun onFailure(call: Call<List<PostRespone>>, t: Throwable) {
                 Toast.makeText(requireActivity(), t.message.toString(), Toast.LENGTH_SHORT).show()
+                Log.e("masalah", t.message.toString())
             }
         })
     }
@@ -153,5 +264,44 @@ class DiskusiFragment : Fragment() {
         adapter.notifyDataSetChanged()
     }
 
+    // Fungsi untuk mendapatkan ukuran file dari Uri
+    private fun getFileSize(uri: Uri): Long {
+        val cursor = requireActivity().contentResolver.query(uri, null, null, null, null)
+        cursor?.use {
+            it.moveToFirst()
+            val sizeIndex = it.getColumnIndex(OpenableColumns.SIZE)
+            if (sizeIndex != -1) {
+                return it.getLong(sizeIndex)
+            }
+        }
+        return 0
+    }
 
+    private fun getImage() {
+        val intent = Intent(Intent.ACTION_PICK)
+        intent.type = "image/*"
+        startActivityForResult(intent, 100)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK && requestCode == 100){
+            selectedImageUri = data?.data
+            show_image.visibility = View.VISIBLE
+            post.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.green))
+            show_image.setImageURI(selectedImageUri)
+        }
+    }
+
+    private fun ContentResolver.getFileName(fileUri: Uri): String {
+        var name =""
+        val returnCursor = this.query(fileUri,null,null,null,null)
+        if (returnCursor != null){
+            val nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+            returnCursor.moveToFirst()
+            name = returnCursor.getString(nameIndex)
+            returnCursor.close()
+        }
+        return name
+    }
 }
