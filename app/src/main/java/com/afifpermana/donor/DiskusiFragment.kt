@@ -46,14 +46,14 @@ import java.io.FileOutputStream
 class DiskusiFragment : Fragment() {
 
     private lateinit var sw_layout : SwipeRefreshLayout
-    private lateinit var adapter: PostAdapter
     private lateinit var add_post: FloatingActionButton
+    private lateinit var adapter: PostAdapter
     private lateinit var recyclerView: RecyclerView
     var newData : ArrayList<Post> = ArrayList()
     lateinit var sharedPref: SharedPrefLogin
     private lateinit var show_image : ImageView
     private lateinit var post : ImageView
-
+//    private var lastPosition = 0
     private var selectedImageUri : Uri? = null
 
     override fun onCreateView(
@@ -70,11 +70,16 @@ class DiskusiFragment : Fragment() {
         // Set up your RecyclerView and other functionality here
         recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.setHasFixedSize(true)
-
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
 
+                // Mendapatkan posisi terakhir yang terlihat
+//                val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+//                val lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition()
+//                lastPosition = lastVisibleItemPosition
+//                sharedPref.setInt("scrollPosition",lastPosition)
+//                Log.e("posisi", lastVisibleItemPosition.toString())
                 // Mengubah visibilitas dan elevation FAB berdasarkan arah scroll
                 if (dy > 0 && add_post.isShown) {
                     add_post.hide()
@@ -91,6 +96,7 @@ class DiskusiFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val layoutManager = LinearLayoutManager(context)
         sw_layout = view.findViewById(R.id.swlayout)
+
         sw_layout.setColorSchemeResources(R.color.blue,R.color.red)
         recyclerView = view.findViewById(R.id.rv_post)
         add_post = view.findViewById(R.id.add_post)
@@ -208,6 +214,8 @@ class DiskusiFragment : Fragment() {
                             if (res?.success == true) {
                                 dialog.dismiss()
                                 selectedImageUri = null
+                                clearData()
+                                postView()
                                 Toast.makeText(requireActivity(), "Berhasil Upload", Toast.LENGTH_SHORT).show()
                             } else {
                                 Toast.makeText(requireActivity(), "terjadi kesalahan", Toast.LENGTH_SHORT).show()
@@ -217,7 +225,7 @@ class DiskusiFragment : Fragment() {
 
                     override fun onFailure(call: Call<AddPostResponse>, t: Throwable) {
                         Toast.makeText(requireActivity(), t.message.toString(), Toast.LENGTH_SHORT).show()
-                        Log.e("sampai", "gambarden3")
+                        Log.e("sampai", t.message.toString())
                     }
                 })
             } else {
@@ -232,9 +240,12 @@ class DiskusiFragment : Fragment() {
                     ) {
                         Log.e("sampai", "gambarden2")
                         val res = response.body()
+                        Log.e("sampai", response.code().toString())
                         if (response.isSuccessful) {
                             if (res?.success == true) {
                                 dialog.dismiss()
+                                clearData()
+                                postView()
                                 Toast.makeText(requireActivity(), "Berhasil Upload", Toast.LENGTH_SHORT).show()
                             } else {
                                 Toast.makeText(requireActivity(), "terjadi kesalahan", Toast.LENGTH_SHORT).show()
@@ -244,7 +255,7 @@ class DiskusiFragment : Fragment() {
 
                     override fun onFailure(call: Call<AddPostResponse>, t: Throwable) {
                         Toast.makeText(requireActivity(), t.message.toString(), Toast.LENGTH_SHORT).show()
-                        Log.e("sampai", "gambarden3")
+                        Log.e("sampai", t.message.toString())
                     }
                 })
             }
@@ -280,6 +291,12 @@ class DiskusiFragment : Fragment() {
                     }
                     adapter.notifyDataSetChanged()
                 }
+//                var sv = sharedPref.getInt("scrollPosition")
+//                Log.e("sv",sv.toString())
+//                if (sv > 3){
+//                    val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+//                    layoutManager.scrollToPosition(sv)
+//                }
             }
 
             override fun onFailure(call: Call<List<PostRespone>>, t: Throwable) {
@@ -334,4 +351,15 @@ class DiskusiFragment : Fragment() {
         }
         return name
     }
+//    override fun onResume() {
+//        super.onResume()
+//        Log.e("lifeclycle", "resume")
+//        clearData()
+//        postView()
+//    }
+//
+//    override fun onDestroyView() {
+//        super.onDestroyView()
+//        sharedPref.setInt("scrollPosition",0)
+//    }
 }

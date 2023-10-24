@@ -53,6 +53,11 @@ class SharedPrefLogin (context: Context){
         return sharedPreferences.getInt(key,0)
     }
 
+    fun setInt(string:String, value:Int){
+        editor.putInt(string,value)
+        editor.apply()
+    }
+
     fun setString(string:String, value:String){
         editor.putString(string,value)
         editor.apply()

@@ -112,6 +112,8 @@
                         android:background="#DDDDDD"/>
 
                     <LinearLayout
+                        android:layout_marginHorizontal="10dp"
+                        android:id="@+id/ll_text"
                         android:orientation="vertical"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
@@ -120,7 +122,7 @@
                             android:id="@+id/text"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/lorem"
+
                             android:justificationMode="inter_word"
                             android:maxLines="4"
                             android:ellipsize="end"
@@ -131,7 +133,6 @@
                             android:id="@+id/textButton"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Selengkapnya"
                             android:clickable="true"
                             android:textColor="@color/blue"
                             android:fontFamily="@font/poppins"
@@ -139,11 +140,12 @@
                     </LinearLayout>
 
                     <ImageView
+                        android:layout_marginHorizontal="10dp"
+                        android:scaleType="centerCrop"
                         android:layout_gravity="center"
                         android:id="@+id/image_post"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/ic_launcher_background" />
+                        android:layout_height="wrap_content"/>
 
                     <View
                         android:layout_marginTop="10dp"

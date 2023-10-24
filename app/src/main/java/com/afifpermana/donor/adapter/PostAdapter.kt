@@ -37,10 +37,15 @@ class PostAdapter(
         if (post.foto_profile != "null"){
             Picasso.get().load(path_foto_profile).into(holder.foto_profile)
         }
+
+        if (post.foto_profile == "null" || post.foto_profile.isNullOrEmpty()){
+            holder.foto_profile.setImageResource(R.drawable.baseline_person_24)
+        }
+        Log.e("ibra",post.toString())
         holder.nama.text = post.nama
         holder.upload.text = post.upload
         // Di dalam metode onBindViewHolder
-        if (post.text.isNullOrEmpty()) {
+        if (post.text.isNullOrEmpty() || post.text == "null") {
             holder.text?.visibility = View.GONE
         } else {
             holder.text.text = post.text
@@ -83,7 +88,7 @@ class PostAdapter(
         holder.btn_comment.setOnClickListener {
             val context = it.context
             val i = Intent(context, CommentsActivity::class.java)
-            i.putExtra("id_post",post.id.toString())
+            i.putExtra("id_post",post.id)
 //            i.putExtra("foto_profile",path_foto_profile)
 //            i.putExtra("nama",post.nama)
 //            i.putExtra("upload",post.upload)
