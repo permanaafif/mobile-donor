@@ -3,17 +3,19 @@ package com.afifpermana.donor.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.afifpermana.donor.R
 import com.afifpermana.donor.model.Comments
+import com.afifpermana.donor.service.CallBackData
 import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
 
 class CommentAdapter(
-    private var listComment : List<Comments>
+    private var listComment : List<Comments>,
+    private var dataCallBack: CallBackData
 ): RecyclerView.Adapter<CommentAdapter.ViewHolder>() {
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ViewHolder(
         LayoutInflater.from(parent.context).inflate(R.layout.card_comment, parent, false)
     )
@@ -31,6 +33,10 @@ class CommentAdapter(
         holder.nama.text = comment.nama
         holder.tv_comment.text = comment.text
         holder.tgl_comment.text = comment.updated_at
+
+        holder.balas.setOnClickListener {
+            dataCallBack.onDataReceived(comment.nama,comment.id_comment)
+        }
     }
 
     override fun getItemCount() = listComment.size

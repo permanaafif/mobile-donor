@@ -204,7 +204,7 @@
                         android:layout_marginTop="10dp"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        tools:itemCount="15"
+                        tools:itemCount="5"
                         tools:listitem="@layout/card_comment" />
                 </LinearLayout>
             </ScrollView>
@@ -223,18 +223,34 @@
         app:layout_constraintStart_toStartOf="parent"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/balas_comment_to"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:fontFamily="@font/poppins"
-            android:maxLines="1"
-            android:layout_marginBottom="5dp"
-            android:text="Balas"
-            android:textStyle="bold"
-            android:textColor="@color/white"
-            android:textSize="12sp" />
+        <LinearLayout
+            android:visibility="gone"
+            android:id="@+id/ll_balas_comment"
+            android:layout_gravity="center_vertical"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/balas_comment_to"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:fontFamily="@font/poppins"
+                android:maxLines="1"
+                android:layout_marginBottom="5dp"
+                android:text="Balas"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                android:textSize="12sp" />
+            <ImageView
+                android:layout_marginLeft="10dp"
+                android:id="@+id/close"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:backgroundTint="@color/red"
+                android:background="@drawable/bulet"
+                android:src="@drawable/baseline_close_24" />
+        </LinearLayout>
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">

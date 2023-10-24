@@ -2,6 +2,7 @@ package com.afifpermana.donor
 
 import android.content.Intent
 import android.content.res.ColorStateList
+import android.media.Image
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
@@ -27,6 +28,7 @@ import com.afifpermana.donor.model.BalasCommentResponse
 import com.afifpermana.donor.model.CommentResponse
 import com.afifpermana.donor.model.Comments
 import com.afifpermana.donor.model.PostRespone
+import com.afifpermana.donor.service.CallBackData
 import com.afifpermana.donor.service.CommentAPI
 import com.afifpermana.donor.util.Retro
 import com.afifpermana.donor.util.SharedPrefLogin
@@ -36,7 +38,8 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class CommentsActivity : AppCompatActivity() {
+class CommentsActivity : AppCompatActivity(), CallBackData {
+    private lateinit var balas_comment_to : TextView
     private lateinit var et_comment : EditText
     private lateinit var send_comment : ImageView
 
@@ -50,6 +53,10 @@ class CommentsActivity : AppCompatActivity() {
     private lateinit var textButton : TextView
     private lateinit var gambar : ImageView
     private lateinit var jumlah_comment : TextView
+
+    private lateinit var ll_comment : LinearLayout
+    private lateinit var ll_balas_comment : LinearLayout
+    private lateinit var close : ImageView
 
     private lateinit var adapter: CommentAdapter
     private lateinit var recyclerView : RecyclerView
@@ -69,13 +76,50 @@ class CommentsActivity : AppCompatActivity() {
         recyclerView = findViewById(R.id.rv_coments)
         recyclerView.layoutManager = layoutManager
         recyclerView.setHasFixedSize(true)
-        adapter = CommentAdapter(newData)
+        adapter = CommentAdapter(newData,this)
+        ll_comment = findViewById(R.id.ll)
+        ll_balas_comment = findViewById(R.id.ll_balas_comment)
+        close = findViewById(R.id.close)
         recyclerView.adapter = adapter
+
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+
+                // Mendapatkan posisi terakhir yang terlihat
+                val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+                val lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition()
+
+                // Durasi animasi (ms)
+                val animationDuration = 300L
+
+                // Jika sedang scroll ke bawah dan ll_comment tidak terlihat
+                if (dy > 0 && ll_comment.visibility == View.VISIBLE) {
+                    ll_comment.animate()
+                        .alpha(0f) // Mengubah alpha menjadi 0 (transparan)
+                        .setDuration(animationDuration)
+                        .withEndAction {
+                            ll_comment.visibility = View.GONE
+                        }
+                        .start()
+                } else if (dy < 0 && ll_comment.visibility != View.VISIBLE) {
+                    // Jika scroll ke atas dan ll_comment terlihat
+                    ll_comment.alpha = 0f // Set alpha menjadi 0 agar mulai transparan
+                    ll_comment.visibility = View.VISIBLE
+                    ll_comment.animate()
+                        .alpha(1f) // Mengubah alpha menjadi 1 (terlihat)
+                        .setDuration(animationDuration)
+                        .start()
+                }
+            }
+        })
+
 
         sharedPref = SharedPrefLogin(this)
         b = intent.extras
         id_post = b!!.getInt("id_post")
 
+        balas_comment_to = findViewById(R.id.balas_comment_to)
         textHelper = findViewById(R.id.helper)
         et_comment = findViewById(R.id.pesan)
         et_comment.addTextChangedListener(object : TextWatcher {
@@ -135,6 +179,16 @@ class CommentsActivity : AppCompatActivity() {
                 sw_layout.isRefreshing = false
             }, 1000)
         }
+
+        close.setOnClickListener {
+            ll_balas_comment.visibility = View.GONE
+            balas_comment_to.text = ""
+        }
+    }
+
+    override fun onDataReceived(nama: String, id:Int) {
+        balas_comment_to.text = "Balas ke $nama"
+        ll_balas_comment.visibility = View.VISIBLE
     }
 
     private fun addComment(id:Int, text:String) {
@@ -162,7 +216,6 @@ class CommentsActivity : AppCompatActivity() {
                     clearData()
                     findPost(id)
                     commentView(id)
-
                 }else{
                     Toast.makeText(this@CommentsActivity,"Terjadi kesalahan", Toast.LENGTH_SHORT).show()
                 }
