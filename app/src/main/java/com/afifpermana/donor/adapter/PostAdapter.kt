@@ -129,6 +129,7 @@ class PostAdapter(
         }
 
         val text = customeView.findViewById<TextView>(R.id.pesan)
+        val textHelper = customeView.findViewById<TextView>(R.id.helper)
         val post = customeView.findViewById<ImageView>(R.id.send)
         text.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
@@ -148,8 +149,25 @@ class PostAdapter(
                     // Panjang teks 0, atur backgroundTint ke warna lain atau null (kembalikan ke default)
                     post.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.grey))
                 }
+
+                if (textLength >= 300){
+                    textHelper.visibility = View.VISIBLE
+                    textHelper.text = "laporan hanya boleh 300 karakter"
+                }else{
+                    textHelper.visibility = View.GONE
+                }
             }
         })
+
+        post.setOnClickListener {
+            val textLength = text.text.toString().trim()
+            if (textLength.isNotBlank()){
+
+            }else{
+                textHelper.text = "Tulis laporan ..."
+                textHelper.visibility = View.VISIBLE
+            }
+        }
         dialog.show()
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
     }

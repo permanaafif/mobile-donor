@@ -253,6 +253,8 @@
                 android:paddingRight="20dp"
                 android:textColor="@color/black"
                 android:textSize="14dp"
+                android:maxLines="4"
+                android:maxLength="300"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/send"
                 app:layout_constraintStart_toStartOf="parent"
@@ -270,6 +272,18 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:visibility="gone"
+            android:id="@+id/helper"
+            android:layout_marginTop="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/poppins"
+            android:maxLines="1"
+            android:text="Balas"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:textSize="10sp" />
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

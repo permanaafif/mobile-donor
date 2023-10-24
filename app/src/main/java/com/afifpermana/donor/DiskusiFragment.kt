@@ -18,6 +18,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
@@ -136,6 +137,7 @@ class DiskusiFragment : Fragment() {
         show_image = customeView.findViewById(R.id.show_image)
         val img = customeView.findViewById<ImageView>(R.id.image)
         val text = customeView.findViewById<EditText>(R.id.pesan)
+        val textHelper = customeView.findViewById<TextView>(R.id.helper)
         post = customeView.findViewById(R.id.send)
         text.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
@@ -155,6 +157,13 @@ class DiskusiFragment : Fragment() {
                     // Panjang teks 0, atur backgroundTint ke warna lain atau null (kembalikan ke default)
                     post.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.grey))
                 }
+
+                if (textLength >= 500){
+                    textHelper.visibility = View.VISIBLE
+                    textHelper.text = "Postingan hanya boleh 500 karakter"
+                }else{
+                    textHelper.visibility = View.GONE
+                }
             }
         })
 
@@ -166,6 +175,9 @@ class DiskusiFragment : Fragment() {
             val textValue = text.text.toString()
             if (textValue.isNotBlank() || selectedImageUri != null) {
                 addPost(textValue, dialog)
+            }else{
+                textHelper.visibility = View.VISIBLE
+                textHelper.text = "Isi postingan kamu terlebih dahulu ..."
             }
         }
 
