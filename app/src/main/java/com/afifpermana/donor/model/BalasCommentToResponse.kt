@@ -3,11 +3,11 @@ package com.afifpermana.donor.model
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
-class CommentResponse {
+class BalasCommentToResponse {
 
-    @SerializedName("id_post")
+    @SerializedName("id")
     @Expose
-    var id_post : Int? = null
+    var id : Int? = null
 
     @SerializedName("id_comment")
     @Expose
@@ -36,8 +36,4 @@ class CommentResponse {
     @SerializedName("nama")
     @Expose
     var nama : String? = null
-
-    @SerializedName("jumlah_balasan")
-    @Expose
-    var jumlah_balasan : Int? = null
-    }
+}

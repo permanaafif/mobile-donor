@@ -92,6 +92,7 @@
                         android:textSize="12sp" />
 
                     <LinearLayout
+                        android:id="@+id/ll_lihat_balasan"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content">
                         <TextView
@@ -108,7 +109,7 @@
                             android:textSize="12sp" />
                         <ImageView
                             android:layout_alignParentEnd="true"
-                            android:id="@+id/faqimage"
+                            android:id="@+id/icon_lihat_balasan"
                             android:layout_gravity="center_vertical"
                             android:layout_width="20dp"
                             android:layout_height="20dp"

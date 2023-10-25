@@ -25,6 +25,8 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.afifpermana.donor.adapter.CommentAdapter
 import com.afifpermana.donor.model.BalasCommentRequest
 import com.afifpermana.donor.model.BalasCommentResponse
+import com.afifpermana.donor.model.BalasCommentTo
+import com.afifpermana.donor.model.BalasCommentToResponse
 import com.afifpermana.donor.model.CommentResponse
 import com.afifpermana.donor.model.Comments
 import com.afifpermana.donor.model.PostRespone
@@ -34,6 +36,11 @@ import com.afifpermana.donor.util.Retro
 import com.afifpermana.donor.util.SharedPrefLogin
 import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -61,10 +68,12 @@ class CommentsActivity : AppCompatActivity(), CallBackData {
     private lateinit var adapter: CommentAdapter
     private lateinit var recyclerView : RecyclerView
     var newData : ArrayList<Comments> = ArrayList()
-
+    var newDataBalasComment : ArrayList<BalasCommentTo> = ArrayList()
     var b : Bundle? =null
     lateinit var sharedPref: SharedPrefLogin
     var id_post = 0
+
+    val scope = CoroutineScope(Dispatchers.Main)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_comments)
@@ -169,13 +178,16 @@ class CommentsActivity : AppCompatActivity(), CallBackData {
         gambar = findViewById(R.id.image_post)
         jumlah_comment = findViewById(R.id.tv_jumlah_comment)
         findPost(id_post)
-        commentView(id_post)
+
+
+        commentView(id_post, scope)
+
         sw_layout.setOnRefreshListener{
             val Handler = Handler(Looper.getMainLooper())
             Handler().postDelayed(Runnable {
                 clearData()
                 findPost(id_post)
-                commentView(id_post)
+                commentView(id_post,scope)
                 sw_layout.isRefreshing = false
             }, 1000)
         }
@@ -215,7 +227,7 @@ class CommentsActivity : AppCompatActivity(), CallBackData {
                     et_comment.text.clear()
                     clearData()
                     findPost(id)
-                    commentView(id)
+                    commentView(id,scope)
                 }else{
                     Toast.makeText(this@CommentsActivity,"Terjadi kesalahan", Toast.LENGTH_SHORT).show()
                 }
@@ -233,53 +245,73 @@ class CommentsActivity : AppCompatActivity(), CallBackData {
 
     private fun clearData() {
         newData.clear()
+        newDataBalasComment.clear()
         adapter.notifyDataSetChanged()
     }
 
-    private fun commentView(id:Int) {
-        val retro = Retro().getRetroClientInstance().create(CommentAPI::class.java)
-        retro.comment("Bearer ${sharedPref.getString("token")}",id).enqueue(object :
-            Callback<List<CommentResponse>> {
-            override fun onResponse(
-                call: Call<List<CommentResponse>>,
-                response: Response<List<CommentResponse>>
-            ) {
-                Log.e("masalahnya", response.code().toString())
-                if (response.code() == 404){
-                    Toast.makeText(this@CommentsActivity,"Comment Belum ada", Toast.LENGTH_SHORT).show()
-                }
-                if (response.isSuccessful) {
-                    Log.e("masalahnya", "success")
-                    val res = response.body()
-                    // Menggunakan sortedByDescending untuk mengurutkan berdasarkan tanggal terbaru
-                    for (i in res!!) {
-                        val data = Comments(
-                            i.id_post.toString().toInt(),
-                            i.id_comment.toString().toInt(),
-                            i.id_pendonor.toString().toInt(),
-                            i.nama.toString(),
-                            i.gambar.toString(),
-                            i.text.toString(),
-                            i.created_at.toString(),
-                            i.update_at.toString()
-                        )
-                        newData.add(data)
+    private fun commentView(id: Int, scope: CoroutineScope) {
+        scope.launch {
+            try {
+                val postResponse = withContext(Dispatchers.IO) {
+                    val retro = Retro().getRetroClientInstance().create(CommentAPI::class.java)
+                    val response = retro.comment("Bearer ${sharedPref.getString("token")}", id).execute()
+                    if (response.isSuccessful) {
+                        response.body()
+                    } else {
+                        null
                     }
-                    adapter.notifyDataSetChanged()
-                }else{
-                    Toast.makeText(this@CommentsActivity,"Terjadi kesalahan", Toast.LENGTH_SHORT).show()
                 }
-            }
 
-            override fun onFailure(call: Call<List<CommentResponse>>, t: Throwable) {
-                Toast.makeText(this@CommentsActivity,"Sesi kamu habis", Toast.LENGTH_SHORT).show()
-                sharedPref.logOut()
-                sharedPref.setStatusLogin(false)
-                startActivity(Intent(this@CommentsActivity, LoginActivity::class.java))
-                finish()
+                if (postResponse == null) {
+                    // Handle kesalahan jika diperlukan
+                    return@launch
+                }
+
+                val comments = postResponse.map { commentResponse ->
+                    val balasComments = viewBalasComment(commentResponse.id_comment!!.toInt(), scope)
+                    Comments(
+                        commentResponse.id_post!!.toInt(),
+                        commentResponse.id_comment!!.toInt(),
+                        commentResponse.id_pendonor!!.toInt(),
+                        commentResponse.nama.toString(),
+                        commentResponse.gambar.toString(),
+                        commentResponse.text.toString(),
+                        commentResponse.created_at.toString(),
+                        commentResponse.update_at.toString(),
+                        commentResponse.jumlah_balasan!!.toInt(),
+                        balasComments
+                    )
+                }
+
+                newData.addAll(comments)
+                adapter.notifyDataSetChanged()
+            } catch (e: Exception) {
+                // Handle kesalahan jika diperlukan
             }
-            })
         }
+    }
+
+    private suspend fun viewBalasComment(id: Int, scope: CoroutineScope): List<BalasCommentTo> = withContext(Dispatchers.IO) {
+        val retro = Retro().getRetroClientInstance().create(CommentAPI::class.java)
+        val response = retro.balasComment("Bearer ${sharedPref.getString("token")}", id).execute()
+        if (response.isSuccessful) {
+            val res = response.body()
+            res?.map { balasCommentToResponse ->
+                BalasCommentTo(
+                    balasCommentToResponse.id!!.toInt(),
+                    balasCommentToResponse.id_comment!!.toInt(),
+                    balasCommentToResponse.id_pendonor!!.toInt(),
+                    balasCommentToResponse.nama.toString(),
+                    balasCommentToResponse.gambar.toString(),
+                    balasCommentToResponse.text.toString(),
+                    balasCommentToResponse.created_at.toString(),
+                    balasCommentToResponse.update_at.toString()
+                )
+            } ?: emptyList()
+        } else {
+            emptyList()
+        }
+    }
 
     private fun findPost(id:Int) {
         val retro = Retro().getRetroClientInstance().create(CommentAPI::class.java)

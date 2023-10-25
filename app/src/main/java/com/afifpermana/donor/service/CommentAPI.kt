@@ -2,6 +2,8 @@ package com.afifpermana.donor.service
 
 import com.afifpermana.donor.model.BalasCommentRequest
 import com.afifpermana.donor.model.BalasCommentResponse
+import com.afifpermana.donor.model.BalasCommentTo
+import com.afifpermana.donor.model.BalasCommentToResponse
 import com.afifpermana.donor.model.CommentResponse
 import com.afifpermana.donor.model.PostRespone
 import retrofit2.Call
@@ -21,4 +23,7 @@ interface CommentAPI {
 
     @POST("api/comment/add")
     fun addComment(@Header("Authorization") auth_token : String, @Body req: BalasCommentRequest ): Call <BalasCommentResponse>
+
+    @GET("api/balas-comment/{id}")
+    fun balasComment(@Header("Authorization") auth_token : String, @Path("id") id: Int): Call <List<BalasCommentToResponse>>
 }

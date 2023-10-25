@@ -65,4 +65,7 @@ dependencies {
 
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.2.0-alpha01"
 
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2"
+
+
 }

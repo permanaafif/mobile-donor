@@ -122,7 +122,6 @@
                             android:id="@+id/text"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-
                             android:justificationMode="inter_word"
                             android:maxLines="4"
                             android:ellipsize="end"
@@ -130,10 +129,12 @@
                             android:textSize="12sp"/>
 
                         <TextView
+                            android:visibility="gone"
                             android:id="@+id/textButton"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:clickable="true"
+                            android:text="Selengkapnya"
                             android:textColor="@color/blue"
                             android:fontFamily="@font/poppins"
                             android:textSize="12sp"/>
