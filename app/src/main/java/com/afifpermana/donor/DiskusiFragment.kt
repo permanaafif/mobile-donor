@@ -27,7 +27,6 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.afifpermana.donor.adapter.PostAdapter
 import com.afifpermana.donor.model.AddPostResponse
-import com.afifpermana.donor.model.AddPostTextRequest
 import com.afifpermana.donor.model.Post
 import com.afifpermana.donor.model.PostFavorite
 import com.afifpermana.donor.model.PostFavoriteResponse
@@ -233,6 +232,7 @@ class DiskusiFragment : Fragment(),CallBackData {
         dialog.setCanceledOnTouchOutside(false)
         val close = customeView.findViewById<ImageView>(R.id.close)
         close.setOnClickListener {
+            selectedImageUri = null
             dialog.dismiss()
         }
 

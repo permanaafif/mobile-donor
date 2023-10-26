@@ -1,8 +1,8 @@
 package com.afifpermana.donor
 
+import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
-import android.media.Image
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
@@ -11,13 +11,16 @@ import android.text.Editable
 import android.text.TextUtils
 import android.text.TextWatcher
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -28,12 +31,12 @@ import com.afifpermana.donor.model.AddBalasCommentResponse
 import com.afifpermana.donor.model.BalasCommentRequest
 import com.afifpermana.donor.model.BalasCommentResponse
 import com.afifpermana.donor.model.BalasCommentTo
-import com.afifpermana.donor.model.BalasCommentToResponse
-import com.afifpermana.donor.model.CommentResponse
 import com.afifpermana.donor.model.Comments
+import com.afifpermana.donor.model.PostFavoriteResponse2
 import com.afifpermana.donor.model.PostRespone
 import com.afifpermana.donor.service.CallBackData
 import com.afifpermana.donor.service.CommentAPI
+import com.afifpermana.donor.service.PostFavoriteAPI
 import com.afifpermana.donor.util.Retro
 import com.afifpermana.donor.util.SharedPrefLogin
 import com.squareup.picasso.Picasso
@@ -41,7 +44,6 @@ import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import retrofit2.Call
 import retrofit2.Callback
@@ -63,6 +65,10 @@ class CommentsActivity : AppCompatActivity(), CallBackData {
     private lateinit var gambar : ImageView
     private lateinit var jumlah_comment : TextView
 
+    private lateinit var btn_comment : ImageView
+    private lateinit var btn_report : ImageView
+    private lateinit var btn_favorit : ImageView
+
     private lateinit var ll_comment : LinearLayout
     private lateinit var ll_balas_comment : LinearLayout
     private lateinit var close : ImageView
@@ -76,6 +82,8 @@ class CommentsActivity : AppCompatActivity(), CallBackData {
     var id_post = 0
     var id_commentar : Int? = null
     var statusComment = false
+    var statusPostFavorit = false
+
 
     val scope = CoroutineScope(Dispatchers.Main)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -86,6 +94,10 @@ class CommentsActivity : AppCompatActivity(), CallBackData {
         val layoutManager = LinearLayoutManager(this)
         sw_layout = findViewById(R.id.swlayout)
         sw_layout.setColorSchemeResources(R.color.blue,R.color.red)
+
+        btn_comment = findViewById(R.id.btn_comment)
+        btn_report = findViewById(R.id.btn_report)
+        btn_favorit = findViewById(R.id.btn_favorit)
         recyclerView = findViewById(R.id.rv_coments)
         recyclerView.layoutManager = layoutManager
         recyclerView.setHasFixedSize(true)
@@ -131,6 +143,30 @@ class CommentsActivity : AppCompatActivity(), CallBackData {
         sharedPref = SharedPrefLogin(this)
         b = intent.extras
         id_post = b!!.getInt("id_post")
+
+        checkPostFavorite(id_post)
+        btn_comment.setOnClickListener {
+            // Meminta fokus ke EditText
+            et_comment.requestFocus()
+
+            // Tampilkan keyboard (jika diperlukan)
+            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.showSoftInput(et_comment, InputMethodManager.SHOW_IMPLICIT)
+        }
+        btn_report.setOnClickListener {
+            showCostumeAlertDialog()
+        }
+        btn_favorit.setOnClickListener {
+            statusPostFavorit = !statusPostFavorit
+
+            if(statusPostFavorit){
+                addPostFavorite(id_post)
+                btn_favorit.setImageResource(R.drawable.baseline_simpan_post_ok)
+            }else{
+                deletePostFavorite(id_post)
+                btn_favorit.setImageResource(R.drawable.baseline_simpan_post)
+            }
+        }
 
         balas_comment_to = findViewById(R.id.balas_comment_to)
         textHelper = findViewById(R.id.helper)
@@ -187,7 +223,6 @@ class CommentsActivity : AppCompatActivity(), CallBackData {
         jumlah_comment = findViewById(R.id.tv_jumlah_comment)
         findPost(id_post)
 
-
         commentView(id_post, scope)
 
         sw_layout.setOnRefreshListener{
@@ -206,6 +241,91 @@ class CommentsActivity : AppCompatActivity(), CallBackData {
             statusComment = false
             Log.e("statuscomment", "false")
         }
+    }
+
+    private fun checkPostFavorite(id: Int) {
+        val retro = Retro().getRetroClientInstance().create(PostFavoriteAPI::class.java)
+        retro.checkPostFavorite("Bearer ${sharedPref.getString("token")}",id).enqueue(object :
+            Callback<PostFavoriteResponse2> {
+            override fun onResponse(
+                call: Call<PostFavoriteResponse2>,
+                response: Response<PostFavoriteResponse2>
+            ) {
+                if (response.isSuccessful){
+                    var res = response.body()
+                    if (res?.success == true){
+                        statusPostFavorit = true
+                        btn_favorit.setImageResource(R.drawable.baseline_simpan_post_ok)
+                    }else{
+                        statusPostFavorit = false
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<PostFavoriteResponse2>, t: Throwable) {
+                Toast.makeText(this@CommentsActivity,"Sesi kamu habis", Toast.LENGTH_SHORT).show()
+                sharedPref.logOut()
+                sharedPref.setStatusLogin(false)
+                startActivity(Intent(this@CommentsActivity, LoginActivity::class.java))
+                finish()
+            }
+        })
+    }
+
+    private fun addPostFavorite(id:Int){
+        val retro = Retro().getRetroClientInstance().create(PostFavoriteAPI::class.java)
+        retro.addPostFavorite("Bearer ${sharedPref.getString("token")}",id).enqueue(object :
+            Callback<PostFavoriteResponse2> {
+            override fun onResponse(
+                call: Call<PostFavoriteResponse2>,
+                response: Response<PostFavoriteResponse2>
+            ) {
+                if (response.isSuccessful){
+                    var res = response.body()
+                    if (res?.success == true){
+                        Toast.makeText(this@CommentsActivity,"Simpan", Toast.LENGTH_SHORT).show()
+                    }else{
+                        //
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<PostFavoriteResponse2>, t: Throwable) {
+                Toast.makeText(this@CommentsActivity,"Sesi kamu habis", Toast.LENGTH_SHORT).show()
+                sharedPref.logOut()
+                sharedPref.setStatusLogin(false)
+                startActivity(Intent(this@CommentsActivity, LoginActivity::class.java))
+                finish()
+            }
+        })
+    }
+
+    private fun deletePostFavorite(id: Int) {
+        val retro = Retro().getRetroClientInstance().create(PostFavoriteAPI::class.java)
+        retro.deletePostFavorite("Bearer ${sharedPref.getString("token")}",id).enqueue(object :
+            Callback<PostFavoriteResponse2> {
+            override fun onResponse(
+                call: Call<PostFavoriteResponse2>,
+                response: Response<PostFavoriteResponse2>
+            ) {
+                if (response.isSuccessful){
+                    var res = response.body()
+                    if (res?.success == true){
+                        Toast.makeText(this@CommentsActivity,"Tidak si simpan", Toast.LENGTH_SHORT).show()
+                    }else{
+                        //
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<PostFavoriteResponse2>, t: Throwable) {
+                Toast.makeText(this@CommentsActivity,"Sesi kamu habis", Toast.LENGTH_SHORT).show()
+                sharedPref.logOut()
+                sharedPref.setStatusLogin(false)
+                startActivity(Intent(this@CommentsActivity, LoginActivity::class.java))
+                finish()
+            }
+        })
     }
 
     override fun onDataReceived(nama: String, id:Int) {
@@ -446,5 +566,61 @@ class CommentsActivity : AppCompatActivity(), CallBackData {
                 finish()
             }
         })
+    }
+
+    private fun showCostumeAlertDialog() {
+        val builder = AlertDialog.Builder(this)
+        val customeView = LayoutInflater.from(this).inflate(R.layout.alert_report,null)
+        builder.setView(customeView)
+        val dialog = builder.create()
+        // Tambahkan ini untuk menghindari menutup dialog saat menekan di luar area dialog
+        dialog.setCanceledOnTouchOutside(false)
+        val close = customeView.findViewById<ImageView>(R.id.close)
+        close.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        val text = customeView.findViewById<TextView>(R.id.pesan)
+        val textHelper = customeView.findViewById<TextView>(R.id.helper)
+        val post = customeView.findViewById<ImageView>(R.id.send)
+        text.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+                val textLength = s?.length ?: 0
+                if (textLength > 0) {
+                    // Panjang teks lebih dari 0, atur backgroundTint ke warna yang Anda inginkan
+                    post.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(this@CommentsActivity, R.color.green))
+                } else {
+                    // Panjang teks 0, atur backgroundTint ke warna lain atau null (kembalikan ke default)
+                    post.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(this@CommentsActivity, R.color.grey))
+                }
+
+                if (textLength >= 300){
+                    textHelper.visibility = View.VISIBLE
+                    textHelper.text = "laporan hanya boleh 300 karakter"
+                }else{
+                    textHelper.visibility = View.GONE
+                }
+            }
+        })
+
+        post.setOnClickListener {
+            val textLength = text.text.toString().trim()
+            if (textLength.isNotBlank()){
+
+            }else{
+                textHelper.text = "Tulis laporan ..."
+                textHelper.visibility = View.VISIBLE
+            }
+        }
+        dialog.show()
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
     }
 }

@@ -87,8 +87,9 @@ class PostAdapter(
         }
 
         var path_gambar = "http://10.0.2.2:8000/assets/post/${post.gambar}"
-        if (holder.gambar != null){
+        if (post.gambar.toString() != "null"){
             Picasso.get().load(path_gambar).into(holder.gambar)
+            holder.gambar?.visibility = View.VISIBLE
         }else{
             holder.gambar?.visibility = View.GONE
         }

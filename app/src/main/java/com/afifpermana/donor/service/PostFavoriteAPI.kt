@@ -14,8 +14,8 @@ interface PostFavoriteAPI {
     @GET("api/post-favorite")
     fun postFavorite(@Header("Authorization") auth_token: String): Call <List<PostFavoriteResponse>>
 
-//    @GET("api/post-favorite/check/{id}")
-//    fun checkPostFavorite(@Header("Authorization") auth_token: String, @Path("id") id: Int): Call <PostFavoriteResponse2>
+    @GET("api/post-favorite/check/{id}")
+    fun checkPostFavorite(@Header("Authorization") auth_token: String, @Path("id") id: Int): Call <PostFavoriteResponse2>
 
     @POST("api/post-favorite/add/{id}")
     fun addPostFavorite(@Header("Authorization") auth_token: String, @Path("id") id: Int): Call <PostFavoriteResponse2>
