@@ -23,6 +23,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.afifpermana.donor.adapter.CommentAdapter
+import com.afifpermana.donor.model.AddBalasCommentRequest
+import com.afifpermana.donor.model.AddBalasCommentResponse
 import com.afifpermana.donor.model.BalasCommentRequest
 import com.afifpermana.donor.model.BalasCommentResponse
 import com.afifpermana.donor.model.BalasCommentTo
@@ -72,6 +74,8 @@ class CommentsActivity : AppCompatActivity(), CallBackData {
     var b : Bundle? =null
     lateinit var sharedPref: SharedPrefLogin
     var id_post = 0
+    var id_commentar : Int? = null
+    var statusComment = false
 
     val scope = CoroutineScope(Dispatchers.Main)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -163,7 +167,11 @@ class CommentsActivity : AppCompatActivity(), CallBackData {
         send_comment.setOnClickListener {
             val textValue = et_comment.text.toString().trim()
             if (textValue.isNotBlank() ){
-                addComment(id_post,textValue)
+                if (statusComment == false){
+                    addComment(id_post,textValue)
+                }else{
+                    balasComment(id_commentar!!.toInt(),textValue)
+                }
             }else{
                 textHelper.visibility = View.VISIBLE
                 textHelper.text = "Tulis Komentar kamu ..."
@@ -195,12 +203,60 @@ class CommentsActivity : AppCompatActivity(), CallBackData {
         close.setOnClickListener {
             ll_balas_comment.visibility = View.GONE
             balas_comment_to.text = ""
+            statusComment = false
+            Log.e("statuscomment", "false")
         }
     }
 
     override fun onDataReceived(nama: String, id:Int) {
         balas_comment_to.text = "Balas ke $nama"
         ll_balas_comment.visibility = View.VISIBLE
+        if (balas_comment_to.text.trim().isNotEmpty()){
+            statusComment = true
+            id_commentar = id
+        }else{
+            statusComment = false
+            id_commentar = null
+        }
+    }
+
+    private fun balasComment(id: Int, text:String) {
+        var data = AddBalasCommentRequest()
+        data.id_comment = id
+        data.text = text
+        val retro = Retro().getRetroClientInstance().create(CommentAPI::class.java)
+        retro.addBalasComment("Bearer ${sharedPref.getString("token")}",data).enqueue(object :
+            Callback<AddBalasCommentResponse> {
+            override fun onResponse(
+                call: Call<AddBalasCommentResponse>,
+                response: Response<AddBalasCommentResponse>
+            ) {
+                if (response.isSuccessful){
+                    val res = response.body()
+                    Log.e("pesan", res!!.message.toString())
+                    if (res!!.success == true){
+                        Toast.makeText(this@CommentsActivity,"Berhasil", Toast.LENGTH_SHORT).show()
+                    }else{
+                        Toast.makeText(this@CommentsActivity,"Gagal", Toast.LENGTH_SHORT).show()
+                        Log.e("pesan", res!!.message.toString())
+                    }
+                    et_comment.text.clear()
+                    clearData()
+                    findPost(id)
+                    commentView(id_post,scope)
+                }else{
+                    Toast.makeText(this@CommentsActivity,"Terjadi kesalahan", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<AddBalasCommentResponse>, t: Throwable) {
+                Toast.makeText(this@CommentsActivity,"Sesi kamu habis", Toast.LENGTH_SHORT).show()
+                sharedPref.logOut()
+                sharedPref.setStatusLogin(false)
+                startActivity(Intent(this@CommentsActivity, LoginActivity::class.java))
+                finish()
+            }
+        })
     }
 
     private fun addComment(id:Int, text:String) {
