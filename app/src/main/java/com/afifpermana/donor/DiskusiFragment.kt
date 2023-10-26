@@ -29,8 +29,13 @@ import com.afifpermana.donor.adapter.PostAdapter
 import com.afifpermana.donor.model.AddPostResponse
 import com.afifpermana.donor.model.AddPostTextRequest
 import com.afifpermana.donor.model.Post
+import com.afifpermana.donor.model.PostFavorite
+import com.afifpermana.donor.model.PostFavoriteResponse
+import com.afifpermana.donor.model.PostFavoriteResponse2
 import com.afifpermana.donor.model.PostRespone
+import com.afifpermana.donor.service.CallBackData
 import com.afifpermana.donor.service.PostAPI
+import com.afifpermana.donor.service.PostFavoriteAPI
 import com.afifpermana.donor.util.Retro
 import com.afifpermana.donor.util.SharedPrefLogin
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -44,13 +49,14 @@ import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 
-class DiskusiFragment : Fragment() {
+class DiskusiFragment : Fragment(),CallBackData {
 
     private lateinit var sw_layout : SwipeRefreshLayout
     private lateinit var add_post: FloatingActionButton
     private lateinit var adapter: PostAdapter
     private lateinit var recyclerView: RecyclerView
     var newData : ArrayList<Post> = ArrayList()
+    var newDataPostFavorite : ArrayList<PostFavorite> = ArrayList()
     lateinit var sharedPref: SharedPrefLogin
     private lateinit var show_image : ImageView
     private lateinit var post : ImageView
@@ -105,14 +111,17 @@ class DiskusiFragment : Fragment() {
         recyclerView.setHasFixedSize(true)
         sharedPref = SharedPrefLogin(requireActivity())
         postView()
-        adapter = PostAdapter(newData)
+        adapter = PostAdapter(newData,newDataPostFavorite,requireContext(),this)
         recyclerView.adapter = adapter
+
+        postFavorite()
 
         sw_layout.setOnRefreshListener{
             val Handler = Handler(Looper.getMainLooper())
             Handler().postDelayed(Runnable {
                 clearData()
                 postView()
+                postFavorite()
                 sw_layout.isRefreshing = false
             }, 1000)
         }
@@ -120,6 +129,99 @@ class DiskusiFragment : Fragment() {
         add_post.setOnClickListener {
             showCostumeAlertDialog()
         }
+    }
+
+    private fun addPostFavorite(id:Int){
+        val retro = Retro().getRetroClientInstance().create(PostFavoriteAPI::class.java)
+        retro.addPostFavorite("Bearer ${sharedPref.getString("token")}",id).enqueue(object :
+            Callback<PostFavoriteResponse2> {
+            override fun onResponse(
+                call: Call<PostFavoriteResponse2>,
+                response: Response<PostFavoriteResponse2>
+            ) {
+                if (response.isSuccessful){
+                    var res = response.body()
+                    if (res?.success == true){
+                        Toast.makeText(requireActivity(),"Simpan", Toast.LENGTH_SHORT).show()
+                    }else{
+                       //
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<PostFavoriteResponse2>, t: Throwable) {
+                Toast.makeText(requireActivity(),"Sesi kamu habis", Toast.LENGTH_SHORT).show()
+                sharedPref.logOut()
+                sharedPref.setStatusLogin(false)
+                startActivity(Intent(requireActivity(), LoginActivity::class.java))
+                activity?.finish()
+            }
+        })
+    }
+
+    private fun deletePostFavorite(id: Int) {
+        val retro = Retro().getRetroClientInstance().create(PostFavoriteAPI::class.java)
+        retro.deletePostFavorite("Bearer ${sharedPref.getString("token")}",id).enqueue(object :
+            Callback<PostFavoriteResponse2> {
+            override fun onResponse(
+                call: Call<PostFavoriteResponse2>,
+                response: Response<PostFavoriteResponse2>
+            ) {
+                if (response.isSuccessful){
+                    var res = response.body()
+                    if (res?.success == true){
+                        Toast.makeText(requireActivity(),"Tidak si simpan", Toast.LENGTH_SHORT).show()
+                    }else{
+                        //
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<PostFavoriteResponse2>, t: Throwable) {
+                Toast.makeText(requireActivity(),"Sesi kamu habis", Toast.LENGTH_SHORT).show()
+                sharedPref.logOut()
+                sharedPref.setStatusLogin(false)
+                startActivity(Intent(requireActivity(), LoginActivity::class.java))
+                activity?.finish()
+            }
+        })
+    }
+    private fun postFavorite() {
+        val retro = Retro().getRetroClientInstance().create(PostFavoriteAPI::class.java)
+        retro.postFavorite("Bearer ${sharedPref.getString("token")}").enqueue(object :
+            Callback<List<PostFavoriteResponse>> {
+            override fun onResponse(
+                call: Call<List<PostFavoriteResponse>>,
+                response: Response<List<PostFavoriteResponse>>
+            ) {
+                if (response.isSuccessful){
+                    var res = response.body()
+                    if (!res.isNullOrEmpty()){
+                        for (i in res!!){
+                            val data = PostFavorite(
+                                i.id!!,
+                                i.id_pendonor!!,
+                                i.id_post!!,
+                                i.created_at!!,
+                                i.updated_at!!
+                            )
+                            newDataPostFavorite.add(data)
+                        }
+                        adapter.notifyDataSetChanged()
+                    }
+                }else{
+                    Toast.makeText(requireActivity(),"terjaadi kesalahan", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<List<PostFavoriteResponse>>, t: Throwable) {
+                Toast.makeText(requireActivity(),"Sesi kamu habis", Toast.LENGTH_SHORT).show()
+                sharedPref.logOut()
+                sharedPref.setStatusLogin(false)
+                startActivity(Intent(requireActivity(), LoginActivity::class.java))
+                activity?.finish()
+            }
+        })
     }
 
     private fun showCostumeAlertDialog() {
@@ -303,12 +405,6 @@ class DiskusiFragment : Fragment() {
                     }
                     adapter.notifyDataSetChanged()
                 }
-//                var sv = sharedPref.getInt("scrollPosition")
-//                Log.e("sv",sv.toString())
-//                if (sv > 3){
-//                    val layoutManager = recyclerView.layoutManager as LinearLayoutManager
-//                    layoutManager.scrollToPosition(sv)
-//                }
             }
 
             override fun onFailure(call: Call<List<PostRespone>>, t: Throwable) {
@@ -320,6 +416,7 @@ class DiskusiFragment : Fragment() {
 
     private fun clearData() {
         newData.clear()
+        newDataPostFavorite.clear()
         adapter.notifyDataSetChanged()
     }
 
@@ -363,15 +460,16 @@ class DiskusiFragment : Fragment() {
         }
         return name
     }
-//    override fun onResume() {
-//        super.onResume()
-//        Log.e("lifeclycle", "resume")
-//        clearData()
-//        postView()
-//    }
-//
-//    override fun onDestroyView() {
-//        super.onDestroyView()
-//        sharedPref.setInt("scrollPosition",0)
-//    }
+
+    override fun onDataReceived(nama: String, id: Int) {
+        // ngak perlu di isi
+    }
+
+    override fun onDataReceivedFavorite(id: Int) {
+        addPostFavorite(id)
+    }
+
+    override fun onDeleteFavorite(id: Int) {
+        deletePostFavorite(id)
+    }
 }

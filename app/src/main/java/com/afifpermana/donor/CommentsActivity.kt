@@ -220,6 +220,14 @@ class CommentsActivity : AppCompatActivity(), CallBackData {
         }
     }
 
+    override fun onDataReceivedFavorite(id: Int) {
+        // ngak perlu di isi
+    }
+
+    override fun onDeleteFavorite(id: Int) {
+        //
+    }
+
     private fun balasComment(id: Int, text:String) {
         var data = AddBalasCommentRequest()
         data.id_comment = id

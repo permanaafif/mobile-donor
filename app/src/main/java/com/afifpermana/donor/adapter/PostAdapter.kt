@@ -21,11 +21,20 @@ import com.afifpermana.donor.ArtikelActivity
 import com.afifpermana.donor.CommentsActivity
 import com.afifpermana.donor.R
 import com.afifpermana.donor.model.Post
+import com.afifpermana.donor.model.PostFavorite
+import com.afifpermana.donor.model.PostFavoriteResponse2
+import com.afifpermana.donor.service.CallBackData
+import com.afifpermana.donor.service.PostFavoriteAPI
+import com.afifpermana.donor.util.Retro
 import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
+import retrofit2.Callback
 
 class PostAdapter(
-    private val listPost : List<Post>
+    private val listPost : List<Post>,
+    private val listPostFavorite : List<PostFavorite>,
+    private val context: Context,
+    private var dataCallBack: CallBackData
 ): RecyclerView.Adapter<PostAdapter.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int)= ViewHolder(
         LayoutInflater.from(parent.context).inflate(R.layout.card_post_diskusi, parent, false)
@@ -100,6 +109,30 @@ class PostAdapter(
         holder.btn_report.setOnClickListener {
             showCostumeAlertDialog(holder.itemView.context)
         }
+
+        var isExpandFavorite = false
+        var id = listPostFavorite.any { it.id_post == post.id }
+        if (id){
+            isExpandFavorite = true
+            holder.btn_favorite.setImageResource(R.drawable.baseline_simpan_post_ok)
+        }else{
+            isExpandFavorite = false
+            holder.btn_favorite.setImageResource(R.drawable.baseline_simpan_post)
+        }
+
+        holder.btn_favorite.setOnClickListener {
+            isExpandFavorite = !isExpandFavorite // Toggle
+
+            if (isExpandFavorite) {
+                dataCallBack.onDataReceivedFavorite(post.id)
+                isExpandFavorite = true
+                holder.btn_favorite.setImageResource(R.drawable.baseline_simpan_post_ok)
+            } else {
+                dataCallBack.onDeleteFavorite(post.id)
+                isExpandFavorite = false
+                holder.btn_favorite.setImageResource(R.drawable.baseline_simpan_post)
+            }
+        }
     }
 
     override fun getItemCount()= listPost.size
@@ -113,6 +146,7 @@ class PostAdapter(
         val gambar = view.findViewById<ImageView>(R.id.image_post)
         val btn_comment = view.findViewById<ImageView>(R.id.btn_comment)
         val btn_report = view.findViewById<ImageView>(R.id.btn_report)
+        val btn_favorite = view.findViewById<ImageView>(R.id.btn_favorit)
         val jumlah_comment = view.findViewById<TextView>(R.id.tv_jumlah_comment)
     }
 
@@ -171,4 +205,5 @@ class PostAdapter(
         dialog.show()
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
     }
+
 }
