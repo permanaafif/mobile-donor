@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".ProfileFragment">
 
     <!-- TODO: Update blank fragment layout -->
@@ -13,17 +14,46 @@
         android:layout_height="wrap_content"
         android:background="@color/bluedark"
         app:layout_collapseMode="pin"
-        app:layout_scrollFlags="scroll|enterAlways">
+        app:layout_scrollFlags="scroll|enterAlways"
+        android:layout_centerHorizontal="true"
+        >
 
-        <TextView
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Profile"
-            android:textStyle="bold"
-            android:textColor="@android:color/white"
-            android:textSize="18sp"
-            android:gravity="center_horizontal"
-            />
+            android:layout_height="match_parent"
+            >
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:fontFamily="@font/poppins"
+                android:text="Profile"
+                android:textColor="@android:color/white"
+                android:textSize="18sp"
+                android:layout_marginEnd="20dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageButton
+                android:id="@+id/btnLogOut"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginEnd="20dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Kembali ke halaman sebelumnya"
+                android:paddingVertical="16dp"
+                android:src="@drawable/baseline_exit_to_app_24"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.appcompat.widget.Toolbar>
 
@@ -33,20 +63,22 @@
         android:layout_height="match_parent"
         android:layout_below="@+id/toolbar">
 
-        <ScrollView
+        <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <RelativeLayout
+            <LinearLayout
+                android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/foto"
                     android:layout_width="96dp"
-                    android:layout_height="94dp"
+                    android:layout_height="96dp"
                     android:layout_marginStart="20dp"
-                    android:layout_marginTop="15dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="20dp"
                     android:layout_marginEnd="15dp"
                     android:layout_marginBottom="15dp"
                     android:src="@drawable/baseline_person_24"
@@ -57,10 +89,10 @@
                     android:layout_height="wrap_content"
                     android:text="Nama Panjang"
                     android:fontFamily="@font/poppins"
+                    android:layout_gravity="center_horizontal"
                     android:textStyle="bold"
                     android:textColor="@color/black"
                     android:layout_toRightOf="@id/foto"
-                    android:layout_marginTop="27dp"
                     android:id="@+id/nama"
                     android:textSize="18sp"
                     />
@@ -69,6 +101,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Kode Donor"
+                    android:layout_gravity="center_horizontal"
                     android:fontFamily="@font/poppins"
                     android:textColor="@color/black"
                     android:layout_toRightOf="@id/foto"
@@ -76,232 +109,182 @@
                     android:textSize="14sp"
                     android:id="@+id/kode"
                     />
+                
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_gravity="center_horizontal"
+                    android:gravity="center_horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    
+                    <androidx.cardview.widget.CardView
+                        android:layout_marginVertical="20dp"
+                        android:id="@+id/cv_edit_profile"
+                        android:layout_marginEnd="20dp"
+                        app:cardCornerRadius="5dp"
+                        android:layout_width="90dp"
+                        app:cardElevation="10dp"
+                        android:layout_height="wrap_content">
+                        <LinearLayout
+                            android:layout_marginVertical="10dp"
+                            android:orientation="vertical"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:src="@drawable/edit"
+                                android:layout_gravity="center_horizontal"/>
+                            <TextView
+                                android:layout_marginTop="5dp"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Edit Profile"
+                                android:layout_gravity="center_horizontal"
+                                android:fontFamily="@font/poppins"
+                                android:textColor="@color/black"
+                                android:textSize="10sp"
+                                />
+                        </LinearLayout>
+                    </androidx.cardview.widget.CardView>
 
-                <TextView
-                    android:focusable="true"
-                    android:clickable="true"
-                    android:padding="10dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/borderedit"
-                    android:textSize="14sp"
-                    android:fontFamily="@font/poppins"
-                    android:text="Edit"
-                    android:textColor="@color/white"
-                    android:gravity="center"
-                    android:textStyle="bold"
-                    android:layout_below="@id/kode"
-                    android:layout_alignParentRight="true"
-                    android:layout_marginRight="40dp"
-                    android:layout_marginTop="5dp"
-                    android:id="@+id/btnEdit"
-                    android:layout_marginBottom="15dp"
-                    />
+                    <androidx.cardview.widget.CardView
+                        android:layout_marginVertical="20dp"
+                        android:id="@+id/cv_ganti_password"
+                        app:cardCornerRadius="5dp"
+                        android:layout_width="90dp"
+                        android:layout_marginEnd="20dp"
+                        app:cardElevation="10dp"
+                        android:layout_height="wrap_content">
+                        <LinearLayout
+                            android:layout_marginVertical="10dp"
+                            android:orientation="vertical"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:src="@drawable/ganti_password"
+                                android:layout_gravity="center_horizontal"/>
+                            <TextView
+                                android:layout_marginTop="5dp"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Ganti Password"
+                                android:layout_gravity="center_horizontal"
+                                android:fontFamily="@font/poppins"
+                                android:textColor="@color/black"
+                                android:textSize="10sp"
+                                />
+                        </LinearLayout>
+                    </androidx.cardview.widget.CardView>
 
-                <TextView
-                    android:layout_width="314dp"
-                    android:layout_height="45dp"
-                    android:layout_below="@id/btnEdit"
-                    android:layout_centerHorizontal="true"
-                    android:hint="Nama User"
-                    android:fontFamily="@font/poppins"
-                    android:textColor="@color/black"
-                    android:textColorHint="@color/black"
-                    android:background="@drawable/borderinput"
-                    android:drawableLeft="@drawable/baseline_person_24"
-                    android:layout_marginBottom="18dp"
-                    android:id="@+id/namauser"
-                    android:paddingLeft="20dp"
-                    android:paddingRight="20dp"
-                    android:paddingVertical="13dp"
-                    android:textSize="14sp"
-                    android:drawablePadding="10dp"
-                    />
+                    <androidx.cardview.widget.CardView
+                        android:layout_marginVertical="20dp"
+                        android:id="@+id/cv_notifikasi"
+                        app:cardCornerRadius="5dp"
+                        android:layout_width="90dp"
+                        app:cardElevation="10dp"
+                        android:layout_height="wrap_content">
+                        <LinearLayout
+                            android:layout_marginVertical="10dp"
+                            android:orientation="vertical"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:src="@drawable/notifikasi"
+                                android:layout_gravity="center_horizontal"/>
+                            <TextView
+                                android:layout_marginTop="5dp"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Notifikasi"
+                                android:layout_gravity="center_horizontal"
+                                android:fontFamily="@font/poppins"
+                                android:textColor="@color/black"
+                                android:textSize="10sp"
+                                />
+                        </LinearLayout>
+                    </androidx.cardview.widget.CardView>
+                </LinearLayout>
 
-                <TextView
-                    android:layout_width="314dp"
-                    android:layout_height="45dp"
-                    android:layout_below="@id/namauser"
-                    android:layout_centerHorizontal="true"
-                    android:hint="Email"
-                    android:fontFamily="@font/poppins"
-                    android:textColor="@color/black"
-                    android:textColorHint="@color/black"
-                    android:background="@drawable/borderinput"
-                    android:drawableLeft="@drawable/baseline_email_24"
-                    android:layout_marginBottom="18dp"
-                    android:id="@+id/email"
-                    android:paddingLeft="20dp"
-                    android:paddingRight="20dp"
-                    android:paddingVertical="13dp"
-                    android:textSize="14sp"
-                    android:drawablePadding="10dp"
-                    />
-
-                <TextView
-                    android:layout_width="314dp"
-                    android:layout_height="45dp"
-                    android:layout_below="@id/email"
-                    android:layout_centerHorizontal="true"
-                    android:hint="**********"
-                    android:textColor="@color/black"
-                    android:textColorHint="@color/black"
-                    android:background="@drawable/borderinput"
-                    android:drawableLeft="@drawable/baseline_lock_24"
-                    android:layout_marginBottom="18dp"
-                    android:id="@+id/password"
-                    android:paddingLeft="20dp"
-                    android:paddingRight="20dp"
-                    android:paddingVertical="13dp"
-                    android:textSize="14sp"
-                    android:fontFamily="@font/poppins"
-                    android:drawablePadding="10dp"
-                    />
-
-                <TextView
-                    android:layout_width="314dp"
-                    android:layout_height="45dp"
-                    android:layout_below="@id/password"
-                    android:layout_centerHorizontal="true"
-                    android:hint="Tanggal lahir"
-                    android:textColor="@color/black"
-                    android:textColorHint="@color/black"
-                    android:background="@drawable/borderinput"
-                    android:drawableLeft="@drawable/baseline_date_range_24"
-                    android:layout_marginBottom="18dp"
-                    android:id="@+id/tanggal_lahir"
-                    android:paddingLeft="20dp"
-                    android:paddingRight="20dp"
-                    android:paddingVertical="13dp"
-                    android:textSize="14sp"
-                    android:fontFamily="@font/poppins"
-                    android:drawablePadding="10dp"
-                    />
-
-                <TextView
-                    android:layout_width="314dp"
-                    android:layout_height="45dp"
-                    android:layout_below="@id/tanggal_lahir"
-                    android:layout_centerHorizontal="true"
-                    android:hint="Alamat"
-                    android:textColor="@color/black"
-                    android:textColorHint="@color/black"
-                    android:background="@drawable/borderinput"
-                    android:drawableLeft="@drawable/baseline_location_city_24"
-                    android:layout_marginBottom="18dp"
-                    android:id="@+id/alamat"
-                    android:paddingLeft="20dp"
-                    android:paddingRight="20dp"
-                    android:paddingVertical="13dp"
-                    android:textSize="14sp"
-                    android:fontFamily="@font/poppins"
-                    android:drawablePadding="10dp"
-                    />
-
-                <TextView
-                    android:id="@+id/jekel"
-                    android:hint="Jenis Kelamin"
-                    android:layout_width="314dp"
-                    android:layout_height="45dp"
-                    android:layout_below="@id/alamat"
-                    android:layout_centerHorizontal="true"
-                    android:textColor="@color/black"
-                    android:textColorHint="@color/black"
-                    android:background="@drawable/borderinput"
-                    android:drawableLeft="@drawable/baseline_group_24"
-                    android:layout_marginBottom="18dp"
-                    android:paddingLeft="20dp"
-                    android:paddingRight="20dp"
-                    android:paddingVertical="13dp"
-                    android:textSize="14sp"
-                    android:fontFamily="@font/poppins"
-                    android:drawablePadding="10dp"
-                    />
-
-                <TextView
-                    android:id="@+id/notelp"
-                    android:hint="Nomor Telepon"
-                    android:layout_width="314dp"
-                    android:layout_height="45dp"
-                    android:layout_below="@id/jekel"
-                    android:layout_centerHorizontal="true"
-                    android:textColor="@color/black"
-                    android:textColorHint="@color/black"
-                    android:background="@drawable/borderinput"
-                    android:drawableLeft="@drawable/baseline_call_24"
-                    android:layout_marginBottom="18dp"
-                    android:paddingLeft="20dp"
-                    android:paddingRight="20dp"
-                    android:paddingVertical="13dp"
-                    android:textSize="14sp"
-                    android:fontFamily="@font/poppins"
-                    android:drawablePadding="10dp"
-                    />
-
-                <TextView
-                    android:id="@+id/goldar"
-                    android:hint="Golongan Darah"
-                    android:layout_width="314dp"
-                    android:layout_height="45dp"
-                    android:layout_below="@id/notelp"
-                    android:layout_centerHorizontal="true"
-                    android:textColor="@color/black"
-                    android:textColorHint="@color/black"
-                    android:background="@drawable/borderinput"
-                    android:drawableLeft="@drawable/baseline_bloodtype_24"
-                    android:layout_marginBottom="18dp"
-                    android:paddingLeft="20dp"
-                    android:paddingRight="20dp"
-                    android:paddingVertical="13dp"
-                    android:textSize="14sp"
-                    android:fontFamily="@font/poppins"
-                    android:drawablePadding="10dp"
-                    />
-
-                <TextView
-                    android:id="@+id/bb"
-                    android:hint="Berat Badan"
-                    android:layout_width="314dp"
-                    android:layout_height="45dp"
-                    android:layout_below="@id/goldar"
-                    android:layout_centerHorizontal="true"
-                    android:textColor="@color/black"
-                    android:textColorHint="@color/black"
-                    android:background="@drawable/borderinput"
-                    android:drawableLeft="@drawable/baseline_monitor_weight_24"
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="10dp"
                     android:layout_marginBottom="10dp"
-                    android:paddingLeft="20dp"
-                    android:paddingRight="20dp"
-                    android:paddingVertical="13dp"
-                    android:textSize="14sp"
-                    android:fontFamily="@font/poppins"
-                    android:drawablePadding="10dp"
-                    />
+                    android:background="@color/grey"/>
 
-                <TextView
-                    android:id="@+id/btnLogOut"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/bb"
-                    android:layout_centerVertical="true"
-                    android:layout_marginStart="40dp"
-                    android:layout_marginTop="15dp"
-                    android:layout_marginEnd="15dp"
-                    android:layout_marginBottom="15dp"
-                    android:background="@drawable/borderkeluar"
-                    android:drawableLeft="@drawable/baseline_exit_to_app_24"
-                    android:gravity="center"
-                    android:drawablePadding="5dp"
-                    android:padding="10dp"
-                    android:paddingVertical="40dp"
-                    android:text="Keluar"
-                    android:textColor="@color/white"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
+                <RadioGroup
+                    android:id="@+id/rg"
+                    android:padding="5dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:orientation="horizontal">
 
-            </RelativeLayout>
-        </ScrollView>
+                    <RadioButton
+                        android:checked="true"
+                        android:id="@+id/btn_semua"
+                        android:layout_width="100dp"
+                        android:layout_height="40dp"
+                        android:text="Semua"
+                        android:button="@android:color/transparent"
+                        android:background="@drawable/radio_selector"
+                        android:textColor="@drawable/text_color_radio"
+                        android:elevation="4dp"
+                        android:gravity="center"
+                        android:padding="10dp"
+                        android:layout_marginLeft="15dp"
+                        android:layout_marginRight="5dp"/>
+
+                    <RadioButton
+                        android:id="@+id/btn_favorite"
+                        android:layout_width="100dp"
+                        android:layout_height="40dp"
+                        android:text="Favorite"
+                        android:button="@android:color/transparent"
+                        android:background="@drawable/radio_selector"
+                        android:textColor="@drawable/text_color_radio"
+                        android:elevation="4dp"
+                        android:gravity="center"
+                        android:padding="10dp"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"/>
+
+                </RadioGroup>
+               <FrameLayout
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content">
+                   <androidx.constraintlayout.widget.ConstraintLayout
+                       android:id="@+id/cl_post_saya"
+                       android:visibility="gone"
+                       android:layout_width="match_parent"
+                       android:layout_height="match_parent">
+
+                       <com.airbnb.lottie.LottieAnimationView
+                           android:id="@+id/animation_view_people_donor"
+                           android:layout_width="150dp"
+                           android:layout_height="150dp"
+                           app:layout_constraintBottom_toBottomOf="parent"
+                           app:layout_constraintEnd_toEndOf="parent"
+                           app:layout_constraintHorizontal_bias="0.54"
+                           app:layout_constraintStart_toStartOf="parent"
+                           app:layout_constraintTop_toTopOf="parent"
+                           app:layout_constraintVertical_bias="0.478"
+                           app:lottie_autoPlay="true"
+                           app:lottie_loop="true"
+                           app:lottie_rawRes="@raw/animation_not_jadwal" />
+                   </androidx.constraintlayout.widget.ConstraintLayout>
+                   <androidx.recyclerview.widget.RecyclerView
+                       android:background="@color/grey"
+                       android:id="@+id/rv_post_saya"
+                       android:layout_width="match_parent"
+                       android:layout_height="match_parent"
+                       tools:itemCount="2"
+                       tools:listitem="@layout/card_post_diskusi" />
+               </FrameLayout>
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-
-
-</RelativeLayout>
+</LinearLayout>

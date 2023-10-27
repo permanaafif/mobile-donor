@@ -86,12 +86,6 @@ class ProfileEdit : AppCompatActivity(), UploadRequestBody.UploadCallback {
             getImage()
         }
 
-        val buttongantipassword = findViewById<TextView>(R.id.password)
-        buttongantipassword.setOnClickListener{
-            val intent = Intent(this,GantiPassword::class.java)
-            startActivity(intent)
-        }
-
         val myCalender = Calendar.getInstance()
         val datePicker = DatePickerDialog.OnDateSetListener{view, year, month, dayOfMonth ->
             myCalender.set(Calendar.YEAR, year)

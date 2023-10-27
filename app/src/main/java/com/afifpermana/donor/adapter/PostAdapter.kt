@@ -34,7 +34,8 @@ class PostAdapter(
     private val listPost : List<Post>,
     private val listPostFavorite : List<PostFavorite>,
     private val context: Context,
-    private var dataCallBack: CallBackData
+    private var dataCallBack: CallBackData,
+    var profile : Boolean? = false
 ): RecyclerView.Adapter<PostAdapter.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int)= ViewHolder(
         LayoutInflater.from(parent.context).inflate(R.layout.card_post_diskusi, parent, false)
@@ -134,6 +135,13 @@ class PostAdapter(
                 holder.btn_favorite.setImageResource(R.drawable.baseline_simpan_post)
             }
         }
+
+        if (profile == true){
+            holder.btn_delete.visibility = View.VISIBLE
+            holder.btn_delete.setOnClickListener {
+                dataCallBack.onDeletePost(post.id)
+            }
+        }
     }
 
     override fun getItemCount()= listPost.size
@@ -146,6 +154,7 @@ class PostAdapter(
         val textButton = view.findViewById<TextView>(R.id.textButton)
         val gambar = view.findViewById<ImageView>(R.id.image_post)
         val btn_comment = view.findViewById<ImageView>(R.id.btn_comment)
+        val btn_delete = view.findViewById<ImageView>(R.id.btn_delete)
         val btn_report = view.findViewById<ImageView>(R.id.btn_report)
         val btn_favorite = view.findViewById<ImageView>(R.id.btn_favorit)
         val jumlah_comment = view.findViewById<TextView>(R.id.tv_jumlah_comment)

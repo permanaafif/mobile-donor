@@ -9,7 +9,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-        <RelativeLayout
+        <LinearLayout
             android:padding="5dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -23,6 +23,8 @@
                 android:background="@drawable/bulet"/>
 
             <LinearLayout
+                android:layout_weight="1"
+                android:layout_gravity="center_vertical"
                 android:id="@+id/ll_profile"
                 android:layout_toRightOf="@id/foto_profile"
                 android:orientation="vertical"
@@ -47,7 +49,17 @@
                     android:fontFamily="@font/poppins"
                     android:textSize="10sp"/>
             </LinearLayout>
-        </RelativeLayout>
+
+            <ImageView
+                android:visibility="gone"
+                android:id="@+id/btn_delete"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:src="@drawable/delete" />
+        </LinearLayout>
 
         <View
             android:layout_width="match_parent"

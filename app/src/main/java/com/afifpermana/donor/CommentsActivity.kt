@@ -348,6 +348,10 @@ class CommentsActivity : AppCompatActivity(), CallBackData {
         //
     }
 
+    override fun onDeletePost(id: Int) {
+        // ngak perlu di isi
+    }
+
     private fun balasComment(id: Int, text:String) {
         var data = AddBalasCommentRequest()
         data.id_comment = id

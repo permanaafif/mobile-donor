@@ -472,4 +472,8 @@ class DiskusiFragment : Fragment(),CallBackData {
     override fun onDeleteFavorite(id: Int) {
         deletePostFavorite(id)
     }
+
+    override fun onDeletePost(id: Int) {
+        // ngak perlu di isi
+    }
 }
