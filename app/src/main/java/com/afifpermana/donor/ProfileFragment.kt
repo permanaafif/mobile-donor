@@ -112,10 +112,12 @@ class ProfileFragment : Fragment(), CallBackData {
                 R.id.btn_semua -> {
                     clearData()
                     postViewMe()
+                    postFavorite()
                 }
                 R.id.btn_favorite -> {
-                    clearData()
-//                    postViewFavorite()
+                    Log.e("abcd","1")
+                    postFavorite()
+                    Log.e("abcd","2")
                 }
             }
         }
@@ -151,9 +153,70 @@ class ProfileFragment : Fragment(), CallBackData {
         }
     }
 
+    // masih bermasalah di fungsi ini
     private fun postViewFavorite() {
-
+        var data : ArrayList<Post> = ArrayList()
+        data = newData.toMutableList() as ArrayList<Post>
+        newData.clear()
+        Log.e("abcd","3")
+        for(post in data){
+            var i = newDataPostFavorite.any { it.id_post == post.id }
+            Log.e("abcd","4")
+            if (i){
+                val data = Post(
+                    post.id.toString().toInt(),
+                    post.foto_profile.toString(),
+                    post.nama.toString(),
+                    post.upload.toString(),
+                    post.text.toString(),
+                    post.gambar.toString(),
+                    post.jumlah_comment.toString().toInt()
+                )
+                newData.add(data)
+                Log.e("abcd",data.toString())
+            }
+        }
+        Log.e("abcd","5")
+        // Perbarui tampilan RecyclerView setelah memodifikasi newData
+        adapter.notifyDataSetChanged()
     }
+
+    private fun postView() {
+        val retro = Retro().getRetroClientInstance().create(PostAPI::class.java)
+        retro.post("Bearer ${sharedPref.getString("token")}").enqueue(object :
+            Callback<List<PostRespone>> {
+            override fun onResponse(
+                call: Call<List<PostRespone>>,
+                response: Response<List<PostRespone>>
+            ) {
+                if (response.isSuccessful) {
+                    val res = response.body()
+                    newData.clear()
+                    // Menggunakan sortedByDescending untuk mengurutkan berdasarkan tanggal terbaru
+                    for (i in res!!) {
+                        val data = Post(
+                            i.id.toString().toInt(),
+                            i.gambar_profile.toString(),
+                            i.nama.toString(),
+                            i.updated_at.toString(),
+                            i.text.toString(),
+                            i.gambar.toString(),
+                            i.jumlah_comment.toString().toInt()
+                        )
+                        newData.add(data)
+                    }
+                    postViewFavorite()
+                    adapter.notifyDataSetChanged()
+                }
+            }
+
+            override fun onFailure(call: Call<List<PostRespone>>, t: Throwable) {
+                Toast.makeText(requireActivity(), t.message.toString(), Toast.LENGTH_SHORT).show()
+                Log.e("masalah", t.message.toString())
+            }
+        })
+    }
+
 
     private fun clearData() {
         newData.clear()
@@ -345,6 +408,10 @@ class ProfileFragment : Fragment(), CallBackData {
                 if (response.isSuccessful){
                     var res = response.body()
                     if (res?.success == true){
+                        var newDataRemoveById = newDataPostFavorite.find { it.id_post == id }
+                        if (newDataRemoveById != null){
+                            newDataPostFavorite.remove(newDataRemoveById)
+                        }
                         Toast.makeText(requireActivity(),"Tidak si simpan", Toast.LENGTH_SHORT).show()
                     }else{
                         //
@@ -372,6 +439,7 @@ class ProfileFragment : Fragment(), CallBackData {
                 if (response.isSuccessful){
                     var res = response.body()
                     if (!res.isNullOrEmpty()){
+                        newDataPostFavorite.clear()
                         for (i in res!!){
                             val data = PostFavorite(
                                 i.id!!,
@@ -381,6 +449,10 @@ class ProfileFragment : Fragment(), CallBackData {
                                 i.updated_at!!
                             )
                             newDataPostFavorite.add(data)
+                        }
+                        if (radioGroup.checkedRadioButtonId == R.id.btn_favorite){
+                            Log.e("btnfav","fav")
+                            postView()
                         }
                         adapter.notifyDataSetChanged()
                     }
@@ -398,6 +470,8 @@ class ProfileFragment : Fragment(), CallBackData {
             }
         })
     }
+
+    //postView
 
     override fun onDataReceived(nama: String, id: Int) {
         // ngak perlu di isi
