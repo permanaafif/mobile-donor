@@ -32,10 +32,14 @@ import com.afifpermana.donor.model.BalasCommentRequest
 import com.afifpermana.donor.model.BalasCommentResponse
 import com.afifpermana.donor.model.BalasCommentTo
 import com.afifpermana.donor.model.Comments
+import com.afifpermana.donor.model.Laporan
+import com.afifpermana.donor.model.LaporanRequest
+import com.afifpermana.donor.model.LaporanResponse
 import com.afifpermana.donor.model.PostFavoriteResponse2
 import com.afifpermana.donor.model.PostRespone
 import com.afifpermana.donor.service.CallBackData
 import com.afifpermana.donor.service.CommentAPI
+import com.afifpermana.donor.service.LaporanAPI
 import com.afifpermana.donor.service.PostFavoriteAPI
 import com.afifpermana.donor.util.Retro
 import com.afifpermana.donor.util.SharedPrefLogin
@@ -154,7 +158,7 @@ class CommentsActivity : AppCompatActivity(), CallBackData {
             imm.showSoftInput(et_comment, InputMethodManager.SHOW_IMPLICIT)
         }
         btn_report.setOnClickListener {
-            showCostumeAlertDialog()
+            showCostumeAlertDialog(id_post)
         }
         btn_favorit.setOnClickListener {
             statusPostFavorit = !statusPostFavorit
@@ -350,6 +354,10 @@ class CommentsActivity : AppCompatActivity(), CallBackData {
 
     override fun onDeletePost(id: Int) {
         // ngak perlu di isi
+    }
+
+    override fun onAddLaporan(laporan: Laporan) {
+        addLaporan(laporan)
     }
 
     private fun balasComment(id: Int, text:String) {
@@ -572,7 +580,7 @@ class CommentsActivity : AppCompatActivity(), CallBackData {
         })
     }
 
-    private fun showCostumeAlertDialog() {
+    private fun showCostumeAlertDialog(id: Int) {
         val builder = AlertDialog.Builder(this)
         val customeView = LayoutInflater.from(this).inflate(R.layout.alert_report,null)
         builder.setView(customeView)
@@ -585,6 +593,7 @@ class CommentsActivity : AppCompatActivity(), CallBackData {
         }
 
         val text = customeView.findViewById<TextView>(R.id.pesan)
+        val type ="Postingan"
         val textHelper = customeView.findViewById<TextView>(R.id.helper)
         val post = customeView.findViewById<ImageView>(R.id.send)
         text.addTextChangedListener(object : TextWatcher {
@@ -618,7 +627,9 @@ class CommentsActivity : AppCompatActivity(), CallBackData {
         post.setOnClickListener {
             val textLength = text.text.toString().trim()
             if (textLength.isNotBlank()){
-
+                val laporan = Laporan(id,null,null,textLength,type )
+                addLaporan(laporan)
+                dialog.dismiss()
             }else{
                 textHelper.text = "Tulis laporan ..."
                 textHelper.visibility = View.VISIBLE
@@ -626,5 +637,40 @@ class CommentsActivity : AppCompatActivity(), CallBackData {
         }
         dialog.show()
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+    }
+
+    private fun addLaporan(laporan: Laporan) {
+        var data = LaporanRequest()
+        data.id_post = laporan.id_post
+        data.id_comment = laporan.id_comment
+        data.id_reply = laporan.id_reply
+        data.text = laporan.text
+        data.type = laporan.type
+        val retro = Retro().getRetroClientInstance().create(LaporanAPI::class.java)
+        retro.addLaporan("Bearer ${sharedPref.getString("token")}",data).enqueue(object :
+            Callback<LaporanResponse> {
+            override fun onResponse(
+                call: Call<LaporanResponse>,
+                response: Response<LaporanResponse>
+            ) {
+                if (response.isSuccessful){
+                    val res = response.body()
+                    if (res != null){
+                        Toast.makeText(this@CommentsActivity,"Laporan Dikirim",Toast.LENGTH_SHORT).show()
+                    }else{
+                        Toast.makeText(this@CommentsActivity,"Laporan tidak terkirim",Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<LaporanResponse>, t: Throwable) {
+//                Toast.makeText(this@CommentsActivity,"Sesi kamu habis", Toast.LENGTH_SHORT).show()
+//                sharedPref.logOut()
+//                sharedPref.setStatusLogin(false)
+//                startActivity(Intent(this@CommentsActivity, LoginActivity::class.java))
+//                finish()
+                Log.e("masalah",t.message.toString())
+            }
+        })
     }
 }

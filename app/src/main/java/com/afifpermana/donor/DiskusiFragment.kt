@@ -27,12 +27,16 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.afifpermana.donor.adapter.PostAdapter
 import com.afifpermana.donor.model.AddPostResponse
+import com.afifpermana.donor.model.Laporan
+import com.afifpermana.donor.model.LaporanRequest
+import com.afifpermana.donor.model.LaporanResponse
 import com.afifpermana.donor.model.Post
 import com.afifpermana.donor.model.PostFavorite
 import com.afifpermana.donor.model.PostFavoriteResponse
 import com.afifpermana.donor.model.PostFavoriteResponse2
 import com.afifpermana.donor.model.PostRespone
 import com.afifpermana.donor.service.CallBackData
+import com.afifpermana.donor.service.LaporanAPI
 import com.afifpermana.donor.service.PostAPI
 import com.afifpermana.donor.service.PostFavoriteAPI
 import com.afifpermana.donor.util.Retro
@@ -475,5 +479,43 @@ class DiskusiFragment : Fragment(),CallBackData {
 
     override fun onDeletePost(id: Int) {
         // ngak perlu di isi
+    }
+
+    override fun onAddLaporan(laporan: Laporan) {
+        addLaporan(laporan)
+    }
+
+    private fun addLaporan(laporan: Laporan) {
+        var data = LaporanRequest()
+        data.id_post = laporan.id_post
+        data.id_comment = laporan.id_comment
+        data.id_reply = laporan.id_reply
+        data.text = laporan.text
+        data.type = laporan.type
+        val retro = Retro().getRetroClientInstance().create(LaporanAPI::class.java)
+        retro.addLaporan("Bearer ${sharedPref.getString("token")}",data).enqueue(object :
+            Callback<LaporanResponse> {
+            override fun onResponse(
+                call: Call<LaporanResponse>,
+                response: Response<LaporanResponse>
+            ) {
+                if (response.isSuccessful){
+                    val res = response.body()
+                    if (res != null){
+                        Toast.makeText(requireActivity(),"Laporan Dikirim",Toast.LENGTH_SHORT).show()
+                    }else{
+                        Toast.makeText(requireActivity(),"Laporan tidak terkirim",Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<LaporanResponse>, t: Throwable) {
+                Toast.makeText(requireActivity(),"Sesi kamu habis", Toast.LENGTH_SHORT).show()
+                sharedPref.logOut()
+                sharedPref.setStatusLogin(false)
+                startActivity(Intent(requireActivity(), LoginActivity::class.java))
+                activity?.finish()
+            }
+        })
     }
 }

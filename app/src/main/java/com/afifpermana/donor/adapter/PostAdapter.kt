@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.afifpermana.donor.ArtikelActivity
 import com.afifpermana.donor.CommentsActivity
 import com.afifpermana.donor.R
+import com.afifpermana.donor.model.Laporan
 import com.afifpermana.donor.model.Post
 import com.afifpermana.donor.model.PostFavorite
 import com.afifpermana.donor.model.PostFavoriteResponse2
@@ -43,7 +44,7 @@ class PostAdapter(
 
     override fun onBindViewHolder(holder: PostAdapter.ViewHolder, position: Int) {
         val post = listPost[position]
-        var path_foto_profile = "http://213.35.121.183/images/${post.foto_profile}"
+        var path_foto_profile = "http://10.0.2.2:8000/images/${post.foto_profile}"
         if (post.foto_profile != "null"){
             Picasso.get().load(path_foto_profile).into(holder.foto_profile)
         }
@@ -87,7 +88,7 @@ class PostAdapter(
             }
         }
 
-        var path_gambar = "http://213.35.121.183/assets/post/${post.gambar}"
+        var path_gambar = "http://10.0.2.2:8000/assets/post/${post.gambar}"
         if (post.gambar.toString() != "null"){
             Picasso.get().load(path_gambar).into(holder.gambar)
             holder.gambar?.visibility = View.VISIBLE
@@ -109,7 +110,7 @@ class PostAdapter(
         }
 
         holder.btn_report.setOnClickListener {
-            showCostumeAlertDialog(holder.itemView.context)
+            showCostumeAlertDialog(holder.itemView.context, post.id)
         }
 
         var isExpandFavorite = false
@@ -160,7 +161,7 @@ class PostAdapter(
         val jumlah_comment = view.findViewById<TextView>(R.id.tv_jumlah_comment)
     }
 
-    private fun showCostumeAlertDialog(context: Context) {
+    private fun showCostumeAlertDialog(context: Context, id:Int) {
         val builder = AlertDialog.Builder(context)
         val customeView = LayoutInflater.from(context).inflate(R.layout.alert_report,null)
         builder.setView(customeView)
@@ -173,6 +174,7 @@ class PostAdapter(
         }
 
         val text = customeView.findViewById<TextView>(R.id.pesan)
+        val type = "Postingan"
         val textHelper = customeView.findViewById<TextView>(R.id.helper)
         val post = customeView.findViewById<ImageView>(R.id.send)
         text.addTextChangedListener(object : TextWatcher {
@@ -206,7 +208,9 @@ class PostAdapter(
         post.setOnClickListener {
             val textLength = text.text.toString().trim()
             if (textLength.isNotBlank()){
-
+                val laporan = Laporan(id,null,null,textLength,type)
+                dataCallBack.onAddLaporan(laporan)
+                dialog.dismiss()
             }else{
                 textHelper.text = "Tulis laporan ..."
                 textHelper.visibility = View.VISIBLE

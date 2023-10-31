@@ -15,8 +15,10 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.afifpermana.donor.CommentsActivity
 import com.afifpermana.donor.R
 import com.afifpermana.donor.model.Comments
+import com.afifpermana.donor.model.Laporan
 import com.afifpermana.donor.service.CallBackData
 import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
@@ -65,7 +67,7 @@ class CommentAdapter(
                 // Set adapter untuk RecyclerView balasan komentar
                 val balasCommentAdapter = comment.balasCommentList?.let { it1 ->
                     BalasCommentAdapter(
-                        it1
+                        it1,dataCallBack
                     )
                 }
                 holder.rv_balas_comment.layoutManager = LinearLayoutManager(holder.rv_balas_comment.context)
@@ -76,7 +78,7 @@ class CommentAdapter(
         }
 
         holder.btn_report.setOnClickListener {
-            showCostumeAlertDialog(holder.itemView.context)
+            showCostumeAlertDialog(holder.itemView.context,comment.id_comment)
         }
     }
 
@@ -95,7 +97,7 @@ class CommentAdapter(
         val btn_report = view.findViewById<ImageView>(R.id.btn_report)
     }
 
-    private fun showCostumeAlertDialog(context: Context) {
+    private fun showCostumeAlertDialog(context: Context, id:Int) {
         val builder = AlertDialog.Builder(context)
         val customeView = LayoutInflater.from(context).inflate(R.layout.alert_report,null)
         builder.setView(customeView)
@@ -108,6 +110,7 @@ class CommentAdapter(
         }
 
         val text = customeView.findViewById<TextView>(R.id.pesan)
+        val type = "Komentar"
         val textHelper = customeView.findViewById<TextView>(R.id.helper)
         val post = customeView.findViewById<ImageView>(R.id.send)
         text.addTextChangedListener(object : TextWatcher {
@@ -141,7 +144,9 @@ class CommentAdapter(
         post.setOnClickListener {
             val textLength = text.text.toString().trim()
             if (textLength.isNotBlank()){
-
+                val laporan = Laporan(null,id,null,textLength,type)
+                dataCallBack.onAddLaporan(laporan)
+                dialog.dismiss()
             }else{
                 textHelper.text = "Tulis laporan ..."
                 textHelper.visibility = View.VISIBLE

@@ -14,11 +14,14 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.afifpermana.donor.R
 import com.afifpermana.donor.model.BalasCommentTo
+import com.afifpermana.donor.model.Laporan
+import com.afifpermana.donor.service.CallBackData
 import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
 
 class BalasCommentAdapter(
-    private var listBalasComment : List<BalasCommentTo>
+    private var listBalasComment : List<BalasCommentTo>,
+    private var dataCallBack: CallBackData
 ): RecyclerView.Adapter<BalasCommentAdapter.ViewHolder>() {
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -42,7 +45,7 @@ class BalasCommentAdapter(
         holder.tgl_comment.text = balasComment.updated_at
 
         holder.btn_report.setOnClickListener {
-            showCostumeAlertDialog(holder.itemView.context)
+            showCostumeAlertDialog(holder.itemView.context,balasComment.id)
         }
     }
 
@@ -57,7 +60,7 @@ class BalasCommentAdapter(
 
     }
 
-    private fun showCostumeAlertDialog(context: Context) {
+    private fun showCostumeAlertDialog(context: Context, id:Int) {
         val builder = AlertDialog.Builder(context)
         val customeView = LayoutInflater.from(context).inflate(R.layout.alert_report,null)
         builder.setView(customeView)
@@ -70,6 +73,7 @@ class BalasCommentAdapter(
         }
 
         val text = customeView.findViewById<TextView>(R.id.pesan)
+        val type = "Balasan"
         val textHelper = customeView.findViewById<TextView>(R.id.helper)
         val post = customeView.findViewById<ImageView>(R.id.send)
         text.addTextChangedListener(object : TextWatcher {
@@ -103,7 +107,9 @@ class BalasCommentAdapter(
         post.setOnClickListener {
             val textLength = text.text.toString().trim()
             if (textLength.isNotBlank()){
-
+                val laporan = Laporan(null,null,id,textLength,type)
+                dataCallBack.onAddLaporan(laporan)
+                dialog.dismiss()
             }else{
                 textHelper.text = "Tulis laporan ..."
                 textHelper.visibility = View.VISIBLE
