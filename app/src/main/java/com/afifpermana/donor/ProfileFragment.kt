@@ -62,6 +62,7 @@ class ProfileFragment : Fragment(), CallBackData {
     private lateinit var kontak : String
     private lateinit var berat_badan : String
     var pathFoto : String? = null
+    var postinganMe = false
 
     private lateinit var adapter: PostAdapter
     private lateinit var recyclerView: RecyclerView
@@ -89,7 +90,7 @@ class ProfileFragment : Fragment(), CallBackData {
 
         postViewMe()
 
-        adapter = PostAdapter(newData,newDataPostFavorite,requireContext(),this,true)
+        adapter = PostAdapter(newData,newDataPostFavorite,requireContext(),this,postinganMe)
         recyclerView.adapter = adapter
 
         postFavorite()
@@ -100,6 +101,15 @@ class ProfileFragment : Fragment(), CallBackData {
         sw_layout.setOnRefreshListener{
             val Handler = Handler(Looper.getMainLooper())
             Handler().postDelayed(Runnable {
+                clearData()
+                if (radioGroup.checkedRadioButtonId == R.id.btn_favorite){
+                    Log.e("btnfav","fav")
+                    postFavorite()
+                }else{
+                    clearData()
+                    postViewMe()
+                    postFavorite()
+                }
                 profileView()
                 sw_layout.isRefreshing = false
             }, 1000)
@@ -111,11 +121,13 @@ class ProfileFragment : Fragment(), CallBackData {
             when (checkedId) {
                 R.id.btn_semua -> {
                     clearData()
+                    postinganMe = true
                     postViewMe()
                     postFavorite()
                 }
                 R.id.btn_favorite -> {
                     Log.e("abcd","1")
+                    postinganMe = false
                     postFavorite()
                     Log.e("abcd","2")
                 }
@@ -455,6 +467,8 @@ class ProfileFragment : Fragment(), CallBackData {
                             postView()
                         }
                         adapter.notifyDataSetChanged()
+                    }else{
+                        clearData()
                     }
                 }else{
                     Toast.makeText(requireActivity(),"terjaadi kesalahan", Toast.LENGTH_SHORT).show()

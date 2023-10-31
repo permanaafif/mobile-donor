@@ -43,7 +43,7 @@ class PostAdapter(
 
     override fun onBindViewHolder(holder: PostAdapter.ViewHolder, position: Int) {
         val post = listPost[position]
-        var path_foto_profile = "http://10.0.2.2:8000/images/${post.foto_profile}"
+        var path_foto_profile = "http://213.35.121.183/images/${post.foto_profile}"
         if (post.foto_profile != "null"){
             Picasso.get().load(path_foto_profile).into(holder.foto_profile)
         }
@@ -87,7 +87,7 @@ class PostAdapter(
             }
         }
 
-        var path_gambar = "http://10.0.2.2:8000/assets/post/${post.gambar}"
+        var path_gambar = "http://213.35.121.183/assets/post/${post.gambar}"
         if (post.gambar.toString() != "null"){
             Picasso.get().load(path_gambar).into(holder.gambar)
             holder.gambar?.visibility = View.VISIBLE

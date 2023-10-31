@@ -369,7 +369,7 @@ class CommentsActivity : AppCompatActivity(), CallBackData {
                     if (res!!.success == true){
                         Toast.makeText(this@CommentsActivity,"Berhasil", Toast.LENGTH_SHORT).show()
                     }else{
-                        Toast.makeText(this@CommentsActivity,"Gagal", Toast.LENGTH_SHORT).show()
+//                        Toast.makeText(this@CommentsActivity,"Gagal", Toast.LENGTH_SHORT).show()
                         Log.e("pesan", res!!.message.toString())
                     }
                     et_comment.text.clear()
@@ -409,7 +409,7 @@ class CommentsActivity : AppCompatActivity(), CallBackData {
                     if (res!!.success == true){
                         Toast.makeText(this@CommentsActivity,"Berhasil", Toast.LENGTH_SHORT).show()
                     }else{
-                        Toast.makeText(this@CommentsActivity,"Gagal", Toast.LENGTH_SHORT).show()
+//                        Toast.makeText(this@CommentsActivity,"Gagal", Toast.LENGTH_SHORT).show()
                         Log.e("pesan", res!!.message.toString())
                     }
                     et_comment.text.clear()
@@ -509,7 +509,7 @@ class CommentsActivity : AppCompatActivity(), CallBackData {
                 var res = response.body()
                 if (response.isSuccessful){
                     if(res?.gambar_profile.toString() != "null"){
-                        Picasso.get().load("http://10.0.2.2:8000/images/${res?.gambar_profile}").into(gambar_profile)
+                        Picasso.get().load("http://213.35.121.183/images/${res?.gambar_profile}").into(gambar_profile)
                     }
                     nama.text = res?.nama
                     tgl_upload.text = res?.updated_at
@@ -552,7 +552,7 @@ class CommentsActivity : AppCompatActivity(), CallBackData {
                     }
 
                     if (res?.gambar.toString() != "null"){
-                        Picasso.get().load("http://10.0.2.2:8000/assets/post/${res?.gambar}").into(gambar)
+                        Picasso.get().load("http://213.35.121.183/assets/post/${res?.gambar}").into(gambar)
                         gambar.visibility = View.VISIBLE
                     }
 

@@ -32,7 +32,7 @@ class CommentAdapter(
 
     override fun onBindViewHolder(holder: CommentAdapter.ViewHolder, position: Int) {
         val comment = listComment[position]
-        var path_foto_profile = "http://10.0.2.2:8000/images/${comment.gambar}"
+        var path_foto_profile = "http://213.35.121.183/images/${comment.gambar}"
         if (!comment.gambar.isNullOrEmpty() || comment.gambar != "null"){
             Picasso.get().load(path_foto_profile).into(holder.foto_profile)
         }

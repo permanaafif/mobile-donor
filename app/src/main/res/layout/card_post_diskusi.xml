@@ -36,6 +36,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Afif"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"
                     android:maxLines="1"
                     android:ellipsize="end"
                     android:fontFamily="@font/poppins"
@@ -81,6 +83,7 @@
                 android:justificationMode="inter_word"
                 android:maxLines="4"
                 android:ellipsize="end"
+                android:textColor="@color/black"
                 android:fontFamily="@font/poppins"
                 android:textSize="12sp"/>
 
@@ -135,6 +138,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="0 Comments"
+                    android:textColor="@color/black"
                     android:fontFamily="@font/poppins"
                     android:textSize="10sp"/>
             </LinearLayout>
