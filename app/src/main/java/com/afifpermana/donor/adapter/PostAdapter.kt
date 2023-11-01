@@ -138,11 +138,13 @@ class PostAdapter(
 
         if (post.status == false){
             holder.btn_delete.visibility = View.GONE
-        }else{
+        }else if (post.status == true){
             holder.btn_delete.visibility = View.VISIBLE
             holder.btn_delete.setOnClickListener {
                 dataCallBack.onDeletePost(post.id)
             }
+        }else{
+            holder.btn_delete.visibility = View.GONE
         }
     }
 

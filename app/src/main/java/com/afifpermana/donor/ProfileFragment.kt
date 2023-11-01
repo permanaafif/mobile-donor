@@ -41,6 +41,7 @@ import com.afifpermana.donor.service.PostFavoriteAPI
 import com.afifpermana.donor.service.ProfileAPI
 import com.afifpermana.donor.util.Retro
 import com.afifpermana.donor.util.SharedPrefLogin
+import com.airbnb.lottie.LottieAnimationView
 import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
 import retrofit2.Call
@@ -51,6 +52,7 @@ class ProfileFragment : Fragment(), CallBackData {
 
     private lateinit var sw_layout : SwipeRefreshLayout
     private lateinit var cl_post : ConstraintLayout
+    private lateinit var lottie : LottieAnimationView
     private lateinit var edit : CardView
     private lateinit var ganti_password : CardView
     private lateinit var radioGroup: RadioGroup
@@ -90,6 +92,7 @@ class ProfileFragment : Fragment(), CallBackData {
 
         recyclerView = view.findViewById(R.id.rv_post_saya)
         cl_post = view.findViewById(R.id.cl_post_saya)
+        lottie = view.findViewById(R.id.animation_view_people_donor)
         recyclerView.layoutManager = layoutManager
         recyclerView.setHasFixedSize(true)
         sharedPref = SharedPrefLogin(requireActivity())
@@ -126,11 +129,19 @@ class ProfileFragment : Fragment(), CallBackData {
         radioGroup.setOnCheckedChangeListener { group, checkedId ->
             when (checkedId) {
                 R.id.btn_semua -> {
+                    recyclerView.visibility = View.GONE
+                    cl_post.visibility = View.VISIBLE
+                    lottie.setAnimation(R.raw.animation_loading)
+                    lottie.playAnimation()
                     clearData()
                     postViewMe()
                     postFavorite()
                 }
                 R.id.btn_favorite -> {
+                    recyclerView.visibility = View.GONE
+                    cl_post.visibility = View.VISIBLE
+                    lottie.setAnimation(R.raw.animation_loading)
+                    lottie.playAnimation()
                     Log.e("abcd","1")
                     postFavorite()
                     Log.e("abcd","2")
@@ -196,6 +207,8 @@ class ProfileFragment : Fragment(), CallBackData {
         Log.e("abcd","5")
         // Perbarui tampilan RecyclerView setelah memodifikasi newData
         adapter.notifyDataSetChanged()
+        recyclerView.visibility = View.VISIBLE
+        cl_post.visibility = View.GONE
     }
 
     private fun postView() {
@@ -268,10 +281,13 @@ class ProfileFragment : Fragment(), CallBackData {
                             i.text.toString(),
                             i.gambar.toString(),
                             i.jumlah_comment.toString().toInt(),
+                            true
                         )
                         newData.add(data)
                     }
                     adapter.notifyDataSetChanged()
+                    recyclerView.visibility = View.VISIBLE
+                    cl_post.visibility = View.GONE
                 }
             }
 
@@ -479,6 +495,8 @@ class ProfileFragment : Fragment(), CallBackData {
                             postView()
                         }
                         adapter.notifyDataSetChanged()
+                        cl_post.visibility = View.GONE
+                        recyclerView.visibility = View.VISIBLE
                     }else{
                         cl_post.visibility = View.VISIBLE
                         recyclerView.visibility = View.GONE
