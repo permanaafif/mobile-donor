@@ -21,6 +21,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -43,6 +44,7 @@ import com.afifpermana.donor.service.LaporanAPI
 import com.afifpermana.donor.service.PostFavoriteAPI
 import com.afifpermana.donor.util.Retro
 import com.afifpermana.donor.util.SharedPrefLogin
+import com.airbnb.lottie.LottieAnimationView
 import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.coroutines.CoroutineScope
@@ -57,6 +59,10 @@ class CommentsActivity : AppCompatActivity(), CallBackData {
     private lateinit var balas_comment_to : TextView
     private lateinit var et_comment : EditText
     private lateinit var send_comment : ImageView
+
+    private lateinit var cl_comment : ConstraintLayout
+    private lateinit var loadingLottie : LottieAnimationView
+    private lateinit var nodataLottie : LottieAnimationView
 
     private lateinit var gambar_profile : CircleImageView
     private lateinit var sw_layout : SwipeRefreshLayout
@@ -98,6 +104,10 @@ class CommentsActivity : AppCompatActivity(), CallBackData {
         val layoutManager = LinearLayoutManager(this)
         sw_layout = findViewById(R.id.swlayout)
         sw_layout.setColorSchemeResources(R.color.blue,R.color.red)
+
+        cl_comment = findViewById(R.id.cl_comment)
+        loadingLottie = findViewById(R.id.loading)
+        nodataLottie = findViewById(R.id.no_data)
 
         btn_comment = findViewById(R.id.btn_comment)
         btn_report = findViewById(R.id.btn_report)
@@ -446,6 +456,9 @@ class CommentsActivity : AppCompatActivity(), CallBackData {
     }
 
     private fun commentView(id: Int, scope: CoroutineScope) {
+        cl_comment.visibility = View.VISIBLE
+        loadingLottie.visibility = View.VISIBLE
+        recyclerView.visibility = View.GONE
         scope.launch {
             try {
                 val postResponse = withContext(Dispatchers.IO) {
@@ -459,6 +472,10 @@ class CommentsActivity : AppCompatActivity(), CallBackData {
                 }
 
                 if (postResponse == null) {
+                    cl_comment.visibility = View.VISIBLE
+                    loadingLottie.visibility = View.GONE
+                    nodataLottie.visibility = View.VISIBLE
+                    recyclerView.visibility = View.GONE
                     // Handle kesalahan jika diperlukan
                     return@launch
                 }
@@ -481,6 +498,10 @@ class CommentsActivity : AppCompatActivity(), CallBackData {
 
                 newData.addAll(comments)
                 adapter.notifyDataSetChanged()
+                cl_comment.visibility = View.GONE
+                loadingLottie.visibility = View.GONE
+                nodataLottie.visibility = View.GONE
+                recyclerView.visibility = View.VISIBLE
             } catch (e: Exception) {
                 // Handle kesalahan jika diperlukan
             }
