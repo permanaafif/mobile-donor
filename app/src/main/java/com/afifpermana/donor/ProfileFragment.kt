@@ -52,7 +52,8 @@ class ProfileFragment : Fragment(), CallBackData {
 
     private lateinit var sw_layout : SwipeRefreshLayout
     private lateinit var cl_post : ConstraintLayout
-    private lateinit var lottie : LottieAnimationView
+    private lateinit var loadingLottie : LottieAnimationView
+    private lateinit var nodataLottie : LottieAnimationView
     private lateinit var edit : CardView
     private lateinit var ganti_password : CardView
     private lateinit var radioGroup: RadioGroup
@@ -92,7 +93,8 @@ class ProfileFragment : Fragment(), CallBackData {
 
         recyclerView = view.findViewById(R.id.rv_post_saya)
         cl_post = view.findViewById(R.id.cl_post_saya)
-        lottie = view.findViewById(R.id.animation_view_people_donor)
+        loadingLottie = view.findViewById(R.id.loading)
+        nodataLottie = view.findViewById(R.id.no_data)
         recyclerView.layoutManager = layoutManager
         recyclerView.setHasFixedSize(true)
         sharedPref = SharedPrefLogin(requireActivity())
@@ -129,20 +131,13 @@ class ProfileFragment : Fragment(), CallBackData {
         radioGroup.setOnCheckedChangeListener { group, checkedId ->
             when (checkedId) {
                 R.id.btn_semua -> {
-                    recyclerView.visibility = View.GONE
-                    cl_post.visibility = View.VISIBLE
-                    lottie.setAnimation(R.raw.animation_loading)
-                    lottie.playAnimation()
                     clearData()
                     postViewMe()
                     postFavorite()
                 }
                 R.id.btn_favorite -> {
-                    recyclerView.visibility = View.GONE
-                    cl_post.visibility = View.VISIBLE
-                    lottie.setAnimation(R.raw.animation_loading)
-                    lottie.playAnimation()
                     Log.e("abcd","1")
+                    clearData()
                     postFavorite()
                     Log.e("abcd","2")
                 }
@@ -188,7 +183,7 @@ class ProfileFragment : Fragment(), CallBackData {
         Log.e("abcd","3")
         for(post in data){
             var i = newDataPostFavorite.any { it.id_post == post.id }
-            Log.e("abcd","4")
+            Log.e("abcd",i.toString())
             if (i){
                 val data = Post(
                     post.id.toString().toInt(),
@@ -205,10 +200,10 @@ class ProfileFragment : Fragment(), CallBackData {
             }
         }
         Log.e("abcd","5")
+        cl_post.visibility = View.GONE
+        recyclerView.visibility = View.VISIBLE
         // Perbarui tampilan RecyclerView setelah memodifikasi newData
         adapter.notifyDataSetChanged()
-        recyclerView.visibility = View.VISIBLE
-        cl_post.visibility = View.GONE
     }
 
     private fun postView() {
@@ -255,6 +250,10 @@ class ProfileFragment : Fragment(), CallBackData {
     }
 
     private fun postViewMe() {
+        cl_post.visibility = View.VISIBLE
+        loadingLottie.visibility = View.VISIBLE
+        loadingLottie.playAnimation()
+        recyclerView.visibility = View.GONE
         val retro = Retro().getRetroClientInstance().create(PostAPI::class.java)
         retro.postMe("Bearer ${sharedPref.getString("token")}").enqueue(object :
             Callback<List<PostRespone>> {
@@ -262,32 +261,37 @@ class ProfileFragment : Fragment(), CallBackData {
                 call: Call<List<PostRespone>>,
                 response: Response<List<PostRespone>>
             ) {
+                Log.e("paaaa",response.code().toString())
                 if (response.isSuccessful) {
+                    Log.e("paaaa","succes")
                     val res = response.body()
-                    if (res.isNullOrEmpty()){
-                        cl_post.visibility = View.VISIBLE
-                        recyclerView.visibility = View.GONE
-                    }else{
+                    if (!res.isNullOrEmpty()){
+                        // Menggunakan sortedByDescending untuk mengurutkan berdasarkan tanggal terbaru
+                        for (i in res!!) {
+                            val data = Post(
+                                i.id.toString().toInt(),
+                                i.gambar_profile.toString(),
+                                i.nama.toString(),
+                                i.updated_at.toString(),
+                                i.text.toString(),
+                                i.gambar.toString(),
+                                i.jumlah_comment.toString().toInt(),
+                                true
+                            )
+                            newData.add(data)
+                        }
+                        Log.e("paaaa","as")
+                        adapter.notifyDataSetChanged()
                         cl_post.visibility = View.GONE
                         recyclerView.visibility = View.VISIBLE
                     }
-                    // Menggunakan sortedByDescending untuk mengurutkan berdasarkan tanggal terbaru
-                    for (i in res!!) {
-                        val data = Post(
-                            i.id.toString().toInt(),
-                            i.gambar_profile.toString(),
-                            i.nama.toString(),
-                            i.updated_at.toString(),
-                            i.text.toString(),
-                            i.gambar.toString(),
-                            i.jumlah_comment.toString().toInt(),
-                            true
-                        )
-                        newData.add(data)
-                    }
-                    adapter.notifyDataSetChanged()
-                    recyclerView.visibility = View.VISIBLE
-                    cl_post.visibility = View.GONE
+                }
+                if (response.code() == 404){
+                    cl_post.visibility = View.VISIBLE
+                    nodataLottie.visibility = View.VISIBLE
+                    nodataLottie.playAnimation()
+                    loadingLottie.visibility = View.GONE
+                    recyclerView.visibility = View.GONE
                 }
             }
 
@@ -469,6 +473,11 @@ class ProfileFragment : Fragment(), CallBackData {
         })
     }
     private fun postFavorite() {
+        cl_post.visibility = View.VISIBLE
+        nodataLottie.visibility = View.GONE
+        loadingLottie.visibility = View.VISIBLE
+        loadingLottie.playAnimation()
+        recyclerView.visibility = View.GONE
         val retro = Retro().getRetroClientInstance().create(PostFavoriteAPI::class.java)
         retro.postFavorite("Bearer ${sharedPref.getString("token")}").enqueue(object :
             Callback<List<PostFavoriteResponse>> {
@@ -495,12 +504,16 @@ class ProfileFragment : Fragment(), CallBackData {
                             postView()
                         }
                         adapter.notifyDataSetChanged()
-                        cl_post.visibility = View.GONE
-                        recyclerView.visibility = View.VISIBLE
                     }else{
-                        cl_post.visibility = View.VISIBLE
-                        recyclerView.visibility = View.GONE
-                        clearData()
+                        if (radioGroup.checkedRadioButtonId == R.id.btn_favorite){
+                            cl_post.visibility = View.VISIBLE
+                            loadingLottie.visibility = View.GONE
+                            nodataLottie.visibility = View.VISIBLE
+                            nodataLottie.setAnimation(R.raw.animation_not_jadwal)
+                            nodataLottie.playAnimation()
+                            recyclerView.visibility = View.GONE
+                        }
+
                     }
                 }else{
                     Toast.makeText(requireActivity(),"terjaadi kesalahan", Toast.LENGTH_SHORT).show()

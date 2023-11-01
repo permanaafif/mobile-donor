@@ -114,6 +114,7 @@ class PostAdapter(
 
         var isExpandFavorite = false
         var id = listPostFavorite.any { it.id_post == post.id }
+        Log.e("listfavprite", id.toString())
         if (id){
             isExpandFavorite = true
             holder.btn_favorite.setImageResource(R.drawable.baseline_simpan_post_ok)
