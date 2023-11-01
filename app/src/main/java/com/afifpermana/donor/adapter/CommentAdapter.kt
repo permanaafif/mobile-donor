@@ -2,6 +2,7 @@ package com.afifpermana.donor.adapter
 
 import android.content.Context
 import android.content.res.ColorStateList
+import android.os.Handler
 import android.text.Editable
 import android.text.TextUtils
 import android.text.TextWatcher
@@ -12,6 +13,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -20,6 +22,7 @@ import com.afifpermana.donor.R
 import com.afifpermana.donor.model.Comments
 import com.afifpermana.donor.model.Laporan
 import com.afifpermana.donor.service.CallBackData
+import com.airbnb.lottie.LottieAnimationView
 import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
 
@@ -56,11 +59,17 @@ class CommentAdapter(
             holder.lihat_balasan.setOnClickListener {
                 isExpanded = !isExpanded // Toggle status
                 if (isExpanded) {
-                    holder.rv_balas_comment.visibility = View.VISIBLE
-                    holder.tv_lihat_balasan.text = "Sembunyinkan"
-                    holder.icon_lihat_balasan.setImageResource(R.drawable.baseline_keyboard_arrow_up_24)
+                    holder.cl_balas_comment.visibility = View.VISIBLE
+                    holder.loadingLottie.visibility = View.VISIBLE
+                    Handler().postDelayed({
+                        holder.cl_balas_comment.visibility = View.GONE
+                        holder.rv_balas_comment.visibility = View.VISIBLE
+                        holder.tv_lihat_balasan.text = "Sembunyinkan"
+                        holder.icon_lihat_balasan.setImageResource(R.drawable.baseline_keyboard_arrow_up_24)
+                    },2000)
                 } else {
                     holder.rv_balas_comment.visibility = View.GONE
+                    holder.cl_balas_comment.visibility = View.GONE
                     holder.tv_lihat_balasan.text = "Lihat Balasan"
                     holder.icon_lihat_balasan.setImageResource(R.drawable.baseline_keyboard_arrow_down_24)
                 }
@@ -95,6 +104,8 @@ class CommentAdapter(
         val icon_lihat_balasan = view.findViewById<ImageView>(R.id.icon_lihat_balasan)
         val rv_balas_comment = view.findViewById<RecyclerView>(R.id.rv_balas_comment)
         val btn_report = view.findViewById<ImageView>(R.id.btn_report)
+        val cl_balas_comment = view.findViewById<ConstraintLayout>(R.id.cl_balas_comment)
+        val loadingLottie = view.findViewById<LottieAnimationView>(R.id.loading)
     }
 
     private fun showCostumeAlertDialog(context: Context, id:Int) {
