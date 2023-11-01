@@ -21,6 +21,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -55,6 +56,7 @@ import java.io.FileOutputStream
 class DiskusiFragment : Fragment(),CallBackData {
 
     private lateinit var sw_layout : SwipeRefreshLayout
+    private lateinit var cl_post : ConstraintLayout
     private lateinit var add_post: FloatingActionButton
     private lateinit var adapter: PostAdapter
     private lateinit var recyclerView: RecyclerView
@@ -75,6 +77,7 @@ class DiskusiFragment : Fragment(),CallBackData {
 
         recyclerView = view.findViewById(R.id.rv_post)
         sw_layout = view.findViewById(R.id.swlayout)
+        cl_post = view.findViewById(R.id.cl_post)
         add_post = view.findViewById(R.id.add_post)
 
         // Set up your RecyclerView and other functionality here
@@ -394,6 +397,13 @@ class DiskusiFragment : Fragment(),CallBackData {
             ) {
                 if (response.isSuccessful) {
                     val res = response.body()
+                    if (res.isNullOrEmpty()){
+                        cl_post.visibility = View.VISIBLE
+                        recyclerView.visibility = View.GONE
+                    }else{
+                        cl_post.visibility = View.GONE
+                        recyclerView.visibility = View.VISIBLE
+                    }
                     // Menggunakan sortedByDescending untuk mengurutkan berdasarkan tanggal terbaru
                     for (i in res!!) {
                         val data = Post(

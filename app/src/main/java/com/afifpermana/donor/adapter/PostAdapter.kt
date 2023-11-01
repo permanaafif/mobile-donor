@@ -36,7 +36,6 @@ class PostAdapter(
     private val listPostFavorite : List<PostFavorite>,
     private val context: Context,
     private var dataCallBack: CallBackData,
-    var profile : Boolean? = false
 ): RecyclerView.Adapter<PostAdapter.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int)= ViewHolder(
         LayoutInflater.from(parent.context).inflate(R.layout.card_post_diskusi, parent, false)
@@ -44,7 +43,7 @@ class PostAdapter(
 
     override fun onBindViewHolder(holder: PostAdapter.ViewHolder, position: Int) {
         val post = listPost[position]
-        var path_foto_profile = "http://10.0.2.2:8000/images/${post.foto_profile}"
+        var path_foto_profile = "http://213.35.121.183/images/${post.foto_profile}"
         if (post.foto_profile != "null"){
             Picasso.get().load(path_foto_profile).into(holder.foto_profile)
         }
@@ -88,7 +87,7 @@ class PostAdapter(
             }
         }
 
-        var path_gambar = "http://10.0.2.2:8000/assets/post/${post.gambar}"
+        var path_gambar = "http://213.35.121.183/assets/post/${post.gambar}"
         if (post.gambar.toString() != "null"){
             Picasso.get().load(path_gambar).into(holder.gambar)
             holder.gambar?.visibility = View.VISIBLE
@@ -137,7 +136,9 @@ class PostAdapter(
             }
         }
 
-        if (profile == true){
+        if (post.status == false){
+            holder.btn_delete.visibility = View.GONE
+        }else{
             holder.btn_delete.visibility = View.VISIBLE
             holder.btn_delete.setOnClickListener {
                 dataCallBack.onDeletePost(post.id)
@@ -219,5 +220,4 @@ class PostAdapter(
         dialog.show()
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
     }
-
 }

@@ -123,6 +123,8 @@ class LoginActivity : AppCompatActivity() {
 
             override fun onFailure(call: Call<PendonorLoginResponse>, t: Throwable) {
                 Log.e("Loginn", t.message.toString())
+                loadingProgressBar.visibility = View.GONE
+                login.visibility = View.VISIBLE
             }
         })
     }

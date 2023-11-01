@@ -17,6 +17,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.cardview.widget.CardView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -49,6 +50,7 @@ import retrofit2.Response
 class ProfileFragment : Fragment(), CallBackData {
 
     private lateinit var sw_layout : SwipeRefreshLayout
+    private lateinit var cl_post : ConstraintLayout
     private lateinit var edit : CardView
     private lateinit var ganti_password : CardView
     private lateinit var radioGroup: RadioGroup
@@ -66,7 +68,6 @@ class ProfileFragment : Fragment(), CallBackData {
     private lateinit var kontak : String
     private lateinit var berat_badan : String
     var pathFoto : String? = null
-    var postinganMe = false
 
     private lateinit var adapter: PostAdapter
     private lateinit var recyclerView: RecyclerView
@@ -88,13 +89,14 @@ class ProfileFragment : Fragment(), CallBackData {
         val layoutManager = LinearLayoutManager(context)
 
         recyclerView = view.findViewById(R.id.rv_post_saya)
+        cl_post = view.findViewById(R.id.cl_post_saya)
         recyclerView.layoutManager = layoutManager
         recyclerView.setHasFixedSize(true)
         sharedPref = SharedPrefLogin(requireActivity())
 
         postViewMe()
 
-        adapter = PostAdapter(newData,newDataPostFavorite,requireContext(),this,postinganMe)
+        adapter = PostAdapter(newData,newDataPostFavorite,requireContext(),this)
         recyclerView.adapter = adapter
 
         postFavorite()
@@ -125,13 +127,11 @@ class ProfileFragment : Fragment(), CallBackData {
             when (checkedId) {
                 R.id.btn_semua -> {
                     clearData()
-                    postinganMe = true
                     postViewMe()
                     postFavorite()
                 }
                 R.id.btn_favorite -> {
                     Log.e("abcd","1")
-                    postinganMe = false
                     postFavorite()
                     Log.e("abcd","2")
                 }
@@ -186,7 +186,8 @@ class ProfileFragment : Fragment(), CallBackData {
                     post.upload.toString(),
                     post.text.toString(),
                     post.gambar.toString(),
-                    post.jumlah_comment.toString().toInt()
+                    post.jumlah_comment.toString().toInt(),
+                    false
                 )
                 newData.add(data)
                 Log.e("abcd",data.toString())
@@ -250,6 +251,13 @@ class ProfileFragment : Fragment(), CallBackData {
             ) {
                 if (response.isSuccessful) {
                     val res = response.body()
+                    if (res.isNullOrEmpty()){
+                        cl_post.visibility = View.VISIBLE
+                        recyclerView.visibility = View.GONE
+                    }else{
+                        cl_post.visibility = View.GONE
+                        recyclerView.visibility = View.VISIBLE
+                    }
                     // Menggunakan sortedByDescending untuk mengurutkan berdasarkan tanggal terbaru
                     for (i in res!!) {
                         val data = Post(
@@ -259,7 +267,7 @@ class ProfileFragment : Fragment(), CallBackData {
                             i.updated_at.toString(),
                             i.text.toString(),
                             i.gambar.toString(),
-                            i.jumlah_comment.toString().toInt()
+                            i.jumlah_comment.toString().toInt(),
                         )
                         newData.add(data)
                     }
@@ -472,6 +480,8 @@ class ProfileFragment : Fragment(), CallBackData {
                         }
                         adapter.notifyDataSetChanged()
                     }else{
+                        cl_post.visibility = View.VISIBLE
+                        recyclerView.visibility = View.GONE
                         clearData()
                     }
                 }else{

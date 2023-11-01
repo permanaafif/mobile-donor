@@ -7,5 +7,6 @@ data class Post(
     val upload : String,
     val text : String,
     val gambar : String,
-    val jumlah_comment : Int
+    val jumlah_comment : Int,
+    val status : Boolean? = null
 )
