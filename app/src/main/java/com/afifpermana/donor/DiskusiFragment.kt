@@ -42,6 +42,7 @@ import com.afifpermana.donor.service.PostAPI
 import com.afifpermana.donor.service.PostFavoriteAPI
 import com.afifpermana.donor.util.Retro
 import com.afifpermana.donor.util.SharedPrefLogin
+import com.airbnb.lottie.LottieAnimationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import okhttp3.MediaType
 import okhttp3.MultipartBody
@@ -57,6 +58,8 @@ class DiskusiFragment : Fragment(),CallBackData {
 
     private lateinit var sw_layout : SwipeRefreshLayout
     private lateinit var cl_post : ConstraintLayout
+    private lateinit var loadingLottie : LottieAnimationView
+    private lateinit var nodataLottie : LottieAnimationView
     private lateinit var add_post: FloatingActionButton
     private lateinit var adapter: PostAdapter
     private lateinit var recyclerView: RecyclerView
@@ -79,6 +82,8 @@ class DiskusiFragment : Fragment(),CallBackData {
         sw_layout = view.findViewById(R.id.swlayout)
         cl_post = view.findViewById(R.id.cl_post)
         add_post = view.findViewById(R.id.add_post)
+        loadingLottie = view.findViewById(R.id.loading)
+        nodataLottie = view.findViewById(R.id.no_data)
 
         // Set up your RecyclerView and other functionality here
         recyclerView.layoutManager = LinearLayoutManager(context)
@@ -388,6 +393,9 @@ class DiskusiFragment : Fragment(),CallBackData {
 
 
     private fun postView() {
+        cl_post.visibility = View.VISIBLE
+        recyclerView.visibility = View.GONE
+        loadingLottie.visibility = View.VISIBLE
         val retro = Retro().getRetroClientInstance().create(PostAPI::class.java)
         retro.post("Bearer ${sharedPref.getString("token")}").enqueue(object :
             Callback<List<PostRespone>> {
@@ -395,35 +403,46 @@ class DiskusiFragment : Fragment(),CallBackData {
                 call: Call<List<PostRespone>>,
                 response: Response<List<PostRespone>>
             ) {
+                Log.e("pesanden",response.code().toString())
                 if (response.isSuccessful) {
                     val res = response.body()
                     if (res.isNullOrEmpty()){
                         cl_post.visibility = View.VISIBLE
+                        loadingLottie.visibility = View.GONE
+                        nodataLottie.visibility = View.VISIBLE
                         recyclerView.visibility = View.GONE
                     }else{
+                        // Menggunakan sortedByDescending untuk mengurutkan berdasarkan tanggal terbaru
+                        for (i in res!!) {
+                            val data = Post(
+                                i.id.toString().toInt(),
+                                i.gambar_profile.toString(),
+                                i.nama.toString(),
+                                i.updated_at.toString(),
+                                i.text.toString(),
+                                i.gambar.toString(),
+                                i.jumlah_comment.toString().toInt()
+                            )
+                            newData.add(data)
+                        }
+                        adapter.notifyDataSetChanged()
                         cl_post.visibility = View.GONE
+                        loadingLottie.visibility = View.VISIBLE
+                        nodataLottie.visibility = View.GONE
                         recyclerView.visibility = View.VISIBLE
                     }
-                    // Menggunakan sortedByDescending untuk mengurutkan berdasarkan tanggal terbaru
-                    for (i in res!!) {
-                        val data = Post(
-                            i.id.toString().toInt(),
-                            i.gambar_profile.toString(),
-                            i.nama.toString(),
-                            i.updated_at.toString(),
-                            i.text.toString(),
-                            i.gambar.toString(),
-                            i.jumlah_comment.toString().toInt()
-                        )
-                        newData.add(data)
-                    }
-                    adapter.notifyDataSetChanged()
+                }
+                if(response.code() == 404){
+                    cl_post.visibility = View.VISIBLE
+                    loadingLottie.visibility = View.GONE
+                    nodataLottie.visibility = View.VISIBLE
+                    recyclerView.visibility = View.GONE
                 }
             }
 
             override fun onFailure(call: Call<List<PostRespone>>, t: Throwable) {
                 Toast.makeText(requireActivity(), t.message.toString(), Toast.LENGTH_SHORT).show()
-                Log.e("masalah", t.message.toString())
+                Log.e("pesanden", t.message.toString())
             }
         })
     }
