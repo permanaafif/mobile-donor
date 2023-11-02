@@ -17,12 +17,18 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.afifpermana.donor.model.HomeResponse
+import com.afifpermana.donor.model.User
 import com.afifpermana.donor.service.HomeAPI
 import com.afifpermana.donor.service.PendonorLoginAPI
 import com.afifpermana.donor.util.Retro
 import com.afifpermana.donor.util.SharedPrefLogin
 import com.example.belajarapi.model.PendonorLoginResponse
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.Firebase
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.IgnoreExtraProperties
+import com.google.firebase.database.database
 import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
 import retrofit2.Call
@@ -35,6 +41,7 @@ import kotlin.math.log
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var database: DatabaseReference
     private lateinit var bottomNavigationView: BottomNavigationView
     private lateinit var radioGroup: RadioGroup
     private lateinit var frameLayout: FrameLayout
@@ -56,6 +63,8 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(this, SplashScreenActivity::class.java))
             finish()
         }else{
+//            database = Firebase.database.reference
+//            writeNewUser("1","afif","afif@gmail.com")
             homeView()
             setContentView(R.layout.activity_main)
             frameLayout = findViewById(R.id.frame_container)
@@ -126,6 +135,11 @@ class MainActivity : AppCompatActivity() {
             replaceFragmentHome(ArtikelFragment())
         }
     }
+//    fun writeNewUser(userId: String, name: String, email: String) {
+//        val user = User(name, email)
+//
+//        database.child("users").child(userId).setValue(user)
+//    }
 
     private fun homeView() {
         val retro = Retro().getRetroClientInstance().create(HomeAPI::class.java)
