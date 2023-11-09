@@ -1,6 +1,5 @@
 package com.afifpermana.donor
 
-import android.annotation.SuppressLint
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
@@ -11,24 +10,19 @@ import android.util.Log
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.LinearLayout
-import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.TextView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.afifpermana.donor.model.HomeResponse
-import com.afifpermana.donor.model.User
+import com.afifpermana.donor.model.SendTokenFCMToServerResponse
 import com.afifpermana.donor.service.HomeAPI
-import com.afifpermana.donor.service.PendonorLoginAPI
+import com.afifpermana.donor.service.SendTokenFCMAPI
 import com.afifpermana.donor.util.Retro
 import com.afifpermana.donor.util.SharedPrefLogin
-import com.example.belajarapi.model.PendonorLoginResponse
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.firebase.Firebase
+import com.google.firebase.FirebaseApp
 import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.IgnoreExtraProperties
-import com.google.firebase.database.database
+import com.google.firebase.messaging.FirebaseMessaging
 import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
 import retrofit2.Call
@@ -63,8 +57,25 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(this, SplashScreenActivity::class.java))
             finish()
         }else{
+            FirebaseApp.initializeApp(this)
+            FirebaseMessaging.getInstance().isAutoInitEnabled = true
+
+            FirebaseMessaging.getInstance().token
+                .addOnCompleteListener { task ->
+                    if (!task.isSuccessful) {
+                        Log.e("token_fcm", "Fetching FCM token failed", task.exception)
+                        return@addOnCompleteListener
+                    }
+
+                    // Dapatkan token FCM pengguna
+                    val token = task.result
+                    Log.e("token_fcm", token)
+                    // Kirim token ke server (Laravel)
+                }
+
 //            database = Firebase.database.reference
 //            writeNewUser("1","afif","afif@gmail.com")
+            sendTokenToServer(sharedPref.getString("token_fcm").toString())
             homeView()
             setContentView(R.layout.activity_main)
             frameLayout = findViewById(R.id.frame_container)
@@ -135,6 +146,31 @@ class MainActivity : AppCompatActivity() {
             replaceFragmentHome(ArtikelFragment())
         }
     }
+
+    private fun sendTokenToServer(token: String) {
+        Log.e("testing","sendTokenToServer")
+        val retro = Retro().getRetroClientInstance().create(SendTokenFCMAPI::class.java)
+        retro.senToken("Bearer ${sharedPref.getString("token")}",token).enqueue(object : Callback<SendTokenFCMToServerResponse> {
+            override fun onResponse(
+                call: Call<SendTokenFCMToServerResponse>,
+                response: Response<SendTokenFCMToServerResponse>
+            ) {
+                if (response.isSuccessful){
+                    var res = response.body()
+                    if (res?.success == true){
+                        Log.e("success","success")
+                    }else{
+                        //
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<SendTokenFCMToServerResponse>, t: Throwable) {
+                Log.e("error",t.message.toString())
+            }
+        })
+    }
+
 //    fun writeNewUser(userId: String, name: String, email: String) {
 //        val user = User(name, email)
 //

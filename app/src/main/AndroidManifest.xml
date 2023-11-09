@@ -27,6 +27,14 @@
         <activity
             android:name=".CommentsActivity"
             android:exported="false" />
+        
+        <service
+            android:name=".service.MyFirebaseMessagingService"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
 
         <receiver
             android:name=".AlarmReceiver"
