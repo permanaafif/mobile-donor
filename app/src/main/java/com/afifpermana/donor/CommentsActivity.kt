@@ -23,6 +23,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -60,6 +61,7 @@ class CommentsActivity : AppCompatActivity(), CallBackData {
     private lateinit var et_comment : EditText
     private lateinit var send_comment : ImageView
 
+    private lateinit var nestedScrollView: NestedScrollView
     private lateinit var cl_comment : ConstraintLayout
     private lateinit var loadingLottie : LottieAnimationView
     private lateinit var nodataLottie : LottieAnimationView
@@ -90,6 +92,8 @@ class CommentsActivity : AppCompatActivity(), CallBackData {
     var b : Bundle? =null
     lateinit var sharedPref: SharedPrefLogin
     var id_post = 0
+    var id_comment = 0
+    var id_balas_comment = 0
     var id_commentar : Int? = null
     var statusComment = false
     var statusPostFavorit = false
@@ -105,6 +109,7 @@ class CommentsActivity : AppCompatActivity(), CallBackData {
         sw_layout = findViewById(R.id.swlayout)
         sw_layout.setColorSchemeResources(R.color.blue,R.color.red)
 
+        nestedScrollView = findViewById(R.id.nested)
         cl_comment = findViewById(R.id.cl_comment)
         loadingLottie = findViewById(R.id.loading)
         nodataLottie = findViewById(R.id.no_data)
@@ -120,39 +125,6 @@ class CommentsActivity : AppCompatActivity(), CallBackData {
         ll_balas_comment = findViewById(R.id.ll_balas_comment)
         close = findViewById(R.id.close)
         recyclerView.adapter = adapter
-
-        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-
-                // Mendapatkan posisi terakhir yang terlihat
-                val layoutManager = recyclerView.layoutManager as LinearLayoutManager
-                val lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition()
-
-                // Durasi animasi (ms)
-                val animationDuration = 300L
-
-                // Jika sedang scroll ke bawah dan ll_comment tidak terlihat
-                if (dy > 0 && ll_comment.visibility == View.VISIBLE) {
-                    ll_comment.animate()
-                        .alpha(0f) // Mengubah alpha menjadi 0 (transparan)
-                        .setDuration(animationDuration)
-                        .withEndAction {
-                            ll_comment.visibility = View.GONE
-                        }
-                        .start()
-                } else if (dy < 0 && ll_comment.visibility != View.VISIBLE) {
-                    // Jika scroll ke atas dan ll_comment terlihat
-                    ll_comment.alpha = 0f // Set alpha menjadi 0 agar mulai transparan
-                    ll_comment.visibility = View.VISIBLE
-                    ll_comment.animate()
-                        .alpha(1f) // Mengubah alpha menjadi 1 (terlihat)
-                        .setDuration(animationDuration)
-                        .start()
-                }
-            }
-        })
-
 
         sharedPref = SharedPrefLogin(this)
         b = intent.extras
@@ -243,6 +215,7 @@ class CommentsActivity : AppCompatActivity(), CallBackData {
             val Handler = Handler(Looper.getMainLooper())
             Handler().postDelayed(Runnable {
                 clearData()
+                id_comment = 0
                 findPost(id_post)
                 commentView(id_post,scope)
                 sw_layout.isRefreshing = false
@@ -254,6 +227,44 @@ class CommentsActivity : AppCompatActivity(), CallBackData {
             balas_comment_to.text = ""
             statusComment = false
             Log.e("statuscomment", "false")
+        }
+
+        id_comment = b!!.getInt("id_comment")
+        id_balas_comment = b!!.getInt("id_balas_comment")
+
+        nestedScrollView.setOnScrollChangeListener { _, _, scrollY, _, _ ->
+            // scrollY berisi posisi scroll vertikal
+            // Lakukan sesuatu dengan nilai scrollY
+            // Misalnya, tampilkan dalam log
+            id_comment = 0
+           Log.e("nested",scrollY.toString())
+        }
+
+
+        //berjalan ketika ui sudah selesai di buat
+        nestedScrollView.viewTreeObserver.addOnGlobalLayoutListener {
+        if(id_comment != 0){
+            val targetItemId = id_comment // Gantilah dengan ID item yang sesuai
+            if (layoutManager != null && layoutManager is LinearLayoutManager) {
+                val adapter = recyclerView.adapter
+                if (adapter != null) {
+                    val itemCount = adapter.itemCount
+                    for (i in 0 until itemCount) {
+                        val item = newData[i] // Gantilah newData dengan sumber data Anda
+                        if (item.id_comment == targetItemId) {
+                            // Temukan posisi item yang sesuai, lalu geser scroll ke posisi tersebut
+                            val position = i
+                            Log.e("nestedddd",position.toString())
+                            nestedScrollView.post {
+                                nestedScrollView.smoothScrollTo(0, recyclerView.getChildAt(position)?.top ?: 0)
+                                // atau nestedScrollView.scrollTo(0, recyclerView.getChildAt(position)?.top ?: 0)
+                            }
+                            break
+                        }
+                    }
+                }
+            }
+        }
         }
     }
 

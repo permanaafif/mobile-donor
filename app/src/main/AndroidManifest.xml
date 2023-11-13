@@ -25,14 +25,17 @@
         android:theme="@style/My.Theme"
         tools:targetApi="31">
         <activity
+            android:name=".NotifikasiActivity"
+            android:exported="false" />
+        <activity
             android:name=".CommentsActivity"
             android:exported="false" />
-        
+
         <service
             android:name=".service.MyFirebaseMessagingService"
             android:exported="true">
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
 
@@ -67,7 +70,7 @@
             android:exported="false" />
         <activity
             android:name=".SplashScreenActivity"
-            android:exported="false"></activity>
+            android:exported="false" />
         <activity
             android:name=".ArtikelActivity"
             android:exported="false" />

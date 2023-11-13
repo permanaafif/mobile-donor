@@ -12,10 +12,13 @@ import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.RadioGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.afifpermana.donor.model.HomeResponse
 import com.afifpermana.donor.model.SendTokenFCMToServerResponse
+import com.afifpermana.donor.model.TotalNotifResponse
 import com.afifpermana.donor.service.HomeAPI
+import com.afifpermana.donor.service.NotifikasiAPI
 import com.afifpermana.donor.service.SendTokenFCMAPI
 import com.afifpermana.donor.util.Retro
 import com.afifpermana.donor.util.SharedPrefLogin
@@ -82,13 +85,14 @@ class MainActivity : AppCompatActivity() {
             linearLayout = findViewById(R.id.home)
             linearLayout.visibility = View.VISIBLE
 
-
             nama = findViewById(R.id.nama)
             kodePendonor = findViewById(R.id.kode_donor)
             goldar = findViewById(R.id.text_goldar)
             beratBadan = findViewById(R.id.text_berat_badan)
             jadwalTerdekat = findViewById(R.id.text_jadwal_terdekat)
             fotoProfile = findViewById(R.id.foto_profile)
+
+            totalNotif()
 
             radioGroup = findViewById(R.id.rg)
             radioGroup.setOnCheckedChangeListener { group, checkedId ->
@@ -114,6 +118,7 @@ class MainActivity : AppCompatActivity() {
                     R.id.btn_home -> {
                         radioGroup.check(R.id.btn_artikel)
                         homeView()
+                        totalNotif()
                         frameLayout.visibility = View.GONE
                         linearLayout.visibility = View.VISIBLE
                         true
@@ -122,22 +127,30 @@ class MainActivity : AppCompatActivity() {
                         replaceFragment(LocationFragment())
                         linearLayout.visibility = View.GONE
                         frameLayout.visibility = View.VISIBLE
+                        totalNotif()
                         true
                     }R.id.btn_forum -> {
                         replaceFragment(DiskusiFragment())
                         linearLayout.visibility = View.GONE
                         frameLayout.visibility = View.VISIBLE
+                        totalNotif()
                         true
                     }R.id.btn_riwayat -> {
                         replaceFragment(RiwayatDonorFragment())
                         linearLayout.visibility = View.GONE
                         frameLayout.visibility = View.VISIBLE
+                        totalNotif()
                         true
                     }
                     R.id.btn_profile -> {
                         replaceFragment(ProfileFragment())
                         linearLayout.visibility = View.GONE
                         frameLayout.visibility = View.VISIBLE
+                        bottomNavigationView.getOrCreateBadge(R.id.btn_profile).apply {
+                            number = 0
+                            isVisible = false
+                            backgroundColor = resources.getColor(R.color.red)
+                        }
                         true
                     }
                     else -> false
@@ -146,7 +159,32 @@ class MainActivity : AppCompatActivity() {
             replaceFragmentHome(ArtikelFragment())
         }
     }
+    private fun totalNotif() {
+        val retro = Retro().getRetroClientInstance().create(NotifikasiAPI::class.java)
+        retro.totalNotif("Bearer ${sharedPref.getString("token")}").enqueue(object :
+            Callback<TotalNotifResponse> {
+            override fun onResponse(
+                call: Call<TotalNotifResponse>,
+                response: Response<TotalNotifResponse>
+            ) {
+                if (response.isSuccessful){
+                    val res = response.body()
+                    if (res?.total_notif != 0){
+                        bottomNavigationView.getOrCreateBadge(R.id.btn_profile).apply {
+                            number = res?.total_notif.toString().toInt()
+                            isVisible = true
+                            backgroundColor = resources.getColor(R.color.red)
+                        }
+                    }
+                }
+            }
 
+            override fun onFailure(call: Call<TotalNotifResponse>, t: Throwable) {
+                Toast.makeText(applicationContext, t.message.toString(), Toast.LENGTH_SHORT).show()
+                Log.e("masalah", t.message.toString())
+            }
+        })
+    }
     private fun sendTokenToServer(token: String) {
         Log.e("testing","sendTokenToServer")
         val retro = Retro().getRetroClientInstance().create(SendTokenFCMAPI::class.java)

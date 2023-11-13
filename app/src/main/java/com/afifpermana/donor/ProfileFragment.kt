@@ -33,8 +33,10 @@ import com.afifpermana.donor.model.PostFavoriteResponse2
 import com.afifpermana.donor.model.PostRespone
 import com.afifpermana.donor.model.PostResponse2
 import com.afifpermana.donor.model.ProfileResponse
+import com.afifpermana.donor.model.TotalNotifResponse
 import com.afifpermana.donor.service.CallBackData
 import com.afifpermana.donor.service.LaporanAPI
+import com.afifpermana.donor.service.NotifikasiAPI
 import com.afifpermana.donor.service.PendonorLogoutAPI
 import com.afifpermana.donor.service.PostAPI
 import com.afifpermana.donor.service.PostFavoriteAPI
@@ -56,9 +58,13 @@ class ProfileFragment : Fragment(), CallBackData {
     private lateinit var nodataLottie : LottieAnimationView
     private lateinit var edit : CardView
     private lateinit var ganti_password : CardView
+    private lateinit var notif : CardView
     private lateinit var radioGroup: RadioGroup
     private lateinit var logout : ImageView
     private lateinit var sharedPref: SharedPrefLogin
+
+    private lateinit var cv_notif_badge : CardView
+    private lateinit var tv_text_notif_badge : TextView
 
     private lateinit var fotoProfile : CircleImageView
     private lateinit var nama : TextView
@@ -99,6 +105,11 @@ class ProfileFragment : Fragment(), CallBackData {
         recyclerView.setHasFixedSize(true)
         sharedPref = SharedPrefLogin(requireActivity())
 
+        cv_notif_badge = view.findViewById(R.id.cv_notif_badge)
+        tv_text_notif_badge = view.findViewById(R.id.tv_text_notif_badge)
+
+        totalNotif()
+
         postViewMe()
 
         adapter = PostAdapter(newData,newDataPostFavorite,requireContext(),this)
@@ -113,6 +124,8 @@ class ProfileFragment : Fragment(), CallBackData {
             val Handler = Handler(Looper.getMainLooper())
             Handler().postDelayed(Runnable {
                 clearData()
+                profileView()
+                totalNotif()
                 if (radioGroup.checkedRadioButtonId == R.id.btn_favorite){
                     Log.e("btnfav","fav")
                     postFavorite()
@@ -121,7 +134,6 @@ class ProfileFragment : Fragment(), CallBackData {
                     postViewMe()
                     postFavorite()
                 }
-                profileView()
                 sw_layout.isRefreshing = false
             }, 1000)
         }
@@ -147,6 +159,7 @@ class ProfileFragment : Fragment(), CallBackData {
         edit = view.findViewById(R.id.cv_edit_profile)
         logout = view.findViewById(R.id.btnLogOut)
         ganti_password = view.findViewById(R.id.cv_ganti_password)
+        notif = view.findViewById(R.id.cv_notifikasi)
         fotoProfile = view.findViewById(R.id.foto)
         nama = view.findViewById(R.id.nama)
         kode_pendonor = view.findViewById(R.id.kode)
@@ -170,9 +183,39 @@ class ProfileFragment : Fragment(), CallBackData {
             startActivity(intent)
         }
 
+        notif.setOnClickListener{
+            val intent = Intent(context,NotifikasiActivity::class.java)
+            startActivity(intent)
+        }
+
         logout.setOnClickListener{
             showCostumeAlertDialog("logout")
         }
+    }
+    private fun totalNotif() {
+        val retro = Retro().getRetroClientInstance().create(NotifikasiAPI::class.java)
+        retro.totalNotif("Bearer ${sharedPref.getString("token")}").enqueue(object :
+            Callback<TotalNotifResponse> {
+            override fun onResponse(
+                call: Call<TotalNotifResponse>,
+                response: Response<TotalNotifResponse>
+            ) {
+                if (response.isSuccessful){
+                    val res = response.body()
+                    if (res?.total_notif != 0){
+                        cv_notif_badge.visibility = View.VISIBLE
+                        tv_text_notif_badge.text = res!!.total_notif.toString()
+                    }else{
+                        cv_notif_badge.visibility = View.GONE
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<TotalNotifResponse>, t: Throwable) {
+                Toast.makeText(requireActivity(), t.message.toString(), Toast.LENGTH_SHORT).show()
+                Log.e("masalah", t.message.toString())
+            }
+        })
     }
 
     // masih bermasalah di fungsi ini
@@ -305,6 +348,7 @@ class ProfileFragment : Fragment(), CallBackData {
     override fun onResume() {
         super.onResume()
         profileView()
+        totalNotif()
     }
 
     private fun profileView() {
