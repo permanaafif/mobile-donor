@@ -1,9 +1,12 @@
 package com.afifpermana.donor
 
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.Gravity
 import androidx.fragment.app.Fragment
@@ -11,13 +14,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.RadioGroup
+import android.widget.RatingBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -33,6 +39,8 @@ import com.afifpermana.donor.model.PostFavoriteResponse2
 import com.afifpermana.donor.model.PostRespone
 import com.afifpermana.donor.model.PostResponse2
 import com.afifpermana.donor.model.ProfileResponse
+import com.afifpermana.donor.model.RatingRequest
+import com.afifpermana.donor.model.RatingResponse
 import com.afifpermana.donor.model.TotalNotifResponse
 import com.afifpermana.donor.service.CallBackData
 import com.afifpermana.donor.service.LaporanAPI
@@ -41,6 +49,7 @@ import com.afifpermana.donor.service.PendonorLogoutAPI
 import com.afifpermana.donor.service.PostAPI
 import com.afifpermana.donor.service.PostFavoriteAPI
 import com.afifpermana.donor.service.ProfileAPI
+import com.afifpermana.donor.service.RatingAPI
 import com.afifpermana.donor.util.Retro
 import com.afifpermana.donor.util.SharedPrefLogin
 import com.airbnb.lottie.LottieAnimationView
@@ -58,6 +67,7 @@ class ProfileFragment : Fragment(), CallBackData {
     private lateinit var nodataLottie : LottieAnimationView
     private lateinit var edit : CardView
     private lateinit var ganti_password : CardView
+    private lateinit var rating_app : CardView
     private lateinit var notif : CardView
     private lateinit var radioGroup: RadioGroup
     private lateinit var logout : ImageView
@@ -159,6 +169,7 @@ class ProfileFragment : Fragment(), CallBackData {
         edit = view.findViewById(R.id.cv_edit_profile)
         logout = view.findViewById(R.id.btnLogOut)
         ganti_password = view.findViewById(R.id.cv_ganti_password)
+        rating_app = view.findViewById(R.id.cv_rating)
         notif = view.findViewById(R.id.cv_notifikasi)
         fotoProfile = view.findViewById(R.id.foto)
         nama = view.findViewById(R.id.nama)
@@ -183,6 +194,10 @@ class ProfileFragment : Fragment(), CallBackData {
             startActivity(intent)
         }
 
+        rating_app.setOnClickListener {
+            ratingAlert()
+        }
+
         notif.setOnClickListener{
             val intent = Intent(context,NotifikasiActivity::class.java)
             startActivity(intent)
@@ -192,6 +207,90 @@ class ProfileFragment : Fragment(), CallBackData {
             showCostumeAlertDialog("logout")
         }
     }
+
+    private fun ratingAlert() {
+        val builder = AlertDialog.Builder(requireContext())
+        val customeView = LayoutInflater.from(requireContext()).inflate(R.layout.alert_add_rating,null)
+        builder.setView(customeView)
+        val dialog = builder.create()
+        // Tambahkan ini untuk menghindari menutup dialog saat menekan di luar area dialog
+        dialog.setCanceledOnTouchOutside(false)
+        val close = customeView.findViewById<ImageView>(R.id.close)
+        close.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        val rating = customeView.findViewById<RatingBar>(R.id.ratingBar)
+        rating.onRatingBarChangeListener =
+            RatingBar.OnRatingBarChangeListener { _, rating, _ ->
+                //
+            }
+        val text = customeView.findViewById<EditText>(R.id.pesan)
+        val textHelper = customeView.findViewById<TextView>(R.id.helper)
+        val post = customeView.findViewById<ImageView>(R.id.send)
+        text.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+                val textLength = s?.length ?: 0
+                if(textLength == 0){
+                    post.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.green))
+                }
+                else if (textLength <= 20){
+                    post.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.grey))
+                    textHelper.visibility = View.VISIBLE
+                    textHelper.text = "Deskripsi minimal 20 karakter"
+                }else{
+                    post.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.green))
+                    textHelper.visibility = View.GONE
+                }
+            }
+        })
+
+        post.setOnClickListener {
+            if (post.backgroundTintList == ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.green))){
+                addRating(rating.rating.toInt(),text.text.toString(),dialog)
+            }
+        }
+        dialog.show()
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+    }
+
+    private fun addRating(star: Int, text:String?,dialog: AlertDialog) {
+        val data = RatingRequest()
+        data.text = text
+        data.star = star
+        val retro = Retro().getRetroClientInstance().create(RatingAPI::class.java)
+        retro.testimonial("Bearer ${sharedPref.getString("token")}",data).enqueue(object :
+            Callback<RatingResponse> {
+            override fun onResponse(
+                call: Call<RatingResponse>,
+                response: Response<RatingResponse>
+            ) {
+                if (response.isSuccessful){
+                    val res = response.body()
+                    if (res?.success == true){
+                        Toast.makeText(requireActivity(), "Berhasil memberikan rating", Toast.LENGTH_SHORT).show()
+                        dialog.dismiss()
+                    }else{
+                        Toast.makeText(requireActivity(), "Gagal memberikan rating", Toast.LENGTH_SHORT).show()
+                        dialog.dismiss()
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<RatingResponse>, t: Throwable) {
+                Log.e("masalah", t.message.toString())
+            }
+        })
+    }
+
     private fun totalNotif() {
         val retro = Retro().getRetroClientInstance().create(NotifikasiAPI::class.java)
         retro.totalNotif("Bearer ${sharedPref.getString("token")}").enqueue(object :
