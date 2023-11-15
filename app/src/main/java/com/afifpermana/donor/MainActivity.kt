@@ -259,15 +259,14 @@ class MainActivity : AppCompatActivity() {
                         }
                     }
                     else{
-                        //
+                        sharedPref.logOut()
+                        sharedPref.setStatusLogin(false)
+                        startActivity(Intent(this@MainActivity, LoginActivity::class.java))
+                        finish()
                     }
                 }
 
                 override fun onFailure(call: Call<HomeResponse>, t: Throwable) {
-                    sharedPref.logOut()
-                    sharedPref.setStatusLogin(false)
-                    startActivity(Intent(this@MainActivity, LoginActivity::class.java))
-                    finish()
                     Log.e("Status response", t.message.toString())
                 }
             })
