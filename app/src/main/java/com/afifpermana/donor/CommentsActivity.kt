@@ -232,6 +232,10 @@ class CommentsActivity : AppCompatActivity(), CallBackData {
         id_comment = b!!.getInt("id_comment")
         id_balas_comment = b!!.getInt("id_balas_comment")
 
+        if (id_balas_comment != 0){
+            adapter.balasanComment(id_comment)
+        }
+
         nestedScrollView.setOnScrollChangeListener { _, _, scrollY, _, _ ->
             // scrollY berisi posisi scroll vertikal
             // Lakukan sesuatu dengan nilai scrollY

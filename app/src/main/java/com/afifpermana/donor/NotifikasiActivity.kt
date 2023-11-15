@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.View
 import android.widget.ImageButton
 import android.widget.Toast
@@ -25,6 +26,7 @@ import com.afifpermana.donor.service.CallBackNotif
 import com.afifpermana.donor.service.NotifikasiAPI
 import com.afifpermana.donor.util.Retro
 import com.afifpermana.donor.util.SharedPrefLogin
+import com.airbnb.lottie.LottieAnimationView
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -33,6 +35,8 @@ class NotifikasiActivity : AppCompatActivity(), CallBackNotif {
 
     private lateinit var sw_layout : SwipeRefreshLayout
     private lateinit var cl_notifikasi : ConstraintLayout
+    private lateinit var loadingLottie : LottieAnimationView
+    private lateinit var nodataLottie : LottieAnimationView
     private lateinit var adapter: NotifikasiAdapter
     private lateinit var recyclerView : RecyclerView
     var newData : ArrayList<Notifikasi> = ArrayList()
@@ -47,6 +51,8 @@ class NotifikasiActivity : AppCompatActivity(), CallBackNotif {
         val layoutManager = LinearLayoutManager(this)
         sw_layout = findViewById(R.id.swlayout)
         cl_notifikasi = findViewById(R.id.cl_notifikasi)
+        loadingLottie = findViewById(R.id.loading)
+        nodataLottie = findViewById(R.id.no_data)
         sw_layout.setColorSchemeResources(R.color.blue,R.color.red)
         recyclerView = findViewById(R.id.rv_notifikasi)
         recyclerView.layoutManager = layoutManager
@@ -66,6 +72,9 @@ class NotifikasiActivity : AppCompatActivity(), CallBackNotif {
     }
 
     private fun notifikasiView() {
+        cl_notifikasi.visibility = View.VISIBLE
+        recyclerView.visibility = View.GONE
+        loadingLottie.visibility = View.VISIBLE
         val retro = Retro().getRetroClientInstance().create(NotifikasiAPI::class.java)
         retro.notif("Bearer ${sharedPref.getString("token")}").enqueue(object :
             Callback<List<NotifikasiResponse>> {
@@ -94,8 +103,14 @@ class NotifikasiActivity : AppCompatActivity(), CallBackNotif {
                             newData.add(data)
                         }
                         adapter.notifyDataSetChanged()
+                        cl_notifikasi.visibility = View.GONE
+                        recyclerView.visibility = View.VISIBLE
+                        loadingLottie.visibility = View.GONE
                     }else{
                         cl_notifikasi.visibility = View.VISIBLE
+                        loadingLottie.visibility = View.GONE
+                        nodataLottie.visibility = View.VISIBLE
+                        recyclerView.visibility = View.GONE
                     }
                 }
 

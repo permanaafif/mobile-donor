@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.res.ColorStateList
 import android.os.Handler
 import android.text.Editable
-import android.text.TextUtils
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
@@ -17,7 +16,6 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.afifpermana.donor.CommentsActivity
 import com.afifpermana.donor.R
 import com.afifpermana.donor.model.Comments
 import com.afifpermana.donor.model.Laporan
@@ -31,6 +29,7 @@ class CommentAdapter(
     private var dataCallBack: CallBackData
 ): RecyclerView.Adapter<CommentAdapter.ViewHolder>() {
 
+    var id_comment_activity = 0
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ViewHolder(
         LayoutInflater.from(parent.context).inflate(R.layout.card_comment, parent, false)
     )
@@ -84,6 +83,26 @@ class CommentAdapter(
             }
         }else{
             holder.lihat_balasan.visibility = View.GONE
+        }
+
+        if (comment.id_comment == id_comment_activity){
+            isExpanded = !isExpanded
+            holder.cl_balas_comment.visibility = View.VISIBLE
+            holder.loadingLottie.visibility = View.VISIBLE
+            Handler().postDelayed({
+                holder.cl_balas_comment.visibility = View.GONE
+                holder.rv_balas_comment.visibility = View.VISIBLE
+                holder.tv_lihat_balasan.text = "Sembunyinkan"
+                holder.icon_lihat_balasan.setImageResource(R.drawable.baseline_keyboard_arrow_up_24)
+            },2000)
+            // Set adapter untuk RecyclerView balasan komentar
+            val balasCommentAdapter = comment.balasCommentList?.let { it1 ->
+                BalasCommentAdapter(
+                    it1,dataCallBack
+                )
+            }
+            holder.rv_balas_comment.layoutManager = LinearLayoutManager(holder.rv_balas_comment.context)
+            holder.rv_balas_comment.adapter = balasCommentAdapter
         }
 
         holder.btn_report.setOnClickListener {
@@ -165,5 +184,12 @@ class CommentAdapter(
         }
         dialog.show()
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+    }
+
+    fun balasanComment(id: Int){
+        id_comment_activity = id
+//        Log.e("balaskoment", id.toString())
+//        Log.e("balaskoment", balasComment.toString())
+        notifyDataSetChanged()
     }
 }

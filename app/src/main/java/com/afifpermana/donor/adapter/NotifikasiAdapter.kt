@@ -43,7 +43,7 @@ class NotifikasiAdapter(
         }
 
         Log.e("notifikasi", notif.id_balas_comment.toString())
-        if (notif.id_balas_comment == 0){
+        if (notif.id_balas_comment != 0){
             val text = "${notif.pendonor.nama.uppercase()} membalas komentar anda"
             val spannable = SpannableStringBuilder(text)
             // Menambahkan teks tebal pada "nama"
