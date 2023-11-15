@@ -75,6 +75,7 @@ class NotifikasiActivity : AppCompatActivity(), CallBackNotif {
         cl_notifikasi.visibility = View.VISIBLE
         recyclerView.visibility = View.GONE
         loadingLottie.visibility = View.VISIBLE
+        nodataLottie.visibility = View.GONE
         val retro = Retro().getRetroClientInstance().create(NotifikasiAPI::class.java)
         retro.notif("Bearer ${sharedPref.getString("token")}").enqueue(object :
             Callback<List<NotifikasiResponse>> {
@@ -106,6 +107,7 @@ class NotifikasiActivity : AppCompatActivity(), CallBackNotif {
                         cl_notifikasi.visibility = View.GONE
                         recyclerView.visibility = View.VISIBLE
                         loadingLottie.visibility = View.GONE
+                        nodataLottie.visibility = View.GONE
                     }else{
                         cl_notifikasi.visibility = View.VISIBLE
                         loadingLottie.visibility = View.GONE

@@ -34,6 +34,7 @@ import com.afifpermana.donor.service.BeritaAPI
 import com.afifpermana.donor.service.LokasiDonorAPI
 import com.afifpermana.donor.util.Retro
 import com.afifpermana.donor.util.SharedPrefLogin
+import com.airbnb.lottie.LottieAnimationView
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -46,6 +47,8 @@ class LocationFragment : Fragment() {
     private lateinit var adapter: JadwalAdapter
     private lateinit var recyclerView: RecyclerView
     private lateinit var cl_jadwal : ConstraintLayout
+    private lateinit var loadingLottie : LottieAnimationView
+    private lateinit var nodataLottie : LottieAnimationView
     private var newData: MutableList<Jadwal> = mutableListOf()
     lateinit var sharedPref: SharedPrefLogin
 
@@ -75,13 +78,15 @@ class LocationFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         sharedPref = SharedPrefLogin(requireActivity())
+        recyclerView = view.findViewById(R.id.rv_jadwal)
+        cl_jadwal = view.findViewById(R.id.cl_jadwal)
+        loadingLottie = view.findViewById(R.id.loading)
+        nodataLottie = view.findViewById(R.id.no_data)
         lokasiView()
         val layoutManager = LinearLayoutManager(context)
         sw_layout = view.findViewById(R.id.swlayout)
         // Mengeset properti warna yang berputar pada SwipeRefreshLayout
         sw_layout.setColorSchemeResources(R.color.blue,R.color.red)
-        recyclerView = view.findViewById(R.id.rv_jadwal)
-        cl_jadwal = view.findViewById(R.id.cl_jadwal)
         recyclerView.layoutManager = layoutManager
         recyclerView.setHasFixedSize(true)
         adapter = JadwalAdapter(newData)
@@ -196,6 +201,10 @@ class LocationFragment : Fragment() {
         }
     }
     private fun lokasiView() {
+        cl_jadwal.visibility = View.VISIBLE
+        recyclerView.visibility = View.GONE
+        loadingLottie.visibility = View.VISIBLE
+        nodataLottie.visibility = View.GONE
         val retro = Retro().getRetroClientInstance().create(LokasiDonorAPI::class.java)
         retro.lokasi("Bearer ${sharedPref.getString("token")}").enqueue(object : Callback<List<LokasiDonorResponse>> {
             override fun onResponse(
@@ -203,8 +212,6 @@ class LocationFragment : Fragment() {
                 response: Response<List<LokasiDonorResponse>>
             ) {
                 if (response.isSuccessful) {
-                    cl_jadwal.visibility = View.GONE
-                    recyclerView.visibility = View.VISIBLE
                     val res = response.body()
 
                     if (res != null) {
@@ -242,13 +249,21 @@ class LocationFragment : Fragment() {
                                 newData.add(data)
                             }
                             adapter.notifyDataSetChanged()
+                            cl_jadwal.visibility = View.GONE
+                            loadingLottie.visibility = View.GONE
+                            nodataLottie.visibility = View.GONE
+                            recyclerView.visibility = View.VISIBLE
                         } else {
-                            // Respons JSON kosong
-                            // Mungkin ada pesan atau tindakan yang perlu Anda lakukan di sini
+                            cl_jadwal.visibility = View.VISIBLE
+                            loadingLottie.visibility = View.GONE
+                            nodataLottie.visibility = View.VISIBLE
+                            recyclerView.visibility = View.GONE
                         }
                     } else {
-                        // Respons JSON null
-                        // Mungkin ada pesan atau tindakan yang perlu Anda lakukan di sini
+                        cl_jadwal.visibility = View.VISIBLE
+                        loadingLottie.visibility = View.GONE
+                        nodataLottie.visibility = View.VISIBLE
+                        recyclerView.visibility = View.GONE
                     }
                 }
 
@@ -256,6 +271,8 @@ class LocationFragment : Fragment() {
 
             override fun onFailure(call: Call<List<LokasiDonorResponse>>, t: Throwable) {
                 cl_jadwal.visibility = View.VISIBLE
+                loadingLottie.visibility = View.GONE
+                nodataLottie.visibility = View.VISIBLE
                 recyclerView.visibility = View.GONE
             }
 
