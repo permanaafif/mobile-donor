@@ -82,6 +82,10 @@ class HomeResponse {
             @Expose
             val kontak : String? = null
 
+            @SerializedName("jumlah_pendonor")
+            @Expose
+            val jumlah_pendonor : Int? = null
+
             @SerializedName("latitude")
             @Expose
             val latitude : Double? = null

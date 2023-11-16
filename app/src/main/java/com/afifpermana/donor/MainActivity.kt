@@ -7,12 +7,15 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.FrameLayout
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.RadioGroup
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import com.afifpermana.donor.model.HomeResponse
 import com.afifpermana.donor.model.SendTokenFCMToServerResponse
@@ -230,31 +233,35 @@ class MainActivity : AppCompatActivity() {
                             if(res.user!!.gambar.isNullOrEmpty()){
                                 fotoProfile.setImageResource(R.drawable.baseline_person_24)
                             }else{
-                                Picasso.get().load("http://213.35.121.183/images/${res.user!!.gambar}").into(fotoProfile)
+                                val path = "http://213.35.121.183/images/${res.user!!.gambar}"
+                                Picasso.get().load(path).into(fotoProfile)
+                                fotoProfile.setOnClickListener {
+                                    showAlertGambar(path)
+                                }
                             }
                             kodePendonor.text = res.user!!.kode_pendonor
                             goldar.text = res.user!!.id_golongan_darah.nama
                             beratBadan.text = "${res.user!!.berat_badan} KG"
-                            if (res.user?.jadwal_terdekat == null){
-                                jadwalTerdekat.text = "-"
-                            }else {
+                            if (res.user?.jadwal_terdekat != null){
                                 val jadwalTerdekatDate = res.user?.jadwal_terdekat?.tanggal_donor
                                 val waktu = res.user?.jadwal_terdekat?.jam_mulai
                                 jadwalTerdekat.text = jadwalTerdekatDate
 
-                                // Cek apakah tanggal berubah
-                                val previousJadwal = sharedPref.getString("previous_jadwal")
-                                val previousWaktu = sharedPref.getString("previous_waktu")
-                                if (jadwalTerdekatDate != previousJadwal || waktu != previousWaktu) {
-                                    // Tanggal berubah, atur ulang status notifikasi
-                                    sharedPref.notification_set(false)
-                                }
-
-                                notif(jadwalTerdekatDate!!,waktu!!)
-
-                                // Simpan tanggal terbaru ke SharedPreferences
-                                sharedPref.setString("previous_jadwal", jadwalTerdekatDate!!)
-                                sharedPref.setString("previous_waktu", waktu!!)
+//                                // Cek apakah tanggal berubah
+//                                val previousJadwal = sharedPref.getString("previous_jadwal")
+//                                val previousWaktu = sharedPref.getString("previous_waktu")
+//                                if (jadwalTerdekatDate != previousJadwal || waktu != previousWaktu) {
+//                                    // Tanggal berubah, atur ulang status notifikasi
+//                                    sharedPref.notification_set(false)
+//                                }
+//
+//                                notif(jadwalTerdekatDate!!,waktu!!)
+//
+//                                // Simpan tanggal terbaru ke SharedPreferences
+//                                sharedPref.setString("previous_jadwal", jadwalTerdekatDate!!)
+//                                sharedPref.setString("previous_waktu", waktu!!)
+                            }else{
+                                jadwalTerdekat.text = "-"
                             }
                         }
                     }
@@ -310,7 +317,21 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun showAlertGambar(path:String) {
+        val builder = AlertDialog.Builder(this, R.style.AlertDialogTheme)
+        val customeView = LayoutInflater.from(this).inflate(R.layout.alert_gambar,null)
+        builder.setView(customeView)
+        val dialog = builder.create()
 
+        val image = customeView.findViewById<ImageView>(R.id.dialogImageView)
+        image.setOnClickListener {
+            dialog.dismiss()
+        }
+        Picasso.get().load(path).into(image)
+        dialog.window?.setDimAmount(1f)
+        dialog.show()
+//        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+    }
 
     private fun replaceFragment(fragment: Fragment){
         supportFragmentManager.beginTransaction().replace(R.id.frame_container, fragment).commit()

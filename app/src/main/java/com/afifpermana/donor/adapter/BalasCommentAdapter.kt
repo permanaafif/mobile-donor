@@ -35,6 +35,9 @@ class BalasCommentAdapter(
         var path_foto_profile = "http://213.35.121.183/images/${balasComment.gambar}"
         if (!balasComment.gambar.isNullOrEmpty() || balasComment.gambar != "null"){
             Picasso.get().load(path_foto_profile).into(holder.foto_profile)
+            holder.foto_profile.setOnClickListener {
+                showAlertGambar(holder.itemView.context,path_foto_profile)
+            }
         }
         if (balasComment.gambar == "null" || balasComment.gambar.isNullOrEmpty()){
             holder.foto_profile.setImageResource(R.drawable.baseline_person_24)
@@ -117,5 +120,21 @@ class BalasCommentAdapter(
         }
         dialog.show()
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+    }
+
+    private fun showAlertGambar(context: Context, path:String) {
+        val builder = AlertDialog.Builder(context, R.style.AlertDialogTheme)
+        val customeView = LayoutInflater.from(context).inflate(R.layout.alert_gambar,null)
+        builder.setView(customeView)
+        val dialog = builder.create()
+
+        val image = customeView.findViewById<ImageView>(R.id.dialogImageView)
+        image.setOnClickListener {
+            dialog.dismiss()
+        }
+        Picasso.get().load(path).into(image)
+        dialog.window?.setDimAmount(1f)
+        dialog.show()
+//        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
     }
 }

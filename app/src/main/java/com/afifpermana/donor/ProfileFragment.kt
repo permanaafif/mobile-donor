@@ -208,6 +208,21 @@ class ProfileFragment : Fragment(), CallBackData {
         }
     }
 
+    private fun showAlertGambar(path:String) {
+        val builder = AlertDialog.Builder(requireContext(), R.style.AlertDialogTheme)
+        val customeView = LayoutInflater.from(requireContext()).inflate(R.layout.alert_gambar,null)
+        builder.setView(customeView)
+        val dialog = builder.create()
+
+        val image = customeView.findViewById<ImageView>(R.id.dialogImageView)
+        image.setOnClickListener {
+            dialog.dismiss()
+        }
+        Picasso.get().load(path).into(image)
+        dialog.window?.setDimAmount(1f)
+        dialog.show()
+//        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+    }
     private fun ratingAlert() {
         val builder = AlertDialog.Builder(requireContext())
         val customeView = LayoutInflater.from(requireContext()).inflate(R.layout.alert_add_rating,null)
@@ -466,6 +481,10 @@ class ProfileFragment : Fragment(), CallBackData {
                     }else{
                         Picasso.get().load("http://213.35.121.183/images/${res.user!!.gambar}").into(fotoProfile)
                         pathFoto = "http://213.35.121.183/images/${res.user!!.gambar}"
+                        fotoProfile.setOnClickListener {
+                            showAlertGambar(pathFoto!!)
+                        }
+
                     }
                     nama.text = res.user.nama
                     email = res.user.email.toString()

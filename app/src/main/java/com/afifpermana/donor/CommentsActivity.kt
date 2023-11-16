@@ -398,12 +398,12 @@ class CommentsActivity : AppCompatActivity(), CallBackData {
             ) {
                 if (response.isSuccessful){
                     val res = response.body()
-                    Log.e("pesan", res!!.message.toString())
+                    Log.e("balasComment", res!!.message.toString())
                     if (res!!.success == true){
                         Toast.makeText(this@CommentsActivity,"Berhasil", Toast.LENGTH_SHORT).show()
                     }else{
 //                        Toast.makeText(this@CommentsActivity,"Gagal", Toast.LENGTH_SHORT).show()
-                        Log.e("pesan", res!!.message.toString())
+                        Log.e("balasComment2", res!!.message.toString())
                     }
                     et_comment.text.clear()
                     clearData()
@@ -416,6 +416,7 @@ class CommentsActivity : AppCompatActivity(), CallBackData {
 
             override fun onFailure(call: Call<AddBalasCommentResponse>, t: Throwable) {
                 Toast.makeText(this@CommentsActivity,"Sesi kamu habis", Toast.LENGTH_SHORT).show()
+                Log.e("balasComment3",t.message.toString())
                 sharedPref.logOut()
                 sharedPref.setStatusLogin(false)
                 startActivity(Intent(this@CommentsActivity, LoginActivity::class.java))
@@ -553,7 +554,11 @@ class CommentsActivity : AppCompatActivity(), CallBackData {
                 var res = response.body()
                 if (response.isSuccessful){
                     if(res?.gambar_profile.toString() != "null"){
-                        Picasso.get().load("http://213.35.121.183/images/${res?.gambar_profile}").into(gambar_profile)
+                        val path = "http://213.35.121.183/images/${res?.gambar_profile}"
+                        Picasso.get().load(path).into(gambar_profile)
+                        gambar_profile.setOnClickListener {
+                            showAlertGambar(path)
+                        }
                     }
                     nama.text = res?.nama
                     tgl_upload.text = res?.updated_at
@@ -608,6 +613,7 @@ class CommentsActivity : AppCompatActivity(), CallBackData {
 
             override fun onFailure(call: Call<PostRespone>, t: Throwable) {
                 Toast.makeText(this@CommentsActivity,"Sesi kamu habis", Toast.LENGTH_SHORT).show()
+                Log.e("masalah",t.message.toString())
                 sharedPref.logOut()
                 sharedPref.setStatusLogin(false)
                 startActivity(Intent(this@CommentsActivity, LoginActivity::class.java))
@@ -616,6 +622,21 @@ class CommentsActivity : AppCompatActivity(), CallBackData {
         })
     }
 
+    private fun showAlertGambar(path:String) {
+        val builder = AlertDialog.Builder(this, R.style.AlertDialogTheme)
+        val customeView = LayoutInflater.from(this).inflate(R.layout.alert_gambar,null)
+        builder.setView(customeView)
+        val dialog = builder.create()
+
+        val image = customeView.findViewById<ImageView>(R.id.dialogImageView)
+        image.setOnClickListener {
+            dialog.dismiss()
+        }
+        Picasso.get().load(path).into(image)
+        dialog.window?.setDimAmount(1f)
+        dialog.show()
+//        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+    }
     private fun showCostumeAlertDialog(id: Int) {
         val builder = AlertDialog.Builder(this)
         val customeView = LayoutInflater.from(this).inflate(R.layout.alert_report,null)
@@ -700,11 +721,11 @@ class CommentsActivity : AppCompatActivity(), CallBackData {
             }
 
             override fun onFailure(call: Call<LaporanResponse>, t: Throwable) {
-//                Toast.makeText(this@CommentsActivity,"Sesi kamu habis", Toast.LENGTH_SHORT).show()
-//                sharedPref.logOut()
-//                sharedPref.setStatusLogin(false)
-//                startActivity(Intent(this@CommentsActivity, LoginActivity::class.java))
-//                finish()
+                Toast.makeText(this@CommentsActivity,"Sesi kamu habis", Toast.LENGTH_SHORT).show()
+                sharedPref.logOut()
+                sharedPref.setStatusLogin(false)
+                startActivity(Intent(this@CommentsActivity, LoginActivity::class.java))
+                finish()
                 Log.e("masalah",t.message.toString())
             }
         })

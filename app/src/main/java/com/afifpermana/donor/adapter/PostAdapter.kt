@@ -46,6 +46,9 @@ class PostAdapter(
         var path_foto_profile = "http://213.35.121.183/images/${post.foto_profile}"
         if (post.foto_profile != "null"){
             Picasso.get().load(path_foto_profile).into(holder.foto_profile)
+            holder.foto_profile.setOnClickListener{
+                showAlertGambar(holder.itemView.context,path_foto_profile)
+            }
         }
 
         if (post.foto_profile == "null" || post.foto_profile.isNullOrEmpty()){
@@ -88,9 +91,13 @@ class PostAdapter(
         }
 
         var path_gambar = "http://213.35.121.183/assets/post/${post.gambar}"
+        holder.gambar.maxHeight = 250
         if (post.gambar.toString() != "null"){
             Picasso.get().load(path_gambar).into(holder.gambar)
             holder.gambar?.visibility = View.VISIBLE
+            holder.gambar.setOnClickListener{
+                showAlertGambar(holder.itemView.context,path_gambar)
+            }
         }else{
             holder.gambar?.visibility = View.GONE
         }
@@ -158,7 +165,7 @@ class PostAdapter(
         val text = view.findViewById<TextView>(R.id.text)
         val textButton = view.findViewById<TextView>(R.id.textButton)
         val gambar = view.findViewById<ImageView>(R.id.image_post)
-        val btn_comment = view.findViewById<ImageView>(R.id.btn_comment)
+        val btn_comment = view.findViewById<LinearLayout>(R.id.ll_comment)
         val btn_delete = view.findViewById<ImageView>(R.id.btn_delete)
         val btn_report = view.findViewById<ImageView>(R.id.btn_report)
         val btn_favorite = view.findViewById<ImageView>(R.id.btn_favorit)
@@ -222,5 +229,21 @@ class PostAdapter(
         }
         dialog.show()
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+    }
+
+    private fun showAlertGambar(context: Context, path:String) {
+        val builder = AlertDialog.Builder(context, R.style.AlertDialogTheme)
+        val customeView = LayoutInflater.from(context).inflate(R.layout.alert_gambar,null)
+        builder.setView(customeView)
+        val dialog = builder.create()
+
+        val image = customeView.findViewById<ImageView>(R.id.dialogImageView)
+        image.setOnClickListener {
+            dialog.dismiss()
+        }
+        Picasso.get().load(path).into(image)
+        dialog.window?.setDimAmount(1f)
+        dialog.show()
+//        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
     }
 }

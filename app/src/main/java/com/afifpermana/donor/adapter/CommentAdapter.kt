@@ -39,6 +39,9 @@ class CommentAdapter(
         var path_foto_profile = "http://213.35.121.183/images/${comment.gambar}"
         if (!comment.gambar.isNullOrEmpty() || comment.gambar != "null"){
             Picasso.get().load(path_foto_profile).into(holder.foto_profile)
+            holder.foto_profile.setOnClickListener{
+                showAlertGambar(holder.itemView.context,path_foto_profile)
+            }
         }
         if (comment.gambar == "null" || comment.gambar.isNullOrEmpty()){
             holder.foto_profile.setImageResource(R.drawable.baseline_person_24)
@@ -80,13 +83,14 @@ class CommentAdapter(
                 }
                 holder.rv_balas_comment.layoutManager = LinearLayoutManager(holder.rv_balas_comment.context)
                 holder.rv_balas_comment.adapter = balasCommentAdapter
+
             }
         }else{
             holder.lihat_balasan.visibility = View.GONE
         }
 
         if (comment.id_comment == id_comment_activity){
-            isExpanded = !isExpanded
+            isExpanded = true
             holder.cl_balas_comment.visibility = View.VISIBLE
             holder.loadingLottie.visibility = View.VISIBLE
             Handler().postDelayed({
@@ -190,6 +194,22 @@ class CommentAdapter(
         id_comment_activity = id
 //        Log.e("balaskoment", id.toString())
 //        Log.e("balaskoment", balasComment.toString())
-        notifyDataSetChanged()
+//        notifyDataSetChanged()
+    }
+
+    private fun showAlertGambar(context: Context, path:String) {
+        val builder = AlertDialog.Builder(context, R.style.AlertDialogTheme)
+        val customeView = LayoutInflater.from(context).inflate(R.layout.alert_gambar,null)
+        builder.setView(customeView)
+        val dialog = builder.create()
+
+        val image = customeView.findViewById<ImageView>(R.id.dialogImageView)
+        image.setOnClickListener {
+            dialog.dismiss()
+        }
+        Picasso.get().load(path).into(image)
+        dialog.window?.setDimAmount(1f)
+        dialog.show()
+//        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
     }
 }

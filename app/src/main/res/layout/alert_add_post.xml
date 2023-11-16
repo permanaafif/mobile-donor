@@ -27,10 +27,9 @@
                     <ImageView
                         android:visibility="gone"
                         android:id="@+id/show_image"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:minWidth="40dp"
-                        android:minHeight="40dp"
+                        android:scaleType="centerInside"
+                        android:layout_width="match_parent"
+                        android:layout_height="300dp"
                         android:layout_gravity="center_horizontal"
                         android:paddingHorizontal="10dp"
                         android:paddingBottom="10dp"
