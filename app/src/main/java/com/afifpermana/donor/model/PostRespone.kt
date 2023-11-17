@@ -9,6 +9,10 @@ class PostRespone {
     @Expose
     val id : Int? = 0
 
+    @SerializedName("id_pendonor")
+    @Expose
+    val id_pendonor : Int? = 0
+
     @SerializedName("gambar_profile")
     @Expose
     val gambar_profile : String? = null

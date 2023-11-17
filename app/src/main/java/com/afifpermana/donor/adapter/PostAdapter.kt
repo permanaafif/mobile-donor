@@ -19,6 +19,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.afifpermana.donor.ArtikelActivity
 import com.afifpermana.donor.CommentsActivity
+import com.afifpermana.donor.OtherDonorProfileActivity
 import com.afifpermana.donor.R
 import com.afifpermana.donor.model.Laporan
 import com.afifpermana.donor.model.Post
@@ -27,6 +28,7 @@ import com.afifpermana.donor.model.PostFavoriteResponse2
 import com.afifpermana.donor.service.CallBackData
 import com.afifpermana.donor.service.PostFavoriteAPI
 import com.afifpermana.donor.util.Retro
+import com.afifpermana.donor.util.SharedPrefLogin
 import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
 import retrofit2.Callback
@@ -36,7 +38,10 @@ class PostAdapter(
     private val listPostFavorite : List<PostFavorite>,
     private val context: Context,
     private var dataCallBack: CallBackData,
+    private var sharedPref: SharedPrefLogin
 ): RecyclerView.Adapter<PostAdapter.ViewHolder>() {
+
+    var id_pendonor_now = 0
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int)= ViewHolder(
         LayoutInflater.from(parent.context).inflate(R.layout.card_post_diskusi, parent, false)
     )
@@ -55,7 +60,18 @@ class PostAdapter(
             holder.foto_profile.setImageResource(R.drawable.baseline_person_24)
         }
         Log.e("ibra",post.toString())
-        holder.nama.text = post.nama
+        holder.nama.text = post.nama.toString().capitalize()
+        holder.nama.setOnClickListener {
+            val id_pendonor = sharedPref.getInt("id")
+            if (id_pendonor != post.id_pendonor){
+                if (id_pendonor_now != post.id_pendonor){
+                    val context = it.context
+                    val i = Intent(context, OtherDonorProfileActivity::class.java)
+                    i.putExtra("id_pendonor",post.id_pendonor)
+                    context.startActivity(i)
+                }
+            }
+        }
         holder.upload.text = post.upload
         // Di dalam metode onBindViewHolder
         if (post.text.isNullOrEmpty() || post.text == "null") {
@@ -107,6 +123,7 @@ class PostAdapter(
             val context = it.context
             val i = Intent(context, CommentsActivity::class.java)
             i.putExtra("id_post",post.id)
+            i.putExtra("id_pendonor",id_pendonor_now)
 //            i.putExtra("foto_profile",path_foto_profile)
 //            i.putExtra("nama",post.nama)
 //            i.putExtra("upload",post.upload)
@@ -245,5 +262,12 @@ class PostAdapter(
         dialog.window?.setDimAmount(1f)
         dialog.show()
 //        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+    }
+
+    fun idPendonorNow(id: Int){
+        id_pendonor_now = id
+//        Log.e("balaskoment", id.toString())
+//        Log.e("balaskoment", balasComment.toString())
+//        notifyDataSetChanged()
     }
 }

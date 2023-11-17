@@ -122,7 +122,7 @@ class ProfileFragment : Fragment(), CallBackData {
 
         postViewMe()
 
-        adapter = PostAdapter(newData,newDataPostFavorite,requireContext(),this)
+        adapter = PostAdapter(newData,newDataPostFavorite,requireContext(),this,sharedPref)
         recyclerView.adapter = adapter
 
         postFavorite()
@@ -344,6 +344,7 @@ class ProfileFragment : Fragment(), CallBackData {
             if (i){
                 val data = Post(
                     post.id.toString().toInt(),
+                    post.id_pendonor.toString().toInt(),
                     post.foto_profile.toString(),
                     post.nama.toString(),
                     post.upload.toString(),
@@ -378,6 +379,7 @@ class ProfileFragment : Fragment(), CallBackData {
                     for (i in res!!) {
                         val data = Post(
                             i.id.toString().toInt(),
+                            i.id_pendonor.toString().toInt(),
                             i.gambar_profile.toString(),
                             i.nama.toString(),
                             i.updated_at.toString(),
@@ -427,6 +429,7 @@ class ProfileFragment : Fragment(), CallBackData {
                         for (i in res!!) {
                             val data = Post(
                                 i.id.toString().toInt(),
+                                i.id_pendonor.toString().toInt(),
                                 i.gambar_profile.toString(),
                                 i.nama.toString(),
                                 i.updated_at.toString(),
@@ -486,7 +489,7 @@ class ProfileFragment : Fragment(), CallBackData {
                         }
 
                     }
-                    nama.text = res.user.nama
+                    nama.text = res.user.nama.toString().capitalize()
                     email = res.user.email.toString()
                     namaUser = res.user.nama.toString()
                     kode_pendonor.text = res.user.kode_pendonor

@@ -1,6 +1,7 @@
 package com.afifpermana.donor.adapter
 
 import android.content.Context
+import android.content.Intent
 import android.content.res.ColorStateList
 import android.text.Editable
 import android.text.TextWatcher
@@ -12,17 +13,22 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.afifpermana.donor.OtherDonorProfileActivity
 import com.afifpermana.donor.R
 import com.afifpermana.donor.model.BalasCommentTo
 import com.afifpermana.donor.model.Laporan
 import com.afifpermana.donor.service.CallBackData
+import com.afifpermana.donor.util.SharedPrefLogin
 import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
 
 class BalasCommentAdapter(
     private var listBalasComment : List<BalasCommentTo>,
-    private var dataCallBack: CallBackData
+    private var dataCallBack: CallBackData,
+    private var sharedPref: SharedPrefLogin
 ): RecyclerView.Adapter<BalasCommentAdapter.ViewHolder>() {
+
+    var id_pendonor_now = 0
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -43,7 +49,18 @@ class BalasCommentAdapter(
             holder.foto_profile.setImageResource(R.drawable.baseline_person_24)
         }
 
-        holder.nama.text = balasComment.nama
+        holder.nama.text = balasComment.nama.capitalize()
+        holder.nama.setOnClickListener {
+            val id_pendonor = sharedPref.getInt("id")
+            if (id_pendonor != balasComment.id_pendonor){
+                if (id_pendonor_now != balasComment.id_pendonor){
+                    val context = it.context
+                    val i = Intent(context, OtherDonorProfileActivity::class.java)
+                    i.putExtra("id_pendonor",balasComment.id_pendonor)
+                    context.startActivity(i)
+                }
+            }
+        }
         holder.tv_comment.text = balasComment.text
         holder.tgl_comment.text = balasComment.updated_at
 
@@ -136,5 +153,9 @@ class BalasCommentAdapter(
         dialog.window?.setDimAmount(1f)
         dialog.show()
 //        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+    }
+
+    fun idPendonorNow(id: Int){
+        id_pendonor_now = id
     }
 }

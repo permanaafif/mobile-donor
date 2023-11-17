@@ -1,6 +1,7 @@
 package com.afifpermana.donor.adapter
 
 import android.content.Context
+import android.content.Intent
 import android.content.res.ColorStateList
 import android.os.Handler
 import android.text.Editable
@@ -16,20 +17,24 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.afifpermana.donor.OtherDonorProfileActivity
 import com.afifpermana.donor.R
 import com.afifpermana.donor.model.Comments
 import com.afifpermana.donor.model.Laporan
 import com.afifpermana.donor.service.CallBackData
+import com.afifpermana.donor.util.SharedPrefLogin
 import com.airbnb.lottie.LottieAnimationView
 import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
 
 class CommentAdapter(
     private var listComment : List<Comments>,
-    private var dataCallBack: CallBackData
+    private var dataCallBack: CallBackData,
+    private var sharedPref: SharedPrefLogin
 ): RecyclerView.Adapter<CommentAdapter.ViewHolder>() {
 
     var id_comment_activity = 0
+    var id_pendonor_now = 0
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ViewHolder(
         LayoutInflater.from(parent.context).inflate(R.layout.card_comment, parent, false)
     )
@@ -47,7 +52,18 @@ class CommentAdapter(
             holder.foto_profile.setImageResource(R.drawable.baseline_person_24)
         }
 
-        holder.nama.text = comment.nama
+        holder.nama.text = comment.nama.toString().capitalize()
+        holder.nama.setOnClickListener {
+            val id_pendonor = sharedPref.getInt("id")
+            if (id_pendonor != comment.id_pendonor){
+                if (id_pendonor_now != comment.id_pendonor){
+                    val context = it.context
+                    val i = Intent(context, OtherDonorProfileActivity::class.java)
+                    i.putExtra("id_pendonor",comment.id_pendonor)
+                    context.startActivity(i)
+                }
+            }
+        }
         holder.tv_comment.text = comment.text
         holder.tgl_comment.text = comment.updated_at
 
@@ -78,12 +94,12 @@ class CommentAdapter(
                 // Set adapter untuk RecyclerView balasan komentar
                 val balasCommentAdapter = comment.balasCommentList?.let { it1 ->
                     BalasCommentAdapter(
-                        it1,dataCallBack
+                        it1,dataCallBack,sharedPref
                     )
                 }
                 holder.rv_balas_comment.layoutManager = LinearLayoutManager(holder.rv_balas_comment.context)
                 holder.rv_balas_comment.adapter = balasCommentAdapter
-
+                balasCommentAdapter?.idPendonorNow(id_pendonor_now)
             }
         }else{
             holder.lihat_balasan.visibility = View.GONE
@@ -102,11 +118,12 @@ class CommentAdapter(
             // Set adapter untuk RecyclerView balasan komentar
             val balasCommentAdapter = comment.balasCommentList?.let { it1 ->
                 BalasCommentAdapter(
-                    it1,dataCallBack
+                    it1,dataCallBack,sharedPref
                 )
             }
             holder.rv_balas_comment.layoutManager = LinearLayoutManager(holder.rv_balas_comment.context)
             holder.rv_balas_comment.adapter = balasCommentAdapter
+            balasCommentAdapter?.idPendonorNow(id_pendonor_now)
         }
 
         holder.btn_report.setOnClickListener {
@@ -195,6 +212,10 @@ class CommentAdapter(
 //        Log.e("balaskoment", id.toString())
 //        Log.e("balaskoment", balasComment.toString())
 //        notifyDataSetChanged()
+    }
+
+    fun idPendonorNow(id: Int){
+        id_pendonor_now = id
     }
 
     private fun showAlertGambar(context: Context, path:String) {

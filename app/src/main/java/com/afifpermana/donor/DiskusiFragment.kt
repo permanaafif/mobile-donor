@@ -122,7 +122,7 @@ class DiskusiFragment : Fragment(),CallBackData {
         recyclerView.setHasFixedSize(true)
         sharedPref = SharedPrefLogin(requireActivity())
         postView()
-        adapter = PostAdapter(newData,newDataPostFavorite,requireContext(),this)
+        adapter = PostAdapter(newData,newDataPostFavorite,requireContext(),this,sharedPref)
         recyclerView.adapter = adapter
 
         postFavorite()
@@ -416,6 +416,7 @@ class DiskusiFragment : Fragment(),CallBackData {
                         for (i in res!!) {
                             val data = Post(
                                 i.id.toString().toInt(),
+                                i.id_pendonor.toString().toInt(),
                                 i.gambar_profile.toString(),
                                 i.nama.toString(),
                                 i.updated_at.toString(),

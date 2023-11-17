@@ -25,6 +25,9 @@
         android:theme="@style/My.Theme"
         tools:targetApi="31">
         <activity
+            android:name=".OtherDonorProfileActivity"
+            android:exported="false" />
+        <activity
             android:name=".NotifikasiActivity"
             android:exported="false" />
         <activity

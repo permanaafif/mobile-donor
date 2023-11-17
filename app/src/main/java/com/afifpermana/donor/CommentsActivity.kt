@@ -92,6 +92,7 @@ class CommentsActivity : AppCompatActivity(), CallBackData {
     var b : Bundle? =null
     lateinit var sharedPref: SharedPrefLogin
     var id_post = 0
+    var id_pendonor_now = 0
     var id_comment = 0
     var id_balas_comment = 0
     var id_commentar : Int? = null
@@ -103,6 +104,7 @@ class CommentsActivity : AppCompatActivity(), CallBackData {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_comments)
+        sharedPref = SharedPrefLogin(this)
         val backButton = findViewById<ImageButton>(R.id.backButton)
         backButton.setOnClickListener { onBackPressed() }
         val layoutManager = LinearLayoutManager(this)
@@ -120,15 +122,15 @@ class CommentsActivity : AppCompatActivity(), CallBackData {
         recyclerView = findViewById(R.id.rv_coments)
         recyclerView.layoutManager = layoutManager
         recyclerView.setHasFixedSize(true)
-        adapter = CommentAdapter(newData,this)
+        adapter = CommentAdapter(newData,this,sharedPref)
         ll_comment = findViewById(R.id.ll)
         ll_balas_comment = findViewById(R.id.ll_balas_comment)
         close = findViewById(R.id.close)
         recyclerView.adapter = adapter
 
-        sharedPref = SharedPrefLogin(this)
         b = intent.extras
         id_post = b!!.getInt("id_post")
+        id_pendonor_now = b!!.getInt("id_pendonor")
 
         checkPostFavorite(id_post)
         btn_comment.setOnClickListener {
@@ -234,6 +236,10 @@ class CommentsActivity : AppCompatActivity(), CallBackData {
 
         if (id_balas_comment != 0){
             adapter.balasanComment(id_comment)
+        }
+
+        if (id_pendonor_now != 0){
+            adapter.idPendonorNow(id_pendonor_now)
         }
 
         nestedScrollView.setOnScrollChangeListener { _, _, scrollY, _, _ ->
@@ -560,7 +566,18 @@ class CommentsActivity : AppCompatActivity(), CallBackData {
                             showAlertGambar(path)
                         }
                     }
-                    nama.text = res?.nama
+                    nama.text = res?.nama.toString().capitalize()
+                    nama.setOnClickListener {
+                        val id_pendonor = sharedPref.getInt("id")
+                        if (id_pendonor != res?.id_pendonor){
+                            if (id_pendonor_now != res?.id_pendonor){
+                                val context = it.context
+                                val i = Intent(context, OtherDonorProfileActivity::class.java)
+                                i.putExtra("id_pendonor",res?.id_pendonor)
+                                context.startActivity(i)
+                            }
+                        }
+                    }
                     tgl_upload.text = res?.updated_at
                     Log.e("tgl_upload",res?.updated_at.toString())
 

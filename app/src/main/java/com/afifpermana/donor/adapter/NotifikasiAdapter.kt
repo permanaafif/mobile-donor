@@ -44,14 +44,14 @@ class NotifikasiAdapter(
 
         Log.e("notifikasi", notif.id_balas_comment.toString())
         if (notif.id_balas_comment != 0){
-            val text = "${notif.pendonor.nama.uppercase()} membalas komentar anda"
+            val text = "${notif.pendonor.nama.capitalize()} membalas komentar anda"
             val spannable = SpannableStringBuilder(text)
             // Menambahkan teks tebal pada "nama"
             spannable.setSpan(StyleSpan(Typeface.BOLD), 0, notif.pendonor.nama.length, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
             holder.notif.text = spannable
             holder.tanggal.text = notif.update
         }else{
-            val text = "${notif.pendonor.nama.uppercase()} mengomentari postingan anda"
+            val text = "${notif.pendonor.nama.capitalize()} mengomentari postingan anda"
             val spannable = SpannableStringBuilder(text)
             // Menambahkan teks tebal pada "nama"
             spannable.setSpan(StyleSpan(Typeface.BOLD), 0, notif.pendonor.nama.length, Spannable.SPAN_INCLUSIVE_INCLUSIVE)

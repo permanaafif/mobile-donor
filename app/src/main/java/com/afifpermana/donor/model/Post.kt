@@ -2,6 +2,7 @@ package com.afifpermana.donor.model
 
 data class Post(
     val id : Int,
+    val id_pendonor : Int,
     val foto_profile : String,
     val nama : String,
     val upload : String,
