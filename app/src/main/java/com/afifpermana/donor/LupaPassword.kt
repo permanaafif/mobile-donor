@@ -73,6 +73,7 @@ class LupaPassword : AppCompatActivity() {
                         var i = Intent(this@LupaPassword,OTP::class.java)
                         i.putExtra("email",res.email.toString())
                         i.putExtra("token",res.token.toString())
+                        i.putExtra("kode_pendonor",kode_pendonor.text.toString())
                         startActivity(i)
                         loadingProgressBar.visibility = View.GONE
                         btn_kirim_otp.visibility = View.VISIBLE

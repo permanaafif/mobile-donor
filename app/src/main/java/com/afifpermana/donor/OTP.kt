@@ -3,6 +3,7 @@ package com.afifpermana.donor
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -11,10 +12,13 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ProgressBar
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
 import com.afifpermana.donor.model.lupa_password.checkOtpRequest
 import com.afifpermana.donor.model.lupa_password.checkOtpResponse
+import com.afifpermana.donor.model.lupa_password.sendOtpRequest
 import com.afifpermana.donor.model.lupa_password.sendOtpResponse
 import com.afifpermana.donor.service.LupaPasswordAPI
 import com.afifpermana.donor.util.Retro
@@ -28,17 +32,26 @@ class OTP : AppCompatActivity() {
     private lateinit var kode2 : EditText
     private lateinit var kode3 : EditText
     private lateinit var kode4 : EditText
+    private lateinit var resend_otp : TextView
     private lateinit var btn_verifikasi : Button
     private lateinit var otp : String
     private lateinit var loadingProgressBar : ProgressBar
+    var i = 30
+    var kode_pendonor = ""
+    var email = ""
+    var token = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_otp)
         b = intent.extras
+        kode_pendonor = b!!.getString("kode_pendonor").toString()
+        email = b!!.getString("email").toString()
+        token = b!!.getString("token").toString()
         kode1 = findViewById(R.id.kode1)
         kode2 = findViewById(R.id.kode2)
         kode3 = findViewById(R.id.kode3)
         kode4 = findViewById(R.id.kode4)
+        resend_otp = findViewById(R.id.resend_otp)
         btn_verifikasi = findViewById(R.id.btnOTP)
         loadingProgressBar=findViewById(R.id.loadingProgressBar)
 
@@ -63,15 +76,41 @@ class OTP : AppCompatActivity() {
                 checkOtp()
             }
         }
+        updateTextResendOTP()
 
+        resend_otp.setOnClickListener {
+            val textColor = resend_otp.currentTextColor
+            val blackColor = ContextCompat.getColor(this, R.color.black)
+            if (textColor == blackColor) {
+                ResendOtp()
+                resend_otp.setTextColor(getResources().getColor(R.color.grey))
+                i = 30
+                updateTextResendOTP()
+            }
+        }
+
+    }
+
+    fun updateTextResendOTP() {
+        resend_otp.text = "Resend OTP ($i)"
+        i--
+
+        if (i >= 1) {
+            Handler().postDelayed({
+                updateTextResendOTP()
+            }, 1000) // 1000 milidetik = 1 detik
+        } else {
+            resend_otp.text = "Resend OTP"
+            resend_otp.setTextColor(getResources().getColor(R.color.black))
+        }
     }
 
     private fun checkOtp() {
         loadingProgressBar.visibility = View.VISIBLE
         btn_verifikasi.visibility = View.GONE
         val data = checkOtpRequest()
-        data.email = b!!.getString("email")
-        data.token = b!!.getString("token")
+        data.email = email
+        data.token = token
         data.otp = otp
         val retro = Retro().getRetroClientInstance().create(LupaPasswordAPI::class.java)
         retro.checkOtp(data).enqueue(object : Callback<checkOtpResponse> {
@@ -101,6 +140,35 @@ class OTP : AppCompatActivity() {
 
             override fun onFailure(call: Call<checkOtpResponse>, t: Throwable) {
 
+            }
+        })
+    }
+
+    private fun ResendOtp() {
+        val data = sendOtpRequest()
+        data.kode_pendonor = kode_pendonor
+        val retro = Retro().getRetroClientInstance().create(LupaPasswordAPI::class.java)
+        retro.sendOtp(data).enqueue(object : Callback<sendOtpResponse> {
+            override fun onResponse(
+                call: Call<sendOtpResponse>,
+                response: Response<sendOtpResponse>
+            ) {
+                Log.e("kode pendonor", response.code().toString())
+                if (response.isSuccessful){
+                    val res = response.body()
+                    if (res!!.success == true){
+                        email = res.email.toString()
+                        token = res.token.toString()
+                        Toast.makeText(this@OTP, "Kode OTP berhasil di kirim",Toast.LENGTH_LONG).show()
+                    }else{
+                        Log.e("kode pendonor", res.message.toString())
+                        Toast.makeText(this@OTP, res.message.toString(),Toast.LENGTH_LONG).show()
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<sendOtpResponse>, t: Throwable) {
+                Toast.makeText(this@OTP, t.message.toString(),Toast.LENGTH_LONG).show()
             }
         })
     }
