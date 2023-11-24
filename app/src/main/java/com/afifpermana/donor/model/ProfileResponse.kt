@@ -66,6 +66,10 @@ class ProfileResponse {
         @SerializedName("jenis_kelamin")
         @Expose
         var jenis_kelamin : String? =null
+
+        @SerializedName("total_donor_darah")
+        @Expose
+        var total_donor_darah : Int? =null
     }
 
 }

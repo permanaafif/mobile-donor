@@ -4,11 +4,14 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import android.widget.Toast
+import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -32,16 +35,14 @@ class RiwayatDonorFragment : Fragment() {
 
     private lateinit var sw_layout : SwipeRefreshLayout
     private lateinit var adapter : RiwayatDonorAdapter
+    private lateinit var total_donor_darah : TextView
+    private lateinit var cv_total_donor_darah : CardView
     private lateinit var recyclerView: RecyclerView
     private lateinit var cl_riwayat : ConstraintLayout
     private lateinit var loadingLottie : LottieAnimationView
     private lateinit var nodataLottie : LottieAnimationView
-    var newData : ArrayList<RiwayatDonor> = ArrayList()
+    var newData : ArrayList<RiwayatDonor.Riwayat> = ArrayList()
     lateinit var sharedPref: SharedPrefLogin
-
-    var tanggal_donor: Array<String> = arrayOf()
-    var lokasi_donor: Array<String> = arrayOf()
-    var jumlah_donor: Array<Int> = arrayOf()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -58,6 +59,8 @@ class RiwayatDonorFragment : Fragment() {
         // Mengeset properti warna yang berputar pada SwipeRefreshLayout
         sw_layout.setColorSchemeResources(R.color.blue,R.color.red)
         val layoutManager = LinearLayoutManager(context)
+        total_donor_darah = view.findViewById(R.id.tv_total_donor_darah)
+        cv_total_donor_darah = view.findViewById(R.id.cv_total_donor_darah)
         recyclerView = view.findViewById(R.id.rv_riwayat_donor)
         cl_riwayat = view.findViewById(R.id.cl_riwayat)
         loadingLottie = view.findViewById(R.id.loading)
@@ -86,24 +89,31 @@ class RiwayatDonorFragment : Fragment() {
         nodataLottie.visibility = View.GONE
         val retro = Retro().getRetroClientInstance().create(RiwayatDonorAPI::class.java)
         retro.riwayatDonor("Bearer ${sharedPref.getString("token")}").enqueue(object :
-            Callback<List<RiwayatDonorResponse>> {
+            Callback<RiwayatDonorResponse> {
             override fun onResponse(
-                call: Call<List<RiwayatDonorResponse>>,
-                response: Response<List<RiwayatDonorResponse>>
+                call: Call<RiwayatDonorResponse>,
+                response: Response<RiwayatDonorResponse>
             ) {
                 val resCode = response.code()
                 if (resCode == 200){
                     val res = response.body()
-                    if (res!!.isNotEmpty()){
-                        for (i in res){
-                            tanggal_donor += i.tanggal_donor.toString()
-                            lokasi_donor += i.lokasi_donor.toString()
-                            jumlah_donor += i.jumlah_donor.toString().toInt()
+                    Log.e("total_donor", res!!.total_donor_darah.toString())
+                    if (res!!.total_donor_darah.toString() != "null"){
+                        if(res.total_donor_darah.toString().toInt() <= 0){
+                            cv_total_donor_darah.visibility = View.VISIBLE
+                            total_donor_darah.text = "Total Donor Darah: ${res.total_donor_darah.toString()} kantong"
                         }
-
-                        for (x in tanggal_donor.indices){
-                            val data = RiwayatDonor(tanggal_donor[x],lokasi_donor[x],jumlah_donor[x])
-                            newData.add(data)
+                    }else{
+                        cv_total_donor_darah.visibility = View.GONE
+                    }
+                    if (res!!.riwayat!!.isNotEmpty()){
+                        for (i in res!!.riwayat!!){
+                            val riwayat = RiwayatDonor.Riwayat(
+                                i.tanggal_donor.toString(),
+                                i.lokasi_donor.toString(),
+                                i.jumlah_donor.toString().toInt()
+                            )
+                            newData.add(riwayat)
                         }
                         adapter.notifyDataSetChanged()
                         cl_riwayat.visibility = View.GONE
@@ -123,7 +133,7 @@ class RiwayatDonorFragment : Fragment() {
                 }
             }
 
-            override fun onFailure(call: Call<List<RiwayatDonorResponse>>, t: Throwable) {
+            override fun onFailure(call: Call<RiwayatDonorResponse>, t: Throwable) {
                 cl_riwayat.visibility = View.VISIBLE
                 loadingLottie.visibility = View.GONE
                 nodataLottie.visibility = View.VISIBLE
@@ -138,9 +148,6 @@ class RiwayatDonorFragment : Fragment() {
 
     private fun clearData() {
         newData.clear()
-        tanggal_donor = emptyArray()
-        lokasi_donor = emptyArray()
-        jumlah_donor = emptyArray()
         adapter.notifyDataSetChanged()
     }
 

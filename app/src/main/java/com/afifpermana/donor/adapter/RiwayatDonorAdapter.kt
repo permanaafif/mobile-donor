@@ -9,7 +9,7 @@ import com.afifpermana.donor.R
 import com.afifpermana.donor.model.RiwayatDonor
 
 class RiwayatDonorAdapter(
-    private val listRiwayatDonor : List<RiwayatDonor>
+    private val listRiwayatDonor : List<RiwayatDonor.Riwayat>
 ): RecyclerView.Adapter<RiwayatDonorAdapter.ViewHolder>() {
     override fun onCreateViewHolder(
         parent: ViewGroup,

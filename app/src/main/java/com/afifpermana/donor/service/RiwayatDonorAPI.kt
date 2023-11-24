@@ -8,5 +8,5 @@ import retrofit2.http.Header
 interface RiwayatDonorAPI {
 
     @GET("api/riwayat-donor-darah")
-    fun riwayatDonor(@Header("Authorization") auth_token : String): Call<List<RiwayatDonorResponse>>
+    fun riwayatDonor(@Header("Authorization") auth_token : String): Call<RiwayatDonorResponse>
 }

@@ -48,6 +48,8 @@ class OtherDonorProfileActivity : AppCompatActivity(), CallBackData {
     private lateinit var nodataLottie : LottieAnimationView
     private lateinit var fotoProfile : CircleImageView
     private lateinit var nama : TextView
+    private lateinit var tv_golongan_darah : TextView
+    private lateinit var tv_total_donor_darah : TextView
     private lateinit var sharedPref: SharedPrefLogin
 
     private lateinit var adapter: PostAdapter
@@ -66,6 +68,11 @@ class OtherDonorProfileActivity : AppCompatActivity(), CallBackData {
 
         b = intent.extras
         id_pendonor = b!!.getInt("id_pendonor")
+
+        fotoProfile = findViewById(R.id.foto)
+        nama = findViewById(R.id.nama)
+        tv_golongan_darah = findViewById(R.id.tv_golongan_darah)
+        tv_total_donor_darah = findViewById(R.id.tv_total_donor_darah)
 
         sharedPref = SharedPrefLogin(this)
         val layoutManager = LinearLayoutManager(this)
@@ -100,8 +107,6 @@ class OtherDonorProfileActivity : AppCompatActivity(), CallBackData {
             }, 1000)
         }
 
-        fotoProfile = findViewById(R.id.foto)
-        nama = findViewById(R.id.nama)
     }
 
     private fun clearData() {
@@ -121,6 +126,14 @@ class OtherDonorProfileActivity : AppCompatActivity(), CallBackData {
                 if (resCode == 200){
                     Log.e("profilecaliak","success")
                     val res = response.body()!!
+                    tv_golongan_darah.text = res.user.id_golongan_darah.nama
+                    if (res.user.total_donor_darah.toString() != "null"){
+                        if (res.user.total_donor_darah.toString().toInt() <= 0){
+                            tv_total_donor_darah.text = res.user.total_donor_darah.toString()
+                        }
+                    }else{
+                        tv_total_donor_darah.text = "0"
+                    }
                     if(res.user.gambar.isNullOrEmpty()){
                         fotoProfile.setImageResource(R.drawable.baseline_person_24)
                     }else{

@@ -5,19 +5,29 @@ import com.google.gson.annotations.SerializedName
 
 class RiwayatDonorResponse {
 
-    @SerializedName("id_riwayat")
+    @SerializedName("total_donor_darah")
     @Expose
-    var id : Int? = null
+    var total_donor_darah : Int? = null
 
-    @SerializedName("tanggal_donor")
+    @SerializedName("riwayat")
     @Expose
-    var tanggal_donor : String? = null
+    var riwayat : List<Riwayat>? = null
 
-    @SerializedName("lokasi_donor")
-    @Expose
-    var lokasi_donor : String? = null
+    class Riwayat{
+        @SerializedName("id_riwayat")
+        @Expose
+        var id : Int? = null
 
-    @SerializedName("jumlah_donor")
-    @Expose
-    var jumlah_donor : Int? = null
+        @SerializedName("tanggal_donor")
+        @Expose
+        var tanggal_donor : String? = null
+
+        @SerializedName("lokasi_donor")
+        @Expose
+        var lokasi_donor : String? = null
+
+        @SerializedName("jumlah_donor")
+        @Expose
+        var jumlah_donor : Int? = null
+    }
 }
