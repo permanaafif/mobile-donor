@@ -48,13 +48,25 @@
         android:id="@+id/swlayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
-        <androidx.recyclerview.widget.RecyclerView
-            android:background="@color/grey"
-            android:id="@+id/rv_post"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            tools:itemCount="2"
-            tools:listitem="@layout/card_post_diskusi" />
+            android:layout_height="match_parent">
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_post"
+                android:background="@color/grey"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:itemCount="2"
+                android:layout_above="@+id/loadmore"
+                tools:listitem="@layout/card_post_diskusi" />
+            <ProgressBar
+                android:visibility="gone"
+                android:id="@+id/loadmore"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_width="50dp"
+                android:layout_height="50dp"/>
+        </RelativeLayout>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton

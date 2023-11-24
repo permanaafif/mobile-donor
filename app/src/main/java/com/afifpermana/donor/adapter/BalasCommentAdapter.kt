@@ -38,7 +38,7 @@ class BalasCommentAdapter(
 
     override fun onBindViewHolder(holder: BalasCommentAdapter.ViewHolder, position: Int) {
         val balasComment = listBalasComment[position]
-        var path_foto_profile = "http://213.35.121.183/images/${balasComment.gambar}"
+        var path_foto_profile = "http://138.2.74.142/images/${balasComment.gambar}"
         if (!balasComment.gambar.isNullOrEmpty() || balasComment.gambar != "null"){
             Picasso.get().load(path_foto_profile).into(holder.foto_profile)
             holder.foto_profile.setOnClickListener {

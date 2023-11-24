@@ -8,7 +8,7 @@ class Retro {
     fun getRetroClientInstance(): Retrofit {
         val gson = GsonBuilder().setLenient().create()
         return Retrofit.Builder()
-            .baseUrl("http://213.35.121.183/")
+            .baseUrl("http://138.2.74.142/")
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
     }

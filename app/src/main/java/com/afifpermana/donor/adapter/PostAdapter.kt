@@ -48,7 +48,7 @@ class PostAdapter(
 
     override fun onBindViewHolder(holder: PostAdapter.ViewHolder, position: Int) {
         val post = listPost[position]
-        var path_foto_profile = "http://213.35.121.183/images/${post.foto_profile}"
+        var path_foto_profile = "http://138.2.74.142/images/${post.foto_profile}"
         if (post.foto_profile != "null"){
             Picasso.get().load(path_foto_profile).into(holder.foto_profile)
             holder.foto_profile.setOnClickListener{
@@ -80,7 +80,7 @@ class PostAdapter(
             holder.text.text = post.text
             holder.text.viewTreeObserver.addOnGlobalLayoutListener {
                 val lineCount = holder.text.lineCount
-                if (lineCount > 3) {
+                if (lineCount > 4 || lineCount == 4) {
                     holder.textButton.visibility = View.VISIBLE
                 } else {
                     holder.textButton.visibility = View.GONE
@@ -106,7 +106,7 @@ class PostAdapter(
             }
         }
 
-        var path_gambar = "http://213.35.121.183/assets/post/${post.gambar}"
+        var path_gambar = "http://138.2.74.142/assets/post/${post.gambar}"
         holder.gambar.maxHeight = 250
         if (post.gambar.toString() != "null"){
             Picasso.get().load(path_gambar).into(holder.gambar)

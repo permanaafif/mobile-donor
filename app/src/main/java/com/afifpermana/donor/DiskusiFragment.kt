@@ -18,6 +18,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -70,6 +71,10 @@ class DiskusiFragment : Fragment(),CallBackData {
     private lateinit var post : ImageView
 //    private var lastPosition = 0
     private var selectedImageUri : Uri? = null
+    var isloading = false
+    var page = 1
+    var x = false
+    private lateinit var loadmore : ProgressBar
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -84,6 +89,7 @@ class DiskusiFragment : Fragment(),CallBackData {
         add_post = view.findViewById(R.id.add_post)
         loadingLottie = view.findViewById(R.id.loading)
         nodataLottie = view.findViewById(R.id.no_data)
+        loadmore = view.findViewById(R.id.loadmore)
 
         // Set up your RecyclerView and other functionality here
         recyclerView.layoutManager = LinearLayoutManager(context)
@@ -104,10 +110,35 @@ class DiskusiFragment : Fragment(),CallBackData {
                 } else if (dy < 0 && !add_post.isShown) {
                     add_post.show()
                 }
+
+                val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+                if(dy > 0){
+                    val visibleItemCount = layoutManager.childCount
+                    val totalItemCount = layoutManager.itemCount
+                    val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
+                    if (!isloading){
+                        if (visibleItemCount + firstVisibleItemPosition >= totalItemCount){
+                            addMoreData()
+//                            Log.e("RecyclerView","RecyclerView")
+                        }
+                    }
+                }
             }
         })
 
         return view
+    }
+
+    private fun addMoreData() {
+        isloading = true
+        loadmore.visibility = View.VISIBLE
+
+        Handler().postDelayed({
+            isloading = false
+            loadmore.visibility = View.GONE
+            postView(page)
+        },3000)
+        page++
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -121,7 +152,11 @@ class DiskusiFragment : Fragment(),CallBackData {
         recyclerView.layoutManager = layoutManager
         recyclerView.setHasFixedSize(true)
         sharedPref = SharedPrefLogin(requireActivity())
-        postView()
+        page = 1
+        cl_post.visibility = View.VISIBLE
+        recyclerView.visibility = View.GONE
+        loadingLottie.visibility = View.VISIBLE
+        postView(page)
         adapter = PostAdapter(newData,newDataPostFavorite,requireContext(),this,sharedPref)
         recyclerView.adapter = adapter
 
@@ -131,7 +166,11 @@ class DiskusiFragment : Fragment(),CallBackData {
             val Handler = Handler(Looper.getMainLooper())
             Handler().postDelayed(Runnable {
                 clearData()
-                postView()
+                page = 1
+                cl_post.visibility = View.VISIBLE
+                recyclerView.visibility = View.GONE
+                loadingLottie.visibility = View.VISIBLE
+                postView(page)
                 postFavorite()
                 sw_layout.isRefreshing = false
             }, 1000)
@@ -341,7 +380,11 @@ class DiskusiFragment : Fragment(),CallBackData {
                                 dialog.dismiss()
                                 selectedImageUri = null
                                 clearData()
-                                postView()
+                                page = 1
+                                cl_post.visibility = View.VISIBLE
+                                recyclerView.visibility = View.GONE
+                                loadingLottie.visibility = View.VISIBLE
+                                postView(page)
                                 Toast.makeText(requireActivity(), "Berhasil Upload", Toast.LENGTH_SHORT).show()
                             } else {
                                 Toast.makeText(requireActivity(), "terjadi kesalahan", Toast.LENGTH_SHORT).show()
@@ -371,7 +414,11 @@ class DiskusiFragment : Fragment(),CallBackData {
                             if (res?.success == true) {
                                 dialog.dismiss()
                                 clearData()
-                                postView()
+                                page = 1
+                                cl_post.visibility = View.VISIBLE
+                                recyclerView.visibility = View.GONE
+                                loadingLottie.visibility = View.VISIBLE
+                                postView(page)
                                 Toast.makeText(requireActivity(), "Berhasil Upload", Toast.LENGTH_SHORT).show()
                             } else {
                                 Toast.makeText(requireActivity(), "terjadi kesalahan", Toast.LENGTH_SHORT).show()
@@ -392,12 +439,9 @@ class DiskusiFragment : Fragment(),CallBackData {
     }
 
 
-    private fun postView() {
-        cl_post.visibility = View.VISIBLE
-        recyclerView.visibility = View.GONE
-        loadingLottie.visibility = View.VISIBLE
+    private fun postView(page:Int) {
         val retro = Retro().getRetroClientInstance().create(PostAPI::class.java)
-        retro.post("Bearer ${sharedPref.getString("token")}").enqueue(object :
+        retro.post("Bearer ${sharedPref.getString("token")}",page).enqueue(object :
             Callback<List<PostRespone>> {
             override fun onResponse(
                 call: Call<List<PostRespone>>,
@@ -412,6 +456,7 @@ class DiskusiFragment : Fragment(),CallBackData {
                         nodataLottie.visibility = View.VISIBLE
                         recyclerView.visibility = View.GONE
                     }else{
+                        x = true
                         // Menggunakan sortedByDescending untuk mengurutkan berdasarkan tanggal terbaru
                         for (i in res!!) {
                             val data = Post(
@@ -433,11 +478,14 @@ class DiskusiFragment : Fragment(),CallBackData {
                         recyclerView.visibility = View.VISIBLE
                     }
                 }
-                if(response.code() == 404){
+                if(response.code() == 403 && x == false){
                     cl_post.visibility = View.VISIBLE
                     loadingLottie.visibility = View.GONE
                     nodataLottie.visibility = View.VISIBLE
                     recyclerView.visibility = View.GONE
+                }
+                if(response.code() == 403 && x == true){
+                    Toast.makeText(requireActivity(), "Anda telah mencapai akhir postingan", Toast.LENGTH_SHORT).show()
                 }
             }
 

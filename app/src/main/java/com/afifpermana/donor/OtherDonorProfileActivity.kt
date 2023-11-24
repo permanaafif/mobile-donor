@@ -124,8 +124,8 @@ class OtherDonorProfileActivity : AppCompatActivity(), CallBackData {
                     if(res.user.gambar.isNullOrEmpty()){
                         fotoProfile.setImageResource(R.drawable.baseline_person_24)
                     }else{
-                        Picasso.get().load("http://213.35.121.183/images/${res.user!!.gambar}").into(fotoProfile)
-                        val pathFoto = "http://213.35.121.183/images/${res.user!!.gambar}"
+                        Picasso.get().load("http://138.2.74.142/images/${res.user!!.gambar}").into(fotoProfile)
+                        val pathFoto = "http://138.2.74.142/images/${res.user!!.gambar}"
                         fotoProfile.setOnClickListener {
                             showAlertGambar(pathFoto!!)
                         }

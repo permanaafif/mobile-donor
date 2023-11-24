@@ -183,8 +183,12 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onFailure(call: Call<TotalNotifResponse>, t: Throwable) {
-                Toast.makeText(applicationContext, t.message.toString(), Toast.LENGTH_SHORT).show()
                 Log.e("masalah", t.message.toString())
+                Toast.makeText(this@MainActivity,"Sesi kamu habis", Toast.LENGTH_SHORT).show()
+                sharedPref.logOut()
+                sharedPref.setStatusLogin(false)
+                startActivity(Intent(this@MainActivity, LoginActivity::class.java))
+                finish()
             }
         })
     }
@@ -233,7 +237,7 @@ class MainActivity : AppCompatActivity() {
                             if(res.user!!.gambar.isNullOrEmpty()){
                                 fotoProfile.setImageResource(R.drawable.baseline_person_24)
                             }else{
-                                val path = "http://213.35.121.183/images/${res.user!!.gambar}"
+                                val path = "http://138.2.74.142/images/${res.user!!.gambar}"
                                 Picasso.get().load(path).into(fotoProfile)
                                 fotoProfile.setOnClickListener {
                                     showAlertGambar(path)
@@ -275,6 +279,11 @@ class MainActivity : AppCompatActivity() {
 
                 override fun onFailure(call: Call<HomeResponse>, t: Throwable) {
                     Log.e("Status response", t.message.toString())
+                    Toast.makeText(this@MainActivity,"Sesi kamu habis", Toast.LENGTH_SHORT).show()
+                    sharedPref.logOut()
+                    sharedPref.setStatusLogin(false)
+                    startActivity(Intent(this@MainActivity, LoginActivity::class.java))
+                    finish()
                 }
             })
 

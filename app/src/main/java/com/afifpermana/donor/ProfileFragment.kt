@@ -364,9 +364,9 @@ class ProfileFragment : Fragment(), CallBackData {
         adapter.notifyDataSetChanged()
     }
 
-    private fun postView() {
+    private fun postViewAll() {
         val retro = Retro().getRetroClientInstance().create(PostAPI::class.java)
-        retro.post("Bearer ${sharedPref.getString("token")}").enqueue(object :
+        retro.postAll("Bearer ${sharedPref.getString("token")}").enqueue(object :
             Callback<List<PostRespone>> {
             override fun onResponse(
                 call: Call<List<PostRespone>>,
@@ -482,8 +482,8 @@ class ProfileFragment : Fragment(), CallBackData {
                     if(res.user.gambar.isNullOrEmpty()){
                         fotoProfile.setImageResource(R.drawable.baseline_person_24)
                     }else{
-                        Picasso.get().load("http://213.35.121.183/images/${res.user!!.gambar}").into(fotoProfile)
-                        pathFoto = "http://213.35.121.183/images/${res.user!!.gambar}"
+                        Picasso.get().load("http://138.2.74.142/images/${res.user!!.gambar}").into(fotoProfile)
+                        pathFoto = "http://138.2.74.142/images/${res.user!!.gambar}"
                         fotoProfile.setOnClickListener {
                             showAlertGambar(pathFoto!!)
                         }
@@ -666,7 +666,7 @@ class ProfileFragment : Fragment(), CallBackData {
                         }
                         if (radioGroup.checkedRadioButtonId == R.id.btn_favorite){
                             Log.e("btnfav","fav")
-                            postView()
+                            postViewAll()
                         }
                         adapter.notifyDataSetChanged()
                     }else{

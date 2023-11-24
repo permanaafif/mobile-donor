@@ -28,7 +28,7 @@ class ArtikelAdapter(
     override fun onBindViewHolder(holder: ArtikelAdapter.ViewHolder, position: Int) {
         val artikel = listArtikel[position]
 //        holder.image.setImageResource(artikel.gambar)
-        Picasso.get().load("http://213.35.121.183/assets/img/${artikel.gambar}").into(holder.image)
+        Picasso.get().load("http://138.2.74.142/assets/img/${artikel.gambar}").into(holder.image)
         holder.judul.text = artikel.judul
         holder.deskripsi.text = artikel.deskripsi
         holder.tanggal.text = artikel.tanggal

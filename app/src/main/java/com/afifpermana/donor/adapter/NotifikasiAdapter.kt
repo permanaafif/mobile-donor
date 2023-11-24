@@ -34,7 +34,7 @@ class NotifikasiAdapter(
 
     override fun onBindViewHolder(holder: NotifikasiAdapter.ViewHolder, position: Int) {
         val notif = listNotif[position]
-        var path_foto_profile = "http://213.35.121.183/images/${notif.pendonor.gambar}"
+        var path_foto_profile = "http://138.2.74.142/images/${notif.pendonor.gambar}"
         if (notif.pendonor.gambar != "null"){
             Picasso.get().load(path_foto_profile).into(holder.image)
         }

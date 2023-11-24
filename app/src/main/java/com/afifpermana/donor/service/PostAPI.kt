@@ -17,11 +17,15 @@ import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface PostAPI {
 
     @GET("api/post")
-    fun post(@Header("Authorization") auth_token : String): Call<List<PostRespone>>
+    fun post(@Header("Authorization") auth_token : String,@Query("page") page: Int): Call<List<PostRespone>>
+
+    @GET("api/post-all")
+    fun postAll(@Header("Authorization") auth_token : String): Call<List<PostRespone>>
 
     @GET("api/post/me")
     fun postMe(@Header("Authorization") auth_token : String): Call<List<PostRespone>>

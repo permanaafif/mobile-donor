@@ -560,7 +560,7 @@ class CommentsActivity : AppCompatActivity(), CallBackData {
                 var res = response.body()
                 if (response.isSuccessful){
                     if(res?.gambar_profile.toString() != "null"){
-                        val path = "http://213.35.121.183/images/${res?.gambar_profile}"
+                        val path = "http://138.2.74.142/images/${res?.gambar_profile}"
                         Picasso.get().load(path).into(gambar_profile)
                         gambar_profile.setOnClickListener {
                             showAlertGambar(path)
@@ -618,7 +618,7 @@ class CommentsActivity : AppCompatActivity(), CallBackData {
                     }
 
                     if (res?.gambar.toString() != "null"){
-                        Picasso.get().load("http://213.35.121.183/assets/post/${res?.gambar}").into(gambar)
+                        Picasso.get().load("http://138.2.74.142/assets/post/${res?.gambar}").into(gambar)
                         gambar.visibility = View.VISIBLE
                     }
 

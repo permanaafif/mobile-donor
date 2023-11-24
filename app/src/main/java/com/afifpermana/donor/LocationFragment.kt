@@ -35,6 +35,7 @@ import com.afifpermana.donor.service.LokasiDonorAPI
 import com.afifpermana.donor.util.Retro
 import com.afifpermana.donor.util.SharedPrefLogin
 import com.airbnb.lottie.LottieAnimationView
+import com.google.android.gms.location.LocationServices
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -113,7 +114,7 @@ class LocationFragment : Fragment() {
             when (itemSelected) {
                 "Tanggal" -> {
                     // Urutkan data sumber berdasarkan tanggal terbesar/ terbaru
-                    val sortedIndices = tanggal.indices.sortedByDescending { parseDate(tanggal[it]) }
+                    val sortedIndices = tanggal.indices.sortedBy { parseDate(tanggal[it]) }
                     // Mengisi newData dengan data yang sudah diurutkan
                     newData.clear()
                     for (i in sortedIndices) {
@@ -125,9 +126,18 @@ class LocationFragment : Fragment() {
 //                    Toast.makeText(requireActivity(), "tanggal", Toast.LENGTH_LONG).show()
                 }
                 "Lokasi Terdekat" -> {
+                    val permission = Manifest.permission.ACCESS_FINE_LOCATION
+                    if (ContextCompat.checkSelfPermission(requireContext(), permission) == PackageManager.PERMISSION_GRANTED) {
+                        // Izin lokasi telah diberikan
+                        // Lakukan pengambilan lokasi di sini
+                        sortLocationsByNearestLocation(lat,long)
+                    } else {
+                        // Jika izin belum diberikan, minta izin kepada pengguna
+                        ActivityCompat.requestPermissions(requireActivity(), arrayOf(permission), LOCATION_PERMISSION_REQUEST_CODE)
+                    }
                     // Tambahkan logika untuk mengurutkan berdasarkan lokasi terdekat di sini
                     // Jika diperlukan
-                    sortLocationsByNearestLocation(lat,long)
+
 //                    println("LatAfif: $lat, Long: $long")
 //                    Toast.makeText(requireActivity(), "Lokasi Terdekat", Toast.LENGTH_LONG).show()
                 }
@@ -173,6 +183,49 @@ class LocationFragment : Fragment() {
                 arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
                 LOCATION_PERMISSION_REQUEST_CODE
             )
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        when (requestCode) {
+            // Sesuaikan dengan requestCode yang Anda gunakan saat meminta izin
+            requestCode -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // Izin diberikan, lakukan pengambilan lokasi di sini
+                    val fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
+                    if (ActivityCompat.checkSelfPermission(
+                            requireContext(),
+                            Manifest.permission.ACCESS_FINE_LOCATION
+                        ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                            requireContext(),
+                            Manifest.permission.ACCESS_COARSE_LOCATION
+                        ) != PackageManager.PERMISSION_GRANTED
+                    ) {
+                        // TODO: Consider calling
+                        //    ActivityCompat#requestPermissions
+                        // here to request the missing permissions, and then overriding
+                        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                        //                                          int[] grantResults)
+                        // to handle the case where the user grants the permission. See the documentation
+                        // for ActivityCompat#requestPermissions for more details.
+                        return
+                    }
+                    fusedLocationClient.lastLocation
+                        .addOnSuccessListener { location: Location? ->
+                            // Lokasi berhasil diperoleh
+                            if (location != null) {
+                                val latitude = location.latitude
+                                val longitude = location.longitude
+                                lat = location.latitude
+                                long = location.longitude
+                                // Lakukan sesuatu dengan koordinat lokasi di sini
+                            }
+                        }
+                } else {
+                    // Izin ditolak, berikan pesan kepada pengguna atau ambil tindakan lainnya
+                    Toast.makeText(requireContext(),"Izin akses GPS di tolak", Toast.LENGTH_SHORT).show()
+                }
+            }
         }
     }
 
