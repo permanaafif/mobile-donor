@@ -13,6 +13,7 @@ import androidx.appcompat.widget.Toolbar
 import com.afifpermana.donor.model.lupa_password.resetPasswordRequest
 import com.afifpermana.donor.model.lupa_password.resetPasswordResponse
 import com.afifpermana.donor.service.LupaPasswordAPI
+import com.afifpermana.donor.util.ConnectivityChecker
 import com.afifpermana.donor.util.Retro
 import retrofit2.Call
 import retrofit2.Callback
@@ -34,9 +35,16 @@ class LupaPassword2 : AppCompatActivity() {
 
         ganti = findViewById(R.id.btnUbah)
         ganti.setOnClickListener{
-           if(validasiPasswdor()){
-                resetPassword()
-           }
+            val connectivityChecker = ConnectivityChecker(this)
+            if (connectivityChecker.isNetworkAvailable()){
+                //koneksi aktif
+                if(validasiPasswdor()){
+                    resetPassword()
+                }
+            }else{
+                //koneksi tidak aktif
+                connectivityChecker.showAlertDialogNoConnection()
+            }
         }
 
         val toolbar = findViewById<Toolbar>(R.id.toolbar)

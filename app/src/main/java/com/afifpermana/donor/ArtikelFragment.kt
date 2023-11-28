@@ -1,5 +1,6 @@
 package com.afifpermana.donor
 
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -18,6 +19,7 @@ import com.afifpermana.donor.adapter.ArtikelAdapter
 import com.afifpermana.donor.model.Artikel
 import com.afifpermana.donor.model.BeritaResponse
 import com.afifpermana.donor.service.BeritaAPI
+import com.afifpermana.donor.util.ConnectivityChecker
 import com.afifpermana.donor.util.Retro
 import com.afifpermana.donor.util.SharedPrefLogin
 import com.airbnb.lottie.LottieAnimationView
@@ -156,54 +158,68 @@ class ArtikelFragment() : Fragment() {
     }
 
     private fun beritaView(page:Int) {
-        val retro = Retro().getRetroClientInstance().create(BeritaAPI::class.java)
-        retro.allBerita("Bearer ${sharedPref.getString("token")}",page).enqueue(object : Callback<List<BeritaResponse>> {
-            override fun onResponse(
-                call: Call<List<BeritaResponse>>,
-                response: Response<List<BeritaResponse>>
-            ) {
-                if (response.isSuccessful) {
-                    val res = response.body()
-                    if (res.isNullOrEmpty()){
+        val connectivityChecker = ConnectivityChecker(requireActivity())
+        if (connectivityChecker.isNetworkAvailable()){
+            //koneksi aktif
+            val retro = Retro().getRetroClientInstance().create(BeritaAPI::class.java)
+            retro.allBerita("Bearer ${sharedPref.getString("token")}",page).enqueue(object : Callback<List<BeritaResponse>> {
+                override fun onResponse(
+                    call: Call<List<BeritaResponse>>,
+                    response: Response<List<BeritaResponse>>
+                ) {
+                    if (response.isSuccessful) {
+                        val res = response.body()
+                        if (res.isNullOrEmpty()){
+                            cl_artikel.visibility = View.VISIBLE
+                            loadingLottie.visibility = View.GONE
+                            nodataLottie.visibility = View.VISIBLE
+                            recyclerView.visibility = View.GONE
+                        }else{
+                            x = true
+                            // Menggunakan sortedByDescending untuk mengurutkan berdasarkan tanggal terbaru
+                            val sortedData = res?.sortedByDescending { it.update_at }
+                            for (i in sortedData!!) {
+                                val data = Artikel(
+                                    i.gambar.toString(),
+                                    i.judul.toString(),
+                                    i.deskripsi.toString(),
+                                    formatTanggal(i.update_at.toString()),
+                                )
+                                newData.add(data)
+                            }
+                            adapter.notifyDataSetChanged()
+                            cl_artikel.visibility = View.GONE
+                            loadingLottie.visibility = View.VISIBLE
+                            nodataLottie.visibility = View.GONE
+                            recyclerView.visibility = View.VISIBLE
+                        }
+                    }
+                    if(response.code() == 403 && x == false){
                         cl_artikel.visibility = View.VISIBLE
                         loadingLottie.visibility = View.GONE
                         nodataLottie.visibility = View.VISIBLE
                         recyclerView.visibility = View.GONE
-                    }else{
-                        x = true
-                        // Menggunakan sortedByDescending untuk mengurutkan berdasarkan tanggal terbaru
-                        val sortedData = res?.sortedByDescending { it.update_at }
-                        for (i in sortedData!!) {
-                            val data = Artikel(
-                                i.gambar.toString(),
-                                i.judul.toString(),
-                                i.deskripsi.toString(),
-                                formatTanggal(i.update_at.toString()),
-                            )
-                            newData.add(data)
-                        }
-                        adapter.notifyDataSetChanged()
-                        cl_artikel.visibility = View.GONE
-                        loadingLottie.visibility = View.VISIBLE
-                        nodataLottie.visibility = View.GONE
-                        recyclerView.visibility = View.VISIBLE
+                    }
+                    if(response.code() == 403 && x == true){
+                        Toast.makeText(requireActivity(), "Anda telah mencapai akhir postingan", Toast.LENGTH_SHORT).show()
                     }
                 }
-                if(response.code() == 403 && x == false){
-                    cl_artikel.visibility = View.VISIBLE
-                    loadingLottie.visibility = View.GONE
-                    nodataLottie.visibility = View.VISIBLE
-                    recyclerView.visibility = View.GONE
-                }
-                if(response.code() == 403 && x == true){
-                    Toast.makeText(requireActivity(), "Anda telah mencapai akhir postingan", Toast.LENGTH_SHORT).show()
-                }
-            }
 
-            override fun onFailure(call: Call<List<BeritaResponse>>, t: Throwable) {
-                Log.e("hasilnya", t.message.toString())
-            }
-        })
+                override fun onFailure(call: Call<List<BeritaResponse>>, t: Throwable) {
+                    Log.e("hasilnya", t.message.toString())
+                    sharedPref.logOut()
+                    sharedPref.setStatusLogin(false)
+                    startActivity(Intent(requireActivity(), LoginActivity::class.java))
+                    activity?.finish()
+                }
+            })
+        }else{
+            connectivityChecker.showAlertDialogNoConnection()
+            cl_artikel.visibility = View.VISIBLE
+            loadingLottie.visibility = View.GONE
+            nodataLottie.visibility = View.VISIBLE
+            recyclerView.visibility = View.GONE
+        }
     }
 
 }

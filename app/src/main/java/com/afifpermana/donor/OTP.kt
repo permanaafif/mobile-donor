@@ -21,6 +21,7 @@ import com.afifpermana.donor.model.lupa_password.checkOtpResponse
 import com.afifpermana.donor.model.lupa_password.sendOtpRequest
 import com.afifpermana.donor.model.lupa_password.sendOtpResponse
 import com.afifpermana.donor.service.LupaPasswordAPI
+import com.afifpermana.donor.util.ConnectivityChecker
 import com.afifpermana.donor.util.Retro
 import retrofit2.Call
 import retrofit2.Callback
@@ -71,9 +72,16 @@ class OTP : AppCompatActivity() {
         kode1.requestFocus()
 
         btn_verifikasi.setOnClickListener {
-            if(valisasiInputOtp()){
-                otp = "${kode1.text.trim()}${kode2.text.trim()}${kode3.text.trim()}${kode4.text.trim()}"
-                checkOtp()
+            val connectivityChecker = ConnectivityChecker(this)
+            if (connectivityChecker.isNetworkAvailable()){
+                //koneksi aktif
+                if(valisasiInputOtp()){
+                    otp = "${kode1.text.trim()}${kode2.text.trim()}${kode3.text.trim()}${kode4.text.trim()}"
+                    checkOtp()
+                }
+            }else{
+                //koneksi tidak aktif
+                connectivityChecker.showAlertDialogNoConnection()
             }
         }
         updateTextResendOTP()

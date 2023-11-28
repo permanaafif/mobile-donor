@@ -16,6 +16,7 @@ import com.afifpermana.donor.model.lupa_password.sendOtpRequest
 import com.afifpermana.donor.model.lupa_password.sendOtpResponse
 import com.afifpermana.donor.service.HomeAPI
 import com.afifpermana.donor.service.LupaPasswordAPI
+import com.afifpermana.donor.util.ConnectivityChecker
 import com.afifpermana.donor.util.Retro
 import retrofit2.Call
 import retrofit2.Callback
@@ -40,8 +41,15 @@ class LupaPassword : AppCompatActivity() {
         loadingProgressBar = findViewById(R.id.loadingProgressBar)
 
         btn_kirim_otp.setOnClickListener {
-            if(validasiInput()){
-                kirimOtp()
+            val connectivityChecker = ConnectivityChecker(this)
+            if (connectivityChecker.isNetworkAvailable()){
+                //koneksi aktif
+                if(validasiInput()){
+                    kirimOtp()
+                }
+            }else{
+                //koneksi tidak aktif
+                connectivityChecker.showAlertDialogNoConnection()
             }
         }
     }

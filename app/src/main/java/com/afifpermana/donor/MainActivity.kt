@@ -23,6 +23,7 @@ import com.afifpermana.donor.model.TotalNotifResponse
 import com.afifpermana.donor.service.HomeAPI
 import com.afifpermana.donor.service.NotifikasiAPI
 import com.afifpermana.donor.service.SendTokenFCMAPI
+import com.afifpermana.donor.util.ConnectivityChecker
 import com.afifpermana.donor.util.Retro
 import com.afifpermana.donor.util.SharedPrefLogin
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -54,6 +55,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var beratBadan : TextView
     private lateinit var jadwalTerdekat : TextView
     private lateinit var fotoProfile : CircleImageView
+    val connectivityChecker = ConnectivityChecker(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -184,11 +186,11 @@ class MainActivity : AppCompatActivity() {
 
             override fun onFailure(call: Call<TotalNotifResponse>, t: Throwable) {
                 Log.e("masalah", t.message.toString())
-                Toast.makeText(this@MainActivity,"Sesi kamu habis", Toast.LENGTH_SHORT).show()
-                sharedPref.logOut()
-                sharedPref.setStatusLogin(false)
-                startActivity(Intent(this@MainActivity, LoginActivity::class.java))
-                finish()
+//                Toast.makeText(this@MainActivity,"Sesi kamu habis", Toast.LENGTH_SHORT).show()
+//                sharedPref.logOut()
+//                sharedPref.setStatusLogin(false)
+//                startActivity(Intent(this@MainActivity, LoginActivity::class.java))
+//                finish()
             }
         })
     }
@@ -278,12 +280,19 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 override fun onFailure(call: Call<HomeResponse>, t: Throwable) {
-                    Log.e("Status response", t.message.toString())
-                    Toast.makeText(this@MainActivity,"Sesi kamu habis", Toast.LENGTH_SHORT).show()
-                    sharedPref.logOut()
-                    sharedPref.setStatusLogin(false)
-                    startActivity(Intent(this@MainActivity, LoginActivity::class.java))
-                    finish()
+                    if (connectivityChecker.isNetworkAvailable()){
+                        //koneksi aktif
+                        Log.e("Status response", t.message.toString())
+                        Toast.makeText(this@MainActivity,"Sesi kamu habis", Toast.LENGTH_SHORT).show()
+                        sharedPref.logOut()
+                        sharedPref.setStatusLogin(false)
+                        startActivity(Intent(this@MainActivity, LoginActivity::class.java))
+                        finish()
+                    }else{
+                        //koneksi tidak aktif
+                        connectivityChecker.showAlertDialogNoConnection()
+                    }
+
                 }
             })
 

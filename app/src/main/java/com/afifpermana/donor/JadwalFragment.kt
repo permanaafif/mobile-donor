@@ -1,5 +1,6 @@
 package com.afifpermana.donor
 
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -18,6 +19,7 @@ import com.afifpermana.donor.model.Jadwal
 import com.afifpermana.donor.model.LokasiDonorResponse
 import com.afifpermana.donor.service.JadwalUserAPI
 import com.afifpermana.donor.service.LokasiDonorAPI
+import com.afifpermana.donor.util.ConnectivityChecker
 import com.afifpermana.donor.util.Retro
 import com.afifpermana.donor.util.SharedPrefLogin
 import retrofit2.Call
@@ -102,44 +104,67 @@ class JadwalFragment : Fragment() {
         }
     }
     private fun jadwalView() {
-        Log.e("lokasinya2","${sharedPref.getInt("id")}")
-        val retro = Retro().getRetroClientInstance().create(JadwalUserAPI::class.java)
-        retro.jadwalDonor("Bearer ${sharedPref.getString("token")}",sharedPref.getInt("id")).enqueue(object : Callback<List<LokasiDonorResponse>> {
-            override fun onResponse(
-                call: Call<List<LokasiDonorResponse>>,
-                response: Response<List<LokasiDonorResponse>>
-            ) {
-                if (response.isSuccessful) {
-                    cl_jadwal.visibility = View.GONE
-                    recyclerView.visibility = View.VISIBLE
-                    Log.e("lokasinya2","test")
-                    val res = response.body()
-                    Log.e("jadwal",res.toString())
-                        for(i in res!!){
-                            id += i.id!!
-                            tanggal += i.tanggal_donor!!
-                            jamMulai += extractJamMenit(i.jam_mulai!!)
-                            jamSelesai += extractJamMenit(i.jam_selesai!!)
-                            lokasi += i.lokasi!!
-                            alamat += i.alamat!!
-                            kontak += i.kontak!!
-                            latitude += i.latitude!!
-                            longitude += i.longitude!!
-                            status += false
+        val connectivityChecker = ConnectivityChecker(requireActivity())
+        if (connectivityChecker.isNetworkAvailable()) {
+            //koneksi aktif
+            Log.e("lokasinya2", "${sharedPref.getInt("id")}")
+            val retro = Retro().getRetroClientInstance().create(JadwalUserAPI::class.java)
+            retro.jadwalDonor("Bearer ${sharedPref.getString("token")}", sharedPref.getInt("id"))
+                .enqueue(object : Callback<List<LokasiDonorResponse>> {
+                    override fun onResponse(
+                        call: Call<List<LokasiDonorResponse>>,
+                        response: Response<List<LokasiDonorResponse>>
+                    ) {
+                        if (response.isSuccessful) {
+                            cl_jadwal.visibility = View.GONE
+                            recyclerView.visibility = View.VISIBLE
+                            Log.e("lokasinya2", "test")
+                            val res = response.body()
+                            Log.e("jadwal", res.toString())
+                            for (i in res!!) {
+                                id += i.id!!
+                                tanggal += i.tanggal_donor!!
+                                jamMulai += extractJamMenit(i.jam_mulai!!)
+                                jamSelesai += extractJamMenit(i.jam_selesai!!)
+                                lokasi += i.lokasi!!
+                                alamat += i.alamat!!
+                                kontak += i.kontak!!
+                                latitude += i.latitude!!
+                                longitude += i.longitude!!
+                                status += false
+                            }
+                            for (x in tanggal.indices) {
+                                val data = Jadwal(
+                                    id[x],
+                                    tanggal[x],
+                                    jamMulai[x],
+                                    jamSelesai[x],
+                                    lokasi[x],
+                                    alamat[x],
+                                    kontak[x],
+                                    latitude[x],
+                                    longitude[x],
+                                    status[x]
+                                )
+                                newData.add(data)
+                            }
+                            adapter.notifyDataSetChanged()
                         }
-                        for (x in tanggal.indices){
-                            val data = Jadwal(id[x],tanggal[x], jamMulai[x], jamSelesai[x], lokasi[x], alamat[x], kontak[x], latitude[x], longitude[x],status[x])
-                            newData.add(data)
+                        if (response.code() == 400){
+                            cl_jadwal.visibility = View.VISIBLE
+                            recyclerView.visibility = View.GONE
                         }
-                        adapter.notifyDataSetChanged()
-                }
-            }
+                    }
 
-            override fun onFailure(call: Call<List<LokasiDonorResponse>>, t: Throwable) {
-                cl_jadwal.visibility = View.VISIBLE
-                recyclerView.visibility = View.GONE
-
-            }
-        })
+                    override fun onFailure(call: Call<List<LokasiDonorResponse>>, t: Throwable) {
+                        sharedPref.logOut()
+                        sharedPref.setStatusLogin(false)
+                        startActivity(Intent(requireActivity(), LoginActivity::class.java))
+                        activity?.finish()
+                    }
+                })
+        }else{
+            connectivityChecker.showAlertDialogNoConnection()
+        }
     }
 }

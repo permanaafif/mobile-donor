@@ -15,6 +15,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.afifpermana.donor.service.PendonorLoginAPI
+import com.afifpermana.donor.util.ConnectivityChecker
 import com.afifpermana.donor.util.Retro
 import com.afifpermana.donor.util.SharedPrefLogin
 import com.example.belajarapi.model.PendonorLoginRequest
@@ -57,8 +58,15 @@ class LoginActivity : AppCompatActivity() {
         }
 
         login.setOnClickListener{
-            if (validateInput()){
-                loginPendonor()
+            val connectivityChecker = ConnectivityChecker(this)
+            if (connectivityChecker.isNetworkAvailable()){
+                //koneksi aktif
+                if (validateInput()){
+                    loginPendonor()
+                }
+            }else{
+                //koneksi tidak aktif
+                connectivityChecker.showAlertDialogNoConnection()
             }
         }
 

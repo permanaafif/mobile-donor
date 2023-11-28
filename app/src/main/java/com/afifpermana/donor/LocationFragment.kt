@@ -2,6 +2,7 @@ package com.afifpermana.donor
 
 import android.Manifest
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationListener
@@ -32,6 +33,7 @@ import com.afifpermana.donor.model.Jadwal
 import com.afifpermana.donor.model.LokasiDonorResponse
 import com.afifpermana.donor.service.BeritaAPI
 import com.afifpermana.donor.service.LokasiDonorAPI
+import com.afifpermana.donor.util.ConnectivityChecker
 import com.afifpermana.donor.util.Retro
 import com.afifpermana.donor.util.SharedPrefLogin
 import com.airbnb.lottie.LottieAnimationView
@@ -258,22 +260,19 @@ class LocationFragment : Fragment() {
         recyclerView.visibility = View.GONE
         loadingLottie.visibility = View.VISIBLE
         nodataLottie.visibility = View.GONE
-        val retro = Retro().getRetroClientInstance().create(LokasiDonorAPI::class.java)
-        retro.lokasi("Bearer ${sharedPref.getString("token")}").enqueue(object : Callback<List<LokasiDonorResponse>> {
-            override fun onResponse(
-                call: Call<List<LokasiDonorResponse>>,
-                response: Response<List<LokasiDonorResponse>>
-            ) {
-                if (response.isSuccessful) {
-                    val res = response.body()
-
-                    if (res != null) {
-                        // Respons JSON tidak null
-
-                        if (res.isNotEmpty()) {
-                            // Respons JSON berisi elemen
-
-                            for (i in res) {
+        val connectivityChecker = ConnectivityChecker(requireActivity())
+        if (connectivityChecker.isNetworkAvailable()) {
+            //koneksi aktif
+            val retro = Retro().getRetroClientInstance().create(LokasiDonorAPI::class.java)
+            retro.lokasi("Bearer ${sharedPref.getString("token")}")
+                .enqueue(object : Callback<List<LokasiDonorResponse>> {
+                    override fun onResponse(
+                        call: Call<List<LokasiDonorResponse>>,
+                        response: Response<List<LokasiDonorResponse>>
+                    ) {
+                        if (response.isSuccessful) {
+                            val res = response.body()
+                            for (i in res!!) {
                                 id += i.id ?: 0
                                 tanggal += i.tanggal_donor ?: ""
                                 jamMulai += extractJamMenit(i.jam_mulai ?: "")
@@ -306,30 +305,32 @@ class LocationFragment : Fragment() {
                             loadingLottie.visibility = View.GONE
                             nodataLottie.visibility = View.GONE
                             recyclerView.visibility = View.VISIBLE
-                        } else {
+                        }
+
+                        if (response.code() == 400) {
                             cl_jadwal.visibility = View.VISIBLE
                             loadingLottie.visibility = View.GONE
                             nodataLottie.visibility = View.VISIBLE
                             recyclerView.visibility = View.GONE
                         }
-                    } else {
-                        cl_jadwal.visibility = View.VISIBLE
-                        loadingLottie.visibility = View.GONE
-                        nodataLottie.visibility = View.VISIBLE
-                        recyclerView.visibility = View.GONE
+
                     }
-                }
 
-            }
+                    override fun onFailure(call: Call<List<LokasiDonorResponse>>, t: Throwable) {
+                        sharedPref.logOut()
+                        sharedPref.setStatusLogin(false)
+                        startActivity(Intent(requireActivity(), LoginActivity::class.java))
+                        activity?.finish()
+                    }
 
-            override fun onFailure(call: Call<List<LokasiDonorResponse>>, t: Throwable) {
-                cl_jadwal.visibility = View.VISIBLE
-                loadingLottie.visibility = View.GONE
-                nodataLottie.visibility = View.VISIBLE
-                recyclerView.visibility = View.GONE
-            }
-
-        })
+                })
+        }else{
+            connectivityChecker.showAlertDialogNoConnection()
+            cl_jadwal.visibility = View.VISIBLE
+            loadingLottie.visibility = View.GONE
+            nodataLottie.visibility = View.VISIBLE
+            recyclerView.visibility = View.GONE
+        }
     }
 
 
