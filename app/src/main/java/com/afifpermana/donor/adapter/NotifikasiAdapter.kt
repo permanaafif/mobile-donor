@@ -1,5 +1,6 @@
 package com.afifpermana.donor.adapter
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.Typeface
 import android.text.Spannable
@@ -18,11 +19,13 @@ import com.afifpermana.donor.CommentsActivity
 import com.afifpermana.donor.R
 import com.afifpermana.donor.model.Notifikasi
 import com.afifpermana.donor.service.CallBackNotif
+import com.afifpermana.donor.util.ConnectivityChecker
 import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
 
 class NotifikasiAdapter(
     private val listNotif : List<Notifikasi>,
+    private val context : Context,
     private val dataCallBack : CallBackNotif
 ): RecyclerView.Adapter<NotifikasiAdapter.ViewHolder>() {
     override fun onCreateViewHolder(
@@ -66,17 +69,24 @@ class NotifikasiAdapter(
         }
 
         holder.ll_notif.setOnClickListener{
-            holder.iconNotif.visibility = View.GONE
-            if (notif.status_read == 0){
-                Log.e("status_read", notif.status_read.toString())
-                dataCallBack.updateStatusRead(notif.id)
+            val connectivityChecker = ConnectivityChecker(context)
+            if (connectivityChecker.isNetworkAvailable()){
+                //koneksi aktif
+                holder.iconNotif.visibility = View.GONE
+                if (notif.status_read == 0){
+                    Log.e("status_read", notif.status_read.toString())
+                    dataCallBack.updateStatusRead(notif.id)
+                }
+                val context = it.context
+                val i = Intent(context, CommentsActivity::class.java)
+                i.putExtra("id_post",notif.id_post)
+                i.putExtra("id_comment",notif.id_comment)
+                i.putExtra("id_balas_comment",notif.id_balas_comment ?: 0)
+                context.startActivity(i)
+            }else{
+                //koneksi tidak aktif
+                connectivityChecker.showAlertDialogNoConnection()
             }
-            val context = it.context
-            val i = Intent(context, CommentsActivity::class.java)
-            i.putExtra("id_post",notif.id_post)
-            i.putExtra("id_comment",notif.id_comment)
-            i.putExtra("id_balas_comment",notif.id_balas_comment ?: 0)
-            context.startActivity(i)
         }
     }
 

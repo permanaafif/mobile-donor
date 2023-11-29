@@ -127,10 +127,9 @@ class OtherDonorProfileActivity : AppCompatActivity(), CallBackData {
                     Log.e("profilecaliak","success")
                     val res = response.body()!!
                     tv_golongan_darah.text = res.user.id_golongan_darah.nama
-                    if (res.user.total_donor_darah.toString() != "null"){
-                        if (res.user.total_donor_darah.toString().toInt() <= 0){
+                    if (res.user.total_donor_darah.toString() != "null"
+                        && res.user.total_donor_darah.toString().toInt() >= 0){
                             tv_total_donor_darah.text = res.user.total_donor_darah.toString()
-                        }
                     }else{
                         tv_total_donor_darah.text = "0"
                     }

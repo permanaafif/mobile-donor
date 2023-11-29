@@ -13,6 +13,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
@@ -27,6 +28,7 @@ import com.afifpermana.donor.model.PostFavorite
 import com.afifpermana.donor.model.PostFavoriteResponse2
 import com.afifpermana.donor.service.CallBackData
 import com.afifpermana.donor.service.PostFavoriteAPI
+import com.afifpermana.donor.util.ConnectivityChecker
 import com.afifpermana.donor.util.Retro
 import com.afifpermana.donor.util.SharedPrefLogin
 import com.squareup.picasso.Picasso
@@ -65,10 +67,17 @@ class PostAdapter(
             val id_pendonor = sharedPref.getInt("id")
             if (id_pendonor != post.id_pendonor){
                 if (id_pendonor_now != post.id_pendonor){
-                    val context = it.context
-                    val i = Intent(context, OtherDonorProfileActivity::class.java)
-                    i.putExtra("id_pendonor",post.id_pendonor)
-                    context.startActivity(i)
+                    val connectivityChecker = ConnectivityChecker(context)
+                    if (connectivityChecker.isNetworkAvailable()){
+                        //koneksi aktif
+                        val context = it.context
+                        val i = Intent(context, OtherDonorProfileActivity::class.java)
+                        i.putExtra("id_pendonor",post.id_pendonor)
+                        context.startActivity(i)
+                    }else{
+                        //koneksi tidak aktif
+                        connectivityChecker.showAlertDialogNoConnection()
+                    }
                 }
             }
         }
@@ -120,16 +129,23 @@ class PostAdapter(
 
         holder.jumlah_comment.text = "${post.jumlah_comment.toString()} comments"
         holder.btn_comment.setOnClickListener {
-            val context = it.context
-            val i = Intent(context, CommentsActivity::class.java)
-            i.putExtra("id_post",post.id)
-            i.putExtra("id_pendonor",id_pendonor_now)
+            val connectivityChecker = ConnectivityChecker(context)
+            if (connectivityChecker.isNetworkAvailable()){
+                //koneksi aktif
+                val context = it.context
+                val i = Intent(context, CommentsActivity::class.java)
+                i.putExtra("id_post",post.id)
+                i.putExtra("id_pendonor",id_pendonor_now)
 //            i.putExtra("foto_profile",path_foto_profile)
 //            i.putExtra("nama",post.nama)
 //            i.putExtra("upload",post.upload)
 //            i.putExtra("gambar",path_gambar)
 //            i.putExtra("jumlah_comment",post.jumlah_comment.toString())
-            context.startActivity(i)
+                context.startActivity(i)
+            }else{
+                //koneksi tidak aktif
+                connectivityChecker.showAlertDialogNoConnection()
+            }
         }
 
         holder.btn_report.setOnClickListener {
@@ -148,17 +164,26 @@ class PostAdapter(
         }
 
         holder.btn_favorite.setOnClickListener {
-            isExpandFavorite = !isExpandFavorite // Toggle
+            val connectivityChecker = ConnectivityChecker(context)
+            if (connectivityChecker.isNetworkAvailable()){
+                //koneksi aktif
+                isExpandFavorite = !isExpandFavorite // Toggle
 
-            if (isExpandFavorite) {
-                dataCallBack.onDataReceivedFavorite(post.id)
-                isExpandFavorite = true
-                holder.btn_favorite.setImageResource(R.drawable.baseline_simpan_post_ok)
-            } else {
-                dataCallBack.onDeleteFavorite(post.id)
-                isExpandFavorite = false
-                holder.btn_favorite.setImageResource(R.drawable.baseline_simpan_post)
+                if (isExpandFavorite) {
+                    dataCallBack.onDataReceivedFavorite(post.id)
+                    isExpandFavorite = true
+                    holder.btn_favorite.setImageResource(R.drawable.baseline_simpan_post_ok)
+                } else {
+                    dataCallBack.onDeleteFavorite(post.id)
+                    isExpandFavorite = false
+                    holder.btn_favorite.setImageResource(R.drawable.baseline_simpan_post)
+                }
+            }else{
+                //koneksi tidak aktif
+//                connectivityChecker.showAlertDialogNoConnection()
+                Toast.makeText(context, "Tidak ada koneksi internet", Toast.LENGTH_SHORT).show()
             }
+
         }
 
         if (post.status == false){
@@ -166,7 +191,14 @@ class PostAdapter(
         }else if (post.status == true){
             holder.btn_delete.visibility = View.VISIBLE
             holder.btn_delete.setOnClickListener {
-                dataCallBack.onDeletePost(post.id)
+                val connectivityChecker = ConnectivityChecker(context)
+                if (connectivityChecker.isNetworkAvailable()){
+                    //koneksi aktif
+                    dataCallBack.onDeletePost(post.id)
+                }else{
+                    //koneksi tidak aktif
+                    Toast.makeText(context, "Tidak ada koneksi internet", Toast.LENGTH_SHORT).show()
+                }
             }
         }else{
             holder.btn_delete.visibility = View.GONE
@@ -237,8 +269,15 @@ class PostAdapter(
             val textLength = text.text.toString().trim()
             if (textLength.isNotBlank()){
                 val laporan = Laporan(id,null,null,textLength,type)
-                dataCallBack.onAddLaporan(laporan)
-                dialog.dismiss()
+                val connectivityChecker = ConnectivityChecker(context)
+                if (connectivityChecker.isNetworkAvailable()){
+                    //koneksi aktif
+                    dataCallBack.onAddLaporan(laporan)
+                    dialog.dismiss()
+                }else{
+                    //koneksi tidak aktif
+                    connectivityChecker.showAlertDialogNoConnection()
+                }
             }else{
                 textHelper.text = "Tulis laporan ..."
                 textHelper.visibility = View.VISIBLE

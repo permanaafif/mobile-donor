@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
@@ -22,6 +23,7 @@ import com.afifpermana.donor.R
 import com.afifpermana.donor.model.Comments
 import com.afifpermana.donor.model.Laporan
 import com.afifpermana.donor.service.CallBackData
+import com.afifpermana.donor.util.ConnectivityChecker
 import com.afifpermana.donor.util.SharedPrefLogin
 import com.airbnb.lottie.LottieAnimationView
 import com.squareup.picasso.Picasso
@@ -30,6 +32,7 @@ import de.hdodenhof.circleimageview.CircleImageView
 class CommentAdapter(
     private var listComment : List<Comments>,
     private var dataCallBack: CallBackData,
+    private val context: Context,
     private var sharedPref: SharedPrefLogin
 ): RecyclerView.Adapter<CommentAdapter.ViewHolder>() {
 
@@ -42,7 +45,7 @@ class CommentAdapter(
     override fun onBindViewHolder(holder: CommentAdapter.ViewHolder, position: Int) {
         val comment = listComment[position]
         var path_foto_profile = "http://138.2.74.142/images/${comment.gambar}"
-        if (!comment.gambar.isNullOrEmpty() || comment.gambar != "null"){
+        if (comment.gambar != "null"){
             Picasso.get().load(path_foto_profile).into(holder.foto_profile)
             holder.foto_profile.setOnClickListener{
                 showAlertGambar(holder.itemView.context,path_foto_profile)
@@ -57,10 +60,18 @@ class CommentAdapter(
             val id_pendonor = sharedPref.getInt("id")
             if (id_pendonor != comment.id_pendonor){
                 if (id_pendonor_now != comment.id_pendonor){
-                    val context = it.context
-                    val i = Intent(context, OtherDonorProfileActivity::class.java)
-                    i.putExtra("id_pendonor",comment.id_pendonor)
-                    context.startActivity(i)
+                    val connectivityChecker = ConnectivityChecker(context)
+                    if (connectivityChecker.isNetworkAvailable()){
+                        //koneksi aktif
+                        val context = it.context
+                        val i = Intent(context, OtherDonorProfileActivity::class.java)
+                        i.putExtra("id_pendonor",comment.id_pendonor)
+                        context.startActivity(i)
+                    }else{
+                        //koneksi tidak aktif
+                        connectivityChecker.showAlertDialogNoConnection()
+                    }
+
                 }
             }
         }
@@ -75,31 +86,39 @@ class CommentAdapter(
         if (comment.jumlah_balasan > 0 ){
             holder.lihat_balasan.visibility = View.VISIBLE
             holder.lihat_balasan.setOnClickListener {
-                isExpanded = !isExpanded // Toggle status
-                if (isExpanded) {
-                    holder.cl_balas_comment.visibility = View.VISIBLE
-                    holder.loadingLottie.visibility = View.VISIBLE
-                    Handler().postDelayed({
+                val connectivityChecker = ConnectivityChecker(context)
+                if (connectivityChecker.isNetworkAvailable()){
+                    //koneksi aktif
+                    isExpanded = !isExpanded // Toggle status
+                    if (isExpanded) {
+                        holder.cl_balas_comment.visibility = View.VISIBLE
+                        holder.loadingLottie.visibility = View.VISIBLE
+                        Handler().postDelayed({
+                            holder.cl_balas_comment.visibility = View.GONE
+                            holder.rv_balas_comment.visibility = View.VISIBLE
+                            holder.tv_lihat_balasan.text = "Sembunyinkan"
+                            holder.icon_lihat_balasan.setImageResource(R.drawable.baseline_keyboard_arrow_up_24)
+                        },2000)
+                    } else {
+                        holder.rv_balas_comment.visibility = View.GONE
                         holder.cl_balas_comment.visibility = View.GONE
-                        holder.rv_balas_comment.visibility = View.VISIBLE
-                        holder.tv_lihat_balasan.text = "Sembunyinkan"
-                        holder.icon_lihat_balasan.setImageResource(R.drawable.baseline_keyboard_arrow_up_24)
-                    },2000)
-                } else {
-                    holder.rv_balas_comment.visibility = View.GONE
-                    holder.cl_balas_comment.visibility = View.GONE
-                    holder.tv_lihat_balasan.text = "Lihat Balasan"
-                    holder.icon_lihat_balasan.setImageResource(R.drawable.baseline_keyboard_arrow_down_24)
+                        holder.tv_lihat_balasan.text = "Lihat Balasan"
+                        holder.icon_lihat_balasan.setImageResource(R.drawable.baseline_keyboard_arrow_down_24)
+                    }
+                    // Set adapter untuk RecyclerView balasan komentar
+                    val balasCommentAdapter = comment.balasCommentList?.let { it1 ->
+                        BalasCommentAdapter(
+                            it1,dataCallBack,sharedPref
+                        )
+                    }
+                    holder.rv_balas_comment.layoutManager = LinearLayoutManager(holder.rv_balas_comment.context)
+                    holder.rv_balas_comment.adapter = balasCommentAdapter
+                    balasCommentAdapter?.idPendonorNow(id_pendonor_now)
+                }else{
+                    //koneksi tidak aktif
+//                    connectivityChecker.showAlertDialogNoConnection()
+                    Toast.makeText(context,"Tidak ada koneksi internet", Toast.LENGTH_SHORT).show()
                 }
-                // Set adapter untuk RecyclerView balasan komentar
-                val balasCommentAdapter = comment.balasCommentList?.let { it1 ->
-                    BalasCommentAdapter(
-                        it1,dataCallBack,sharedPref
-                    )
-                }
-                holder.rv_balas_comment.layoutManager = LinearLayoutManager(holder.rv_balas_comment.context)
-                holder.rv_balas_comment.adapter = balasCommentAdapter
-                balasCommentAdapter?.idPendonorNow(id_pendonor_now)
             }
         }else{
             holder.lihat_balasan.visibility = View.GONE
@@ -196,8 +215,15 @@ class CommentAdapter(
             val textLength = text.text.toString().trim()
             if (textLength.isNotBlank()){
                 val laporan = Laporan(null,id,null,textLength,type)
-                dataCallBack.onAddLaporan(laporan)
-                dialog.dismiss()
+                val connectivityChecker = ConnectivityChecker(context)
+                if (connectivityChecker.isNetworkAvailable()){
+                    //koneksi aktif
+                    dataCallBack.onAddLaporan(laporan)
+                    dialog.dismiss()
+                }else{
+                    //koneksi tidak aktif
+                    connectivityChecker.showAlertDialogNoConnection()
+                }
             }else{
                 textHelper.text = "Tulis laporan ..."
                 textHelper.visibility = View.VISIBLE

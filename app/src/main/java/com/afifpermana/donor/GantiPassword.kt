@@ -17,6 +17,7 @@ import com.afifpermana.donor.model.GantiPasswordRequest
 import com.afifpermana.donor.model.GantiPasswordResponse
 import com.afifpermana.donor.service.PendonorLoginAPI
 import com.afifpermana.donor.service.UpdateProfileAPI
+import com.afifpermana.donor.util.ConnectivityChecker
 import com.afifpermana.donor.util.Retro
 import com.afifpermana.donor.util.SharedPrefLogin
 import com.example.belajarapi.model.PendonorLoginResponse
@@ -49,7 +50,14 @@ class GantiPassword : AppCompatActivity() {
 
         btn_simpan.setOnClickListener {
             if (validationInput()){
-                gantiPassword()
+                val connectivityChecker = ConnectivityChecker(this)
+                if (connectivityChecker.isNetworkAvailable()){
+                    //koneksi aktif
+                    gantiPassword()
+                }else{
+                    //koneksi tidak aktif
+                    connectivityChecker.showAlertDialogNoConnection()
+                }
             }
         }
     }

@@ -18,6 +18,7 @@ import com.afifpermana.donor.model.UpdateProfileEditDataResponse
 import com.afifpermana.donor.model.UpdateProfileRequestData
 import com.afifpermana.donor.service.ProfileAPI
 import com.afifpermana.donor.service.UpdateProfileAPI
+import com.afifpermana.donor.util.ConnectivityChecker
 import com.afifpermana.donor.util.Retro
 import com.afifpermana.donor.util.SharedPrefLogin
 import com.squareup.picasso.Picasso
@@ -175,10 +176,18 @@ class ProfileEdit : AppCompatActivity(), UploadRequestBody.UploadCallback {
         btn_simpan.setOnClickListener {
             if (validateInput()) {
                 // Validasi sukses, lanjutkan dengan tindakan penyimpanan data
-                loadingProgressBar.visibility = View.VISIBLE
-                btn_simpan.visibility = View.GONE
-                doSimpanGambar()
-                doSimpanData()
+                val connectivityChecker = ConnectivityChecker(this)
+                if (connectivityChecker.isNetworkAvailable()){
+                    //koneksi aktif
+                    loadingProgressBar.visibility = View.VISIBLE
+                    btn_simpan.visibility = View.GONE
+                    doSimpanGambar()
+                    doSimpanData()
+                }else{
+                    //koneksi tidak aktif
+                    connectivityChecker.showAlertDialogNoConnection()
+                }
+
             }
         }
 

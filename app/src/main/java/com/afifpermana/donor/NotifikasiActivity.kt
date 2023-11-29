@@ -24,6 +24,7 @@ import com.afifpermana.donor.model.UpdateStatusNotifikasiResponse
 import com.afifpermana.donor.service.BeritaAPI
 import com.afifpermana.donor.service.CallBackNotif
 import com.afifpermana.donor.service.NotifikasiAPI
+import com.afifpermana.donor.util.ConnectivityChecker
 import com.afifpermana.donor.util.Retro
 import com.afifpermana.donor.util.SharedPrefLogin
 import com.airbnb.lottie.LottieAnimationView
@@ -57,7 +58,7 @@ class NotifikasiActivity : AppCompatActivity(), CallBackNotif {
         recyclerView = findViewById(R.id.rv_notifikasi)
         recyclerView.layoutManager = layoutManager
         recyclerView.setHasFixedSize(true)
-        adapter = NotifikasiAdapter(newData,this)
+        adapter = NotifikasiAdapter(newData,this,this)
         recyclerView.adapter = adapter
 
         notifikasiView()
@@ -76,56 +77,68 @@ class NotifikasiActivity : AppCompatActivity(), CallBackNotif {
         recyclerView.visibility = View.GONE
         loadingLottie.visibility = View.VISIBLE
         nodataLottie.visibility = View.GONE
-        val retro = Retro().getRetroClientInstance().create(NotifikasiAPI::class.java)
-        retro.notif("Bearer ${sharedPref.getString("token")}").enqueue(object :
-            Callback<List<NotifikasiResponse>> {
-            override fun onResponse(
-                call: Call<List<NotifikasiResponse>>,
-                response: Response<List<NotifikasiResponse>>
-            ) {
-                if (response.isSuccessful) {
-                    val res = response.body()
-                    if (!res.isNullOrEmpty()) {
-                        for (i in res) {
-                            val pendonor = Notifikasi.PendonorItem(
-                                i.pendonor?.id!!.toInt(),
-                                i.pendonor.gambar,
-                                i.pendonor.nama!!
-                            )
-                            val data = Notifikasi(
-                                i.id!!,
-                                i.id_post!!,
-                                i.id_comment ?: 0,
-                                i.id_balas_comment ?: 0,
-                                i.status_read!!.toInt(),
-                                i.update.toString(),
-                                pendonor
-                            )
-                            newData.add(data)
+        val connectivityChecker = ConnectivityChecker(this)
+        if (connectivityChecker.isNetworkAvailable()){
+            //koneksi aktif
+            val retro = Retro().getRetroClientInstance().create(NotifikasiAPI::class.java)
+            retro.notif("Bearer ${sharedPref.getString("token")}").enqueue(object :
+                Callback<List<NotifikasiResponse>> {
+                override fun onResponse(
+                    call: Call<List<NotifikasiResponse>>,
+                    response: Response<List<NotifikasiResponse>>
+                ) {
+                    if (response.isSuccessful) {
+                        val res = response.body()
+                        if (!res.isNullOrEmpty()) {
+                            for (i in res) {
+                                val pendonor = Notifikasi.PendonorItem(
+                                    i.pendonor?.id!!.toInt(),
+                                    i.pendonor.gambar,
+                                    i.pendonor.nama!!
+                                )
+                                val data = Notifikasi(
+                                    i.id!!,
+                                    i.id_post!!,
+                                    i.id_comment ?: 0,
+                                    i.id_balas_comment ?: 0,
+                                    i.status_read!!.toInt(),
+                                    i.update.toString(),
+                                    pendonor
+                                )
+                                newData.add(data)
+                            }
+                            adapter.notifyDataSetChanged()
+                            cl_notifikasi.visibility = View.GONE
+                            recyclerView.visibility = View.VISIBLE
+                            loadingLottie.visibility = View.GONE
+                            nodataLottie.visibility = View.GONE
+                        }else{
+                            cl_notifikasi.visibility = View.VISIBLE
+                            loadingLottie.visibility = View.GONE
+                            nodataLottie.visibility = View.VISIBLE
+                            recyclerView.visibility = View.GONE
                         }
-                        adapter.notifyDataSetChanged()
-                        cl_notifikasi.visibility = View.GONE
-                        recyclerView.visibility = View.VISIBLE
-                        loadingLottie.visibility = View.GONE
-                        nodataLottie.visibility = View.GONE
-                    }else{
-                        cl_notifikasi.visibility = View.VISIBLE
-                        loadingLottie.visibility = View.GONE
-                        nodataLottie.visibility = View.VISIBLE
-                        recyclerView.visibility = View.GONE
                     }
+
                 }
 
-            }
+                override fun onFailure(call: Call<List<NotifikasiResponse>>, t: Throwable) {
+                    Toast.makeText(this@NotifikasiActivity,"Sesi kamu habis", Toast.LENGTH_SHORT).show()
+                    sharedPref.logOut()
+                    sharedPref.setStatusLogin(false)
+                    startActivity(Intent(this@NotifikasiActivity, LoginActivity::class.java))
+                    finish()
+                }
+            })
+        }else{
+            //koneksi tidak aktif
+            connectivityChecker.showAlertDialogNoConnection()
+            cl_notifikasi.visibility = View.VISIBLE
+            loadingLottie.visibility = View.GONE
+            nodataLottie.visibility = View.VISIBLE
+            recyclerView.visibility = View.GONE
+        }
 
-            override fun onFailure(call: Call<List<NotifikasiResponse>>, t: Throwable) {
-                Toast.makeText(this@NotifikasiActivity,"Sesi kamu habis", Toast.LENGTH_SHORT).show()
-                sharedPref.logOut()
-                sharedPref.setStatusLogin(false)
-                startActivity(Intent(this@NotifikasiActivity, LoginActivity::class.java))
-                finish()
-            }
-        })
     }
 
     private fun clearData() {

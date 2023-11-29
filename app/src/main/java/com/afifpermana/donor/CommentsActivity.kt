@@ -43,6 +43,7 @@ import com.afifpermana.donor.service.CallBackData
 import com.afifpermana.donor.service.CommentAPI
 import com.afifpermana.donor.service.LaporanAPI
 import com.afifpermana.donor.service.PostFavoriteAPI
+import com.afifpermana.donor.util.ConnectivityChecker
 import com.afifpermana.donor.util.Retro
 import com.afifpermana.donor.util.SharedPrefLogin
 import com.airbnb.lottie.LottieAnimationView
@@ -122,7 +123,7 @@ class CommentsActivity : AppCompatActivity(), CallBackData {
         recyclerView = findViewById(R.id.rv_coments)
         recyclerView.layoutManager = layoutManager
         recyclerView.setHasFixedSize(true)
-        adapter = CommentAdapter(newData,this,sharedPref)
+        adapter = CommentAdapter(newData,this,this,sharedPref)
         ll_comment = findViewById(R.id.ll)
         ll_balas_comment = findViewById(R.id.ll_balas_comment)
         close = findViewById(R.id.close)
@@ -145,14 +146,21 @@ class CommentsActivity : AppCompatActivity(), CallBackData {
             showCostumeAlertDialog(id_post)
         }
         btn_favorit.setOnClickListener {
-            statusPostFavorit = !statusPostFavorit
+            val connectivityChecker = ConnectivityChecker(this)
+            if (connectivityChecker.isNetworkAvailable()){
+                //koneksi aktif
+                statusPostFavorit = !statusPostFavorit
 
-            if(statusPostFavorit){
-                addPostFavorite(id_post)
-                btn_favorit.setImageResource(R.drawable.baseline_simpan_post_ok)
+                if(statusPostFavorit){
+                    addPostFavorite(id_post)
+                    btn_favorit.setImageResource(R.drawable.baseline_simpan_post_ok)
+                }else{
+                    deletePostFavorite(id_post)
+                    btn_favorit.setImageResource(R.drawable.baseline_simpan_post)
+                }
             }else{
-                deletePostFavorite(id_post)
-                btn_favorit.setImageResource(R.drawable.baseline_simpan_post)
+                //koneksi tidak aktif
+                connectivityChecker.showAlertDialogNoConnection()
             }
         }
 
@@ -191,10 +199,17 @@ class CommentsActivity : AppCompatActivity(), CallBackData {
         send_comment.setOnClickListener {
             val textValue = et_comment.text.toString().trim()
             if (textValue.isNotBlank() ){
-                if (statusComment == false){
-                    addComment(id_post,textValue)
+                val connectivityChecker = ConnectivityChecker(this)
+                if (connectivityChecker.isNetworkAvailable()){
+                    //koneksi aktif
+                    if (statusComment == false){
+                        addComment(id_post,textValue)
+                    }else{
+                        balasComment(id_commentar!!.toInt(),textValue)
+                    }
                 }else{
-                    balasComment(id_commentar!!.toInt(),textValue)
+                    //koneksi tidak aktif
+                    connectivityChecker.showAlertDialogNoConnection()
                 }
             }else{
                 textHelper.visibility = View.VISIBLE
@@ -481,52 +496,64 @@ class CommentsActivity : AppCompatActivity(), CallBackData {
         cl_comment.visibility = View.VISIBLE
         loadingLottie.visibility = View.VISIBLE
         recyclerView.visibility = View.GONE
-        scope.launch {
-            try {
-                val postResponse = withContext(Dispatchers.IO) {
-                    val retro = Retro().getRetroClientInstance().create(CommentAPI::class.java)
-                    val response = retro.comment("Bearer ${sharedPref.getString("token")}", id).execute()
-                    if (response.isSuccessful) {
-                        response.body()
-                    } else {
-                        null
+        nodataLottie.visibility = View.GONE
+        val connectivityChecker = ConnectivityChecker(this)
+        if (connectivityChecker.isNetworkAvailable()){
+            //koneksi aktif
+            scope.launch {
+                try {
+                    val postResponse = withContext(Dispatchers.IO) {
+                        val retro = Retro().getRetroClientInstance().create(CommentAPI::class.java)
+                        val response = retro.comment("Bearer ${sharedPref.getString("token")}", id).execute()
+                        if (response.isSuccessful) {
+                            response.body()
+                        } else {
+                            null
+                        }
                     }
-                }
 
-                if (postResponse == null) {
-                    cl_comment.visibility = View.VISIBLE
+                    if (postResponse == null) {
+                        cl_comment.visibility = View.VISIBLE
+                        loadingLottie.visibility = View.GONE
+                        nodataLottie.visibility = View.VISIBLE
+                        recyclerView.visibility = View.GONE
+                        // Handle kesalahan jika diperlukan
+                        return@launch
+                    }
+
+                    val comments = postResponse.map { commentResponse ->
+                        val balasComments = viewBalasComment(commentResponse.id_comment!!.toInt(), scope)
+                        Comments(
+                            commentResponse.id_post!!.toInt(),
+                            commentResponse.id_comment!!.toInt(),
+                            commentResponse.id_pendonor!!.toInt(),
+                            commentResponse.nama.toString(),
+                            commentResponse.gambar.toString(),
+                            commentResponse.text.toString(),
+                            commentResponse.created_at.toString(),
+                            commentResponse.update_at.toString(),
+                            commentResponse.jumlah_balasan!!.toInt(),
+                            balasComments
+                        )
+                    }
+
+                    newData.addAll(comments)
+                    adapter.notifyDataSetChanged()
+                    cl_comment.visibility = View.GONE
                     loadingLottie.visibility = View.GONE
-                    nodataLottie.visibility = View.VISIBLE
-                    recyclerView.visibility = View.GONE
+                    nodataLottie.visibility = View.GONE
+                    recyclerView.visibility = View.VISIBLE
+                } catch (e: Exception) {
                     // Handle kesalahan jika diperlukan
-                    return@launch
                 }
-
-                val comments = postResponse.map { commentResponse ->
-                    val balasComments = viewBalasComment(commentResponse.id_comment!!.toInt(), scope)
-                    Comments(
-                        commentResponse.id_post!!.toInt(),
-                        commentResponse.id_comment!!.toInt(),
-                        commentResponse.id_pendonor!!.toInt(),
-                        commentResponse.nama.toString(),
-                        commentResponse.gambar.toString(),
-                        commentResponse.text.toString(),
-                        commentResponse.created_at.toString(),
-                        commentResponse.update_at.toString(),
-                        commentResponse.jumlah_balasan!!.toInt(),
-                        balasComments
-                    )
-                }
-
-                newData.addAll(comments)
-                adapter.notifyDataSetChanged()
-                cl_comment.visibility = View.GONE
-                loadingLottie.visibility = View.GONE
-                nodataLottie.visibility = View.GONE
-                recyclerView.visibility = View.VISIBLE
-            } catch (e: Exception) {
-                // Handle kesalahan jika diperlukan
             }
+        }else{
+            //koneksi tidak aktif
+//            connectivityChecker.showAlertDialogNoConnection()
+            cl_comment.visibility = View.VISIBLE
+            loadingLottie.visibility = View.GONE
+            nodataLottie.visibility = View.VISIBLE
+            recyclerView.visibility = View.GONE
         }
     }
 
@@ -553,90 +580,107 @@ class CommentsActivity : AppCompatActivity(), CallBackData {
     }
 
     private fun findPost(id:Int) {
-        val retro = Retro().getRetroClientInstance().create(CommentAPI::class.java)
-        retro.findPost("Bearer ${sharedPref.getString("token")}",id).enqueue(object :
-            Callback<PostRespone> {
-            override fun onResponse(call: Call<PostRespone>, response: Response<PostRespone>) {
-                var res = response.body()
-                if (response.isSuccessful){
-                    if(res?.gambar_profile.toString() != "null"){
-                        val path = "http://138.2.74.142/images/${res?.gambar_profile}"
-                        Picasso.get().load(path).into(gambar_profile)
-                        gambar_profile.setOnClickListener {
-                            showAlertGambar(path)
-                        }
-                    }
-                    nama.text = res?.nama.toString().capitalize()
-                    nama.setOnClickListener {
-                        val id_pendonor = sharedPref.getInt("id")
-                        if (id_pendonor != res?.id_pendonor){
-                            if (id_pendonor_now != res?.id_pendonor){
-                                val context = it.context
-                                val i = Intent(context, OtherDonorProfileActivity::class.java)
-                                i.putExtra("id_pendonor",res?.id_pendonor)
-                                context.startActivity(i)
+        val connectivityChecker = ConnectivityChecker(this)
+        if (connectivityChecker.isNetworkAvailable()){
+            //koneksi aktif
+            val retro = Retro().getRetroClientInstance().create(CommentAPI::class.java)
+            retro.findPost("Bearer ${sharedPref.getString("token")}",id).enqueue(object :
+                Callback<PostRespone> {
+                override fun onResponse(call: Call<PostRespone>, response: Response<PostRespone>) {
+                    var res = response.body()
+                    if (response.isSuccessful){
+                        if(res?.gambar_profile.toString() != "null"){
+                            val path = "http://138.2.74.142/images/${res?.gambar_profile}"
+                            Picasso.get().load(path).into(gambar_profile)
+                            gambar_profile.setOnClickListener {
+                                showAlertGambar(path)
                             }
                         }
-                    }
-                    tgl_upload.text = res?.updated_at
-                    Log.e("tgl_upload",res?.updated_at.toString())
-
-                    if (res?.text.toString() != "null"){
-                        text.text = res?.text
-                        ll_text.visibility = View.VISIBLE
-                    }
-
-                    if (res?.text.isNullOrEmpty()) {
-                        text?.visibility = View.GONE
-                    } else {
-                        text.text = res?.text
-                        text.viewTreeObserver.addOnGlobalLayoutListener {
-                            val lineCount = text.lineCount
-                            if (lineCount > 3) {
-                                textButton.visibility = View.VISIBLE
-                            } else {
-                                textButton.visibility = View.GONE
+                        nama.text = res?.nama.toString().capitalize()
+                        nama.setOnClickListener {
+                            val id_pendonor = sharedPref.getInt("id")
+                            if (id_pendonor != res?.id_pendonor){
+                                if (id_pendonor_now != res?.id_pendonor){
+                                    if (connectivityChecker.isNetworkAvailable()){
+                                        //koneksi aktif
+                                        val context = it.context
+                                        val i = Intent(context, OtherDonorProfileActivity::class.java)
+                                        i.putExtra("id_pendonor",res?.id_pendonor)
+                                        context.startActivity(i)
+                                    }else{
+                                        //koneksi tidak aktif
+                                        connectivityChecker.showAlertDialogNoConnection()
+                                    }
+                                }
                             }
                         }
-                    }
+                        tgl_upload.text = res?.updated_at
+                        Log.e("tgl_upload",res?.updated_at.toString())
 
-                    var isExpanded = false // Status awal adalah teks dipotong
-                    textButton.setOnClickListener {
-                        isExpanded = !isExpanded // Toggle status
+                        if (res?.text.toString() != "null"){
+                            text.text = res?.text
+                            ll_text.visibility = View.VISIBLE
+                        }
 
-                        if (isExpanded) {
-                            // Jika saat ini dipotong, tampilkan seluruh teks
-                            text.maxLines = Int.MAX_VALUE
-                            text.ellipsize = null
-                            textButton.text = "Sembunyikan"
+                        if (res?.text.isNullOrEmpty()) {
+                            text?.visibility = View.GONE
                         } else {
-                            // Jika saat ini ditampilkan secara penuh, potong teks
-                            text.maxLines = 4
-                            text.ellipsize = TextUtils.TruncateAt.END
-                            textButton.text = "Selengkapnya"
+                            text.text = res?.text
+                            text.viewTreeObserver.addOnGlobalLayoutListener {
+                                val lineCount = text.lineCount
+                                if (lineCount > 3) {
+                                    textButton.visibility = View.VISIBLE
+                                } else {
+                                    textButton.visibility = View.GONE
+                                }
+                            }
                         }
-                    }
 
-                    if (res?.gambar.toString() != "null"){
-                        Picasso.get().load("http://138.2.74.142/assets/post/${res?.gambar}").into(gambar)
-                        gambar.visibility = View.VISIBLE
-                    }
+                        var isExpanded = false // Status awal adalah teks dipotong
+                        textButton.setOnClickListener {
+                            isExpanded = !isExpanded // Toggle status
 
-                    if (res?.jumlah_comment.toString() != "null"){
-                        jumlah_comment.text = "${res?.jumlah_comment.toString()} Comments"
+                            if (isExpanded) {
+                                // Jika saat ini dipotong, tampilkan seluruh teks
+                                text.maxLines = Int.MAX_VALUE
+                                text.ellipsize = null
+                                textButton.text = "Sembunyikan"
+                            } else {
+                                // Jika saat ini ditampilkan secara penuh, potong teks
+                                text.maxLines = 4
+                                text.ellipsize = TextUtils.TruncateAt.END
+                                textButton.text = "Selengkapnya"
+                            }
+                        }
+
+                        if (res?.gambar.toString() != "null"){
+                            val path = "http://138.2.74.142/assets/post/${res?.gambar}"
+                            Picasso.get().load(path).into(gambar)
+                            gambar.visibility = View.VISIBLE
+                            gambar.setOnClickListener {
+                                showAlertGambar(path)
+                            }
+                        }
+
+                        if (res?.jumlah_comment.toString() != "null"){
+                            jumlah_comment.text = "${res?.jumlah_comment.toString()} Comments"
+                        }
                     }
                 }
-            }
 
-            override fun onFailure(call: Call<PostRespone>, t: Throwable) {
-                Toast.makeText(this@CommentsActivity,"Sesi kamu habis", Toast.LENGTH_SHORT).show()
-                Log.e("masalah",t.message.toString())
-                sharedPref.logOut()
-                sharedPref.setStatusLogin(false)
-                startActivity(Intent(this@CommentsActivity, LoginActivity::class.java))
-                finish()
-            }
-        })
+                override fun onFailure(call: Call<PostRespone>, t: Throwable) {
+                    Toast.makeText(this@CommentsActivity,"Sesi kamu habis", Toast.LENGTH_SHORT).show()
+                    Log.e("masalah",t.message.toString())
+                    sharedPref.logOut()
+                    sharedPref.setStatusLogin(false)
+                    startActivity(Intent(this@CommentsActivity, LoginActivity::class.java))
+                    finish()
+                }
+            })
+        }else{
+            //koneksi tidak aktif
+            connectivityChecker.showAlertDialogNoConnection()
+        }
     }
 
     private fun showAlertGambar(path:String) {
@@ -702,8 +746,15 @@ class CommentsActivity : AppCompatActivity(), CallBackData {
             val textLength = text.text.toString().trim()
             if (textLength.isNotBlank()){
                 val laporan = Laporan(id,null,null,textLength,type )
-                addLaporan(laporan)
-                dialog.dismiss()
+                val connectivityChecker = ConnectivityChecker(this)
+                if (connectivityChecker.isNetworkAvailable()){
+                    //koneksi aktif
+                    addLaporan(laporan)
+                    dialog.dismiss()
+                }else{
+                    //koneksi tidak aktif
+                    connectivityChecker.showAlertDialogNoConnection()
+                }
             }else{
                 textHelper.text = "Tulis laporan ..."
                 textHelper.visibility = View.VISIBLE

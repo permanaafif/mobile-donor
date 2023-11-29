@@ -11,4 +11,8 @@ class RatingRequest {
     @SerializedName("star")
     @Expose
     var star: Int? = null
+
+    @SerializedName("status")
+    @Expose
+    var status: Int? = null
 }

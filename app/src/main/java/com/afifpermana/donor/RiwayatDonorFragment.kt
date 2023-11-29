@@ -24,6 +24,7 @@ import com.afifpermana.donor.model.RiwayatDonor
 import com.afifpermana.donor.model.RiwayatDonorResponse
 import com.afifpermana.donor.service.ProfileAPI
 import com.afifpermana.donor.service.RiwayatDonorAPI
+import com.afifpermana.donor.util.ConnectivityChecker
 import com.afifpermana.donor.util.Retro
 import com.afifpermana.donor.util.SharedPrefLogin
 import com.airbnb.lottie.LottieAnimationView
@@ -87,63 +88,75 @@ class RiwayatDonorFragment : Fragment() {
         recyclerView.visibility = View.GONE
         loadingLottie.visibility = View.VISIBLE
         nodataLottie.visibility = View.GONE
-        val retro = Retro().getRetroClientInstance().create(RiwayatDonorAPI::class.java)
-        retro.riwayatDonor("Bearer ${sharedPref.getString("token")}").enqueue(object :
-            Callback<RiwayatDonorResponse> {
-            override fun onResponse(
-                call: Call<RiwayatDonorResponse>,
-                response: Response<RiwayatDonorResponse>
-            ) {
-                val resCode = response.code()
-                if (resCode == 200){
-                    val res = response.body()
-                    Log.e("total_donor", res!!.total_donor_darah.toString())
-                    if (res!!.total_donor_darah.toString() != "null"){
-                        if(res.total_donor_darah.toString().toInt() <= 0){
-                            cv_total_donor_darah.visibility = View.VISIBLE
-                            total_donor_darah.text = "Total Donor Darah: ${res.total_donor_darah.toString()} kantong"
+        val connectivityChecker = ConnectivityChecker(requireActivity())
+        if (connectivityChecker.isNetworkAvailable()){
+            //koneksi aktif
+            val retro = Retro().getRetroClientInstance().create(RiwayatDonorAPI::class.java)
+            retro.riwayatDonor("Bearer ${sharedPref.getString("token")}").enqueue(object :
+                Callback<RiwayatDonorResponse> {
+                override fun onResponse(
+                    call: Call<RiwayatDonorResponse>,
+                    response: Response<RiwayatDonorResponse>
+                ) {
+                    val resCode = response.code()
+                    if (resCode == 200){
+                        val res = response.body()
+                        Log.e("total_donor", res!!.total_donor_darah.toString())
+                        if (res!!.total_donor_darah.toString() != "null"){
+                            if(res.total_donor_darah.toString().toInt() <= 0){
+                                cv_total_donor_darah.visibility = View.VISIBLE
+                                total_donor_darah.text = "Total Donor Darah: ${res.total_donor_darah.toString()} kantong"
+                            }
+                        }else{
+                            cv_total_donor_darah.visibility = View.GONE
+                        }
+                        if (res!!.riwayat!!.isNotEmpty()){
+                            for (i in res!!.riwayat!!){
+                                val riwayat = RiwayatDonor.Riwayat(
+                                    i.tanggal_donor.toString(),
+                                    i.lokasi_donor.toString(),
+                                    i.jumlah_donor.toString().toInt()
+                                )
+                                newData.add(riwayat)
+                            }
+                            adapter.notifyDataSetChanged()
+                            cl_riwayat.visibility = View.GONE
+                            loadingLottie.visibility = View.GONE
+                            nodataLottie.visibility = View.GONE
+                            recyclerView.visibility = View.VISIBLE
+                        }else{
+                            cl_riwayat.visibility = View.VISIBLE
+                            loadingLottie.visibility = View.GONE
+                            nodataLottie.visibility = View.VISIBLE
+                            recyclerView.visibility = View.GONE
                         }
                     }else{
-                        cv_total_donor_darah.visibility = View.GONE
+                        sharedPref.logOut()
+                        sharedPref.setStatusLogin(false)
+                        startActivity(Intent(requireActivity(),LoginActivity::class.java))
                     }
-                    if (res!!.riwayat!!.isNotEmpty()){
-                        for (i in res!!.riwayat!!){
-                            val riwayat = RiwayatDonor.Riwayat(
-                                i.tanggal_donor.toString(),
-                                i.lokasi_donor.toString(),
-                                i.jumlah_donor.toString().toInt()
-                            )
-                            newData.add(riwayat)
-                        }
-                        adapter.notifyDataSetChanged()
-                        cl_riwayat.visibility = View.GONE
-                        loadingLottie.visibility = View.GONE
-                        nodataLottie.visibility = View.GONE
-                        recyclerView.visibility = View.VISIBLE
-                    }else{
-                        cl_riwayat.visibility = View.VISIBLE
-                        loadingLottie.visibility = View.GONE
-                        nodataLottie.visibility = View.VISIBLE
-                        recyclerView.visibility = View.GONE
-                    }
-                }else{
+                }
+
+                override fun onFailure(call: Call<RiwayatDonorResponse>, t: Throwable) {
+                    cl_riwayat.visibility = View.VISIBLE
+                    loadingLottie.visibility = View.GONE
+                    nodataLottie.visibility = View.VISIBLE
+                    recyclerView.visibility = View.GONE
                     sharedPref.logOut()
                     sharedPref.setStatusLogin(false)
                     startActivity(Intent(requireActivity(),LoginActivity::class.java))
+                    Toast.makeText(requireActivity(),"Terjadi Kelasalah",Toast.LENGTH_SHORT).show()
                 }
-            }
+            })
+        }else{
+            //koneksi tidak aktif
+            connectivityChecker.showAlertDialogNoConnection()
+            cl_riwayat.visibility = View.VISIBLE
+            loadingLottie.visibility = View.GONE
+            nodataLottie.visibility = View.VISIBLE
+            recyclerView.visibility = View.GONE
+        }
 
-            override fun onFailure(call: Call<RiwayatDonorResponse>, t: Throwable) {
-                cl_riwayat.visibility = View.VISIBLE
-                loadingLottie.visibility = View.GONE
-                nodataLottie.visibility = View.VISIBLE
-                recyclerView.visibility = View.GONE
-                sharedPref.logOut()
-                sharedPref.setStatusLogin(false)
-                startActivity(Intent(requireActivity(),LoginActivity::class.java))
-                Toast.makeText(requireActivity(),"Terjadi Kelasalah",Toast.LENGTH_SHORT).show()
-            }
-        })
     }
 
     private fun clearData() {

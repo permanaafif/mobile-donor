@@ -41,6 +41,7 @@ import com.afifpermana.donor.service.CallBackData
 import com.afifpermana.donor.service.LaporanAPI
 import com.afifpermana.donor.service.PostAPI
 import com.afifpermana.donor.service.PostFavoriteAPI
+import com.afifpermana.donor.util.ConnectivityChecker
 import com.afifpermana.donor.util.Retro
 import com.afifpermana.donor.util.SharedPrefLogin
 import com.airbnb.lottie.LottieAnimationView
@@ -182,96 +183,113 @@ class DiskusiFragment : Fragment(),CallBackData {
     }
 
     private fun addPostFavorite(id:Int){
-        val retro = Retro().getRetroClientInstance().create(PostFavoriteAPI::class.java)
-        retro.addPostFavorite("Bearer ${sharedPref.getString("token")}",id).enqueue(object :
-            Callback<PostFavoriteResponse2> {
-            override fun onResponse(
-                call: Call<PostFavoriteResponse2>,
-                response: Response<PostFavoriteResponse2>
-            ) {
-                if (response.isSuccessful){
-                    var res = response.body()
-                    if (res?.success == true){
-                        Toast.makeText(requireActivity(),"Simpan", Toast.LENGTH_SHORT).show()
-                    }else{
-                       //
+        val connectivityChecker = ConnectivityChecker(requireActivity())
+        if (connectivityChecker.isNetworkAvailable()){
+            //koneksi aktif
+            val retro = Retro().getRetroClientInstance().create(PostFavoriteAPI::class.java)
+            retro.addPostFavorite("Bearer ${sharedPref.getString("token")}",id).enqueue(object :
+                Callback<PostFavoriteResponse2> {
+                override fun onResponse(
+                    call: Call<PostFavoriteResponse2>,
+                    response: Response<PostFavoriteResponse2>
+                ) {
+                    if (response.isSuccessful){
+                        var res = response.body()
+                        if (res?.success == true){
+                            Toast.makeText(requireActivity(),"Simpan", Toast.LENGTH_SHORT).show()
+                        }else{
+                           //
+                        }
                     }
                 }
-            }
 
-            override fun onFailure(call: Call<PostFavoriteResponse2>, t: Throwable) {
-                Toast.makeText(requireActivity(),"Sesi kamu habis", Toast.LENGTH_SHORT).show()
-                sharedPref.logOut()
-                sharedPref.setStatusLogin(false)
-                startActivity(Intent(requireActivity(), LoginActivity::class.java))
-                activity?.finish()
-            }
-        })
+                override fun onFailure(call: Call<PostFavoriteResponse2>, t: Throwable) {
+                    Toast.makeText(requireActivity(),"Sesi kamu habis", Toast.LENGTH_SHORT).show()
+                    sharedPref.logOut()
+                    sharedPref.setStatusLogin(false)
+                    startActivity(Intent(requireActivity(), LoginActivity::class.java))
+                    activity?.finish()
+                }
+            })
+        }
     }
 
     private fun deletePostFavorite(id: Int) {
-        val retro = Retro().getRetroClientInstance().create(PostFavoriteAPI::class.java)
-        retro.deletePostFavorite("Bearer ${sharedPref.getString("token")}",id).enqueue(object :
-            Callback<PostFavoriteResponse2> {
-            override fun onResponse(
-                call: Call<PostFavoriteResponse2>,
-                response: Response<PostFavoriteResponse2>
-            ) {
-                if (response.isSuccessful){
-                    var res = response.body()
-                    if (res?.success == true){
-                        Toast.makeText(requireActivity(),"Tidak si simpan", Toast.LENGTH_SHORT).show()
-                    }else{
-                        //
+        val connectivityChecker = ConnectivityChecker(requireActivity())
+        if (connectivityChecker.isNetworkAvailable()){
+            //koneksi aktif
+            val retro = Retro().getRetroClientInstance().create(PostFavoriteAPI::class.java)
+            retro.deletePostFavorite("Bearer ${sharedPref.getString("token")}",id).enqueue(object :
+                Callback<PostFavoriteResponse2> {
+                override fun onResponse(
+                    call: Call<PostFavoriteResponse2>,
+                    response: Response<PostFavoriteResponse2>
+                ) {
+                    if (response.isSuccessful){
+                        var res = response.body()
+                        if (res?.success == true){
+                            Toast.makeText(requireActivity(),"Tidak si simpan", Toast.LENGTH_SHORT).show()
+                        }else{
+                            //
+                        }
                     }
                 }
-            }
 
-            override fun onFailure(call: Call<PostFavoriteResponse2>, t: Throwable) {
-                Toast.makeText(requireActivity(),"Sesi kamu habis", Toast.LENGTH_SHORT).show()
-                sharedPref.logOut()
-                sharedPref.setStatusLogin(false)
-                startActivity(Intent(requireActivity(), LoginActivity::class.java))
-                activity?.finish()
+                override fun onFailure(call: Call<PostFavoriteResponse2>, t: Throwable) {
+                    Toast.makeText(requireActivity(),"Sesi kamu habis", Toast.LENGTH_SHORT).show()
+                    sharedPref.logOut()
+                    sharedPref.setStatusLogin(false)
+                    startActivity(Intent(requireActivity(), LoginActivity::class.java))
+                    activity?.finish()
             }
-        })
+            })
+        }
     }
     private fun postFavorite() {
-        val retro = Retro().getRetroClientInstance().create(PostFavoriteAPI::class.java)
-        retro.postFavorite("Bearer ${sharedPref.getString("token")}").enqueue(object :
-            Callback<List<PostFavoriteResponse>> {
-            override fun onResponse(
-                call: Call<List<PostFavoriteResponse>>,
-                response: Response<List<PostFavoriteResponse>>
-            ) {
-                if (response.isSuccessful){
-                    var res = response.body()
-                    if (!res.isNullOrEmpty()){
-                        for (i in res!!){
-                            val data = PostFavorite(
-                                i.id!!,
-                                i.id_pendonor!!,
-                                i.id_post!!,
-                                i.created_at!!,
-                                i.updated_at!!
-                            )
-                            newDataPostFavorite.add(data)
+        val connectivityChecker = ConnectivityChecker(requireActivity())
+        if (connectivityChecker.isNetworkAvailable()){
+            //koneksi aktif
+            val retro = Retro().getRetroClientInstance().create(PostFavoriteAPI::class.java)
+            retro.postFavorite("Bearer ${sharedPref.getString("token")}").enqueue(object :
+                Callback<List<PostFavoriteResponse>> {
+                override fun onResponse(
+                    call: Call<List<PostFavoriteResponse>>,
+                    response: Response<List<PostFavoriteResponse>>
+                ) {
+                    if (response.isSuccessful){
+                        var res = response.body()
+                        if (!res.isNullOrEmpty()){
+                            for (i in res!!){
+                                val data = PostFavorite(
+                                    i.id!!,
+                                    i.id_pendonor!!,
+                                    i.id_post!!,
+                                    i.created_at!!,
+                                    i.updated_at!!
+                                )
+                                newDataPostFavorite.add(data)
+                            }
+                            adapter.notifyDataSetChanged()
                         }
-                        adapter.notifyDataSetChanged()
+                    }else{
+                        Toast.makeText(requireActivity(),"terjaadi kesalahan", Toast.LENGTH_SHORT).show()
                     }
-                }else{
-                    Toast.makeText(requireActivity(),"terjaadi kesalahan", Toast.LENGTH_SHORT).show()
                 }
-            }
 
-            override fun onFailure(call: Call<List<PostFavoriteResponse>>, t: Throwable) {
-                Toast.makeText(requireActivity(),"Sesi kamu habis", Toast.LENGTH_SHORT).show()
-                sharedPref.logOut()
-                sharedPref.setStatusLogin(false)
-                startActivity(Intent(requireActivity(), LoginActivity::class.java))
-                activity?.finish()
-            }
-        })
+                override fun onFailure(call: Call<List<PostFavoriteResponse>>, t: Throwable) {
+                    Toast.makeText(requireActivity(),"Sesi kamu habis", Toast.LENGTH_SHORT).show()
+                    sharedPref.logOut()
+                    sharedPref.setStatusLogin(false)
+                    startActivity(Intent(requireActivity(), LoginActivity::class.java))
+                    activity?.finish()
+                }
+            })
+        }
+//        else{
+//            //koneksi tidak aktif
+//            connectivityChecker.showAlertDialogNoConnection()
+//        }
+
     }
 
     private fun showCostumeAlertDialog() {
@@ -393,7 +411,7 @@ class DiskusiFragment : Fragment(),CallBackData {
                     }
 
                     override fun onFailure(call: Call<AddPostResponse>, t: Throwable) {
-                        Toast.makeText(requireActivity(), t.message.toString(), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireActivity(), "Tidak ada koneksi internet", Toast.LENGTH_SHORT).show()
                         Log.e("sampai", t.message.toString())
                     }
                 })
@@ -427,7 +445,7 @@ class DiskusiFragment : Fragment(),CallBackData {
                     }
 
                     override fun onFailure(call: Call<AddPostResponse>, t: Throwable) {
-                        Toast.makeText(requireActivity(), t.message.toString(), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireActivity(), "Tidak ada koneksi internet", Toast.LENGTH_SHORT).show()
                         Log.e("sampai", t.message.toString())
                     }
                 })
@@ -440,60 +458,75 @@ class DiskusiFragment : Fragment(),CallBackData {
 
 
     private fun postView(page:Int) {
-        val retro = Retro().getRetroClientInstance().create(PostAPI::class.java)
-        retro.post("Bearer ${sharedPref.getString("token")}",page).enqueue(object :
-            Callback<List<PostRespone>> {
-            override fun onResponse(
-                call: Call<List<PostRespone>>,
-                response: Response<List<PostRespone>>
-            ) {
-                Log.e("pesanden",response.code().toString())
-                if (response.isSuccessful) {
-                    val res = response.body()
-                    if (res.isNullOrEmpty()){
+        val connectivityChecker = ConnectivityChecker(requireActivity())
+        if (connectivityChecker.isNetworkAvailable()){
+            //koneksi aktif
+            val retro = Retro().getRetroClientInstance().create(PostAPI::class.java)
+            retro.post("Bearer ${sharedPref.getString("token")}",page).enqueue(object :
+                Callback<List<PostRespone>> {
+                override fun onResponse(
+                    call: Call<List<PostRespone>>,
+                    response: Response<List<PostRespone>>
+                ) {
+                    Log.e("pesanden",response.code().toString())
+                    if (response.isSuccessful) {
+                        val res = response.body()
+                        if (res.isNullOrEmpty()){
+                            cl_post.visibility = View.VISIBLE
+                            loadingLottie.visibility = View.GONE
+                            nodataLottie.visibility = View.VISIBLE
+                            recyclerView.visibility = View.GONE
+                        }else{
+                            x = true
+                            // Menggunakan sortedByDescending untuk mengurutkan berdasarkan tanggal terbaru
+                            for (i in res!!) {
+                                val data = Post(
+                                    i.id.toString().toInt(),
+                                    i.id_pendonor.toString().toInt(),
+                                    i.gambar_profile.toString(),
+                                    i.nama.toString(),
+                                    i.updated_at.toString(),
+                                    i.text.toString(),
+                                    i.gambar.toString(),
+                                    i.jumlah_comment.toString().toInt()
+                                )
+                                newData.add(data)
+                            }
+                            adapter.notifyDataSetChanged()
+                            cl_post.visibility = View.GONE
+                            loadingLottie.visibility = View.VISIBLE
+                            nodataLottie.visibility = View.GONE
+                            recyclerView.visibility = View.VISIBLE
+                        }
+                    }
+                    if(response.code() == 403 && x == false){
                         cl_post.visibility = View.VISIBLE
                         loadingLottie.visibility = View.GONE
                         nodataLottie.visibility = View.VISIBLE
                         recyclerView.visibility = View.GONE
-                    }else{
-                        x = true
-                        // Menggunakan sortedByDescending untuk mengurutkan berdasarkan tanggal terbaru
-                        for (i in res!!) {
-                            val data = Post(
-                                i.id.toString().toInt(),
-                                i.id_pendonor.toString().toInt(),
-                                i.gambar_profile.toString(),
-                                i.nama.toString(),
-                                i.updated_at.toString(),
-                                i.text.toString(),
-                                i.gambar.toString(),
-                                i.jumlah_comment.toString().toInt()
-                            )
-                            newData.add(data)
-                        }
-                        adapter.notifyDataSetChanged()
-                        cl_post.visibility = View.GONE
-                        loadingLottie.visibility = View.VISIBLE
-                        nodataLottie.visibility = View.GONE
-                        recyclerView.visibility = View.VISIBLE
+                    }
+                    if(response.code() == 403 && x == true){
+                        Toast.makeText(requireActivity(), "Anda telah mencapai akhir postingan", Toast.LENGTH_SHORT).show()
                     }
                 }
-                if(response.code() == 403 && x == false){
-                    cl_post.visibility = View.VISIBLE
-                    loadingLottie.visibility = View.GONE
-                    nodataLottie.visibility = View.VISIBLE
-                    recyclerView.visibility = View.GONE
-                }
-                if(response.code() == 403 && x == true){
-                    Toast.makeText(requireActivity(), "Anda telah mencapai akhir postingan", Toast.LENGTH_SHORT).show()
-                }
-            }
 
-            override fun onFailure(call: Call<List<PostRespone>>, t: Throwable) {
-                Toast.makeText(requireActivity(), t.message.toString(), Toast.LENGTH_SHORT).show()
-                Log.e("pesanden", t.message.toString())
-            }
-        })
+                override fun onFailure(call: Call<List<PostRespone>>, t: Throwable) {
+                    Toast.makeText(requireActivity(), t.message.toString(), Toast.LENGTH_SHORT).show()
+                    Log.e("pesanden", t.message.toString())
+                    sharedPref.logOut()
+                    sharedPref.setStatusLogin(false)
+                    startActivity(Intent(requireActivity(), LoginActivity::class.java))
+                    activity?.finish()
+                }
+            })
+        }else{
+            //koneksi tidak aktif
+            connectivityChecker.showAlertDialogNoConnection()
+            cl_post.visibility = View.VISIBLE
+            loadingLottie.visibility = View.GONE
+            nodataLottie.visibility = View.VISIBLE
+            recyclerView.visibility = View.GONE
+        }
     }
 
     private fun clearData() {
@@ -570,30 +603,38 @@ class DiskusiFragment : Fragment(),CallBackData {
         data.id_reply = laporan.id_reply
         data.text = laporan.text
         data.type = laporan.type
-        val retro = Retro().getRetroClientInstance().create(LaporanAPI::class.java)
-        retro.addLaporan("Bearer ${sharedPref.getString("token")}",data).enqueue(object :
-            Callback<LaporanResponse> {
-            override fun onResponse(
-                call: Call<LaporanResponse>,
-                response: Response<LaporanResponse>
-            ) {
-                if (response.isSuccessful){
-                    val res = response.body()
-                    if (res != null){
-                        Toast.makeText(requireActivity(),"Laporan Dikirim",Toast.LENGTH_SHORT).show()
-                    }else{
-                        Toast.makeText(requireActivity(),"Laporan tidak terkirim",Toast.LENGTH_SHORT).show()
+        val connectivityChecker = ConnectivityChecker(requireActivity())
+        if (connectivityChecker.isNetworkAvailable()){
+            //koneksi aktif
+            val retro = Retro().getRetroClientInstance().create(LaporanAPI::class.java)
+            retro.addLaporan("Bearer ${sharedPref.getString("token")}",data).enqueue(object :
+                Callback<LaporanResponse> {
+                override fun onResponse(
+                    call: Call<LaporanResponse>,
+                    response: Response<LaporanResponse>
+                ) {
+                    if (response.isSuccessful){
+                        val res = response.body()
+                        if (res != null){
+                            Toast.makeText(requireActivity(),"Laporan Dikirim",Toast.LENGTH_SHORT).show()
+                        }else{
+                            Toast.makeText(requireActivity(),"Laporan tidak terkirim",Toast.LENGTH_SHORT).show()
+                        }
                     }
                 }
-            }
 
-            override fun onFailure(call: Call<LaporanResponse>, t: Throwable) {
-                Toast.makeText(requireActivity(),"Sesi kamu habis", Toast.LENGTH_SHORT).show()
-                sharedPref.logOut()
-                sharedPref.setStatusLogin(false)
-                startActivity(Intent(requireActivity(), LoginActivity::class.java))
-                activity?.finish()
-            }
-        })
+                override fun onFailure(call: Call<LaporanResponse>, t: Throwable) {
+                    Toast.makeText(requireActivity(),"Sesi kamu habis", Toast.LENGTH_SHORT).show()
+                    sharedPref.logOut()
+                    sharedPref.setStatusLogin(false)
+                    startActivity(Intent(requireActivity(), LoginActivity::class.java))
+                    activity?.finish()
+                }
+            })
+        }
+//        else{
+//            //koneksi tidak aktif
+//            connectivityChecker.showAlertDialogNoConnection()
+//        }
     }
 }
