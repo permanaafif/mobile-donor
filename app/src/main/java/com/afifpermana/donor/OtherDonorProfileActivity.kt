@@ -10,10 +10,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -61,6 +63,12 @@ class OtherDonorProfileActivity : AppCompatActivity(), CallBackData {
     var b : Bundle? =null
     var id_pendonor = 0
 
+    var isloading = false
+    var page = 1
+    var x = false
+    private lateinit var loadmore : ProgressBar
+    private lateinit var nestedScrollView: NestedScrollView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_other_donor_profile)
@@ -82,6 +90,7 @@ class OtherDonorProfileActivity : AppCompatActivity(), CallBackData {
         cl_post = findViewById(R.id.cl_post_saya)
         loadingLottie = findViewById(R.id.loading)
         nodataLottie = findViewById(R.id.no_data)
+        loadmore = findViewById(R.id.loadmore)
         recyclerView.layoutManager = layoutManager
         recyclerView.setHasFixedSize(true)
         sharedPref = SharedPrefLogin(this)
@@ -91,7 +100,11 @@ class OtherDonorProfileActivity : AppCompatActivity(), CallBackData {
         adapter.idPendonorNow(id_pendonor)
 
         profileView(id_pendonor)
-        postViewOtherDonor(id_pendonor)
+        page = 1
+        cl_post.visibility = View.VISIBLE
+        recyclerView.visibility = View.GONE
+        loadingLottie.visibility = View.VISIBLE
+        postViewOtherDonor(id_pendonor,page)
         postFavorite()
 
         sw_layout = findViewById(R.id.swlayout)
@@ -102,12 +115,42 @@ class OtherDonorProfileActivity : AppCompatActivity(), CallBackData {
             Handler().postDelayed(Runnable {
                 clearData()
                 profileView(id_pendonor)
-                postViewOtherDonor(id_pendonor)
+                page=1
+                cl_post.visibility = View.VISIBLE
+                recyclerView.visibility = View.GONE
+                loadingLottie.visibility = View.VISIBLE
+                postViewOtherDonor(id_pendonor,page)
                 postFavorite()
                 sw_layout.isRefreshing = false
             }, 1000)
         }
 
+        nestedScrollView = findViewById(R.id.nestedScrollView)
+
+        nestedScrollView.setOnScrollChangeListener { _, _, scrollY, _, _ ->
+            val totalHeight = nestedScrollView.computeVerticalScrollRange()
+            val currentScrollHeight = nestedScrollView.computeVerticalScrollOffset() + nestedScrollView.computeVerticalScrollExtent()
+
+            // Jika currentScrollHeight sama dengan totalHeight, berarti kita berada di posisi scroll terakhir
+            if (currentScrollHeight == totalHeight) {
+                Log.e("posisi_scroll", "Posisi scroll terakhir")
+                if (!isloading){
+                    addMoreData()
+                }
+            }
+        }
+    }
+
+    private fun addMoreData() {
+        isloading = true
+        loadmore.visibility = View.VISIBLE
+
+        Handler().postDelayed({
+            isloading = false
+            loadmore.visibility = View.GONE
+            postViewOtherDonor(id_pendonor,page)
+        },3000)
+        page++
     }
 
     private fun clearData() {
@@ -168,15 +211,12 @@ class OtherDonorProfileActivity : AppCompatActivity(), CallBackData {
 
     }
 
-    private fun postViewOtherDonor(id: Int) {
-        cl_post.visibility = View.VISIBLE
-        recyclerView.visibility = View.GONE
-        loadingLottie.visibility = View.VISIBLE
+    private fun postViewOtherDonor(id: Int, page:Int) {
         val connectivityChecker = ConnectivityChecker(this)
         if (connectivityChecker.isNetworkAvailable()){
             //koneksi aktif
             val retro = Retro().getRetroClientInstance().create(PostAPI::class.java)
-            retro.postOtherDonor("Bearer ${sharedPref.getString("token")}", id).enqueue(object :
+            retro.postOtherDonor("Bearer ${sharedPref.getString("token")}", id,page).enqueue(object :
                 Callback<List<PostRespone>> {
                 override fun onResponse(
                     call: Call<List<PostRespone>>,
@@ -191,6 +231,7 @@ class OtherDonorProfileActivity : AppCompatActivity(), CallBackData {
                             nodataLottie.visibility = View.VISIBLE
                             recyclerView.visibility = View.GONE
                         }else{
+                            x = true
                             // Menggunakan sortedByDescending untuk mengurutkan berdasarkan tanggal terbaru
                             for (i in res!!) {
                                 val data = Post(
@@ -212,11 +253,14 @@ class OtherDonorProfileActivity : AppCompatActivity(), CallBackData {
                             recyclerView.visibility = View.VISIBLE
                         }
                     }
-                    if(response.code() == 404){
+                    if(response.code() == 404 && x == false){
                         cl_post.visibility = View.VISIBLE
                         loadingLottie.visibility = View.GONE
                         nodataLottie.visibility = View.VISIBLE
                         recyclerView.visibility = View.GONE
+                    }
+                    if(response.code() == 403 && x == true){
+                        Toast.makeText(this@OtherDonorProfileActivity, "Anda telah mencapai akhir postingan", Toast.LENGTH_SHORT).show()
                     }
                 }
 

@@ -16,6 +16,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.RadioGroup
 import android.widget.RatingBar
 import android.widget.TextView
@@ -24,6 +25,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -94,12 +96,46 @@ class ProfileFragment : Fragment(), CallBackData {
     var newData : ArrayList<Post> = ArrayList()
     var newDataPostFavorite : ArrayList<PostFavorite> = ArrayList()
 
+    var isloading = false
+    var page = 1
+    var x = false
+    private lateinit var loadmore : ProgressBar
+    private lateinit var nestedScrollView: NestedScrollView
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_profile, container, false)
+        val view = inflater.inflate(R.layout.fragment_profile, container, false)
+
+        nestedScrollView = view.findViewById(R.id.nestedScrollView)
+
+        nestedScrollView.setOnScrollChangeListener { _, _, scrollY, _, _ ->
+            val totalHeight = nestedScrollView.computeVerticalScrollRange()
+            val currentScrollHeight = nestedScrollView.computeVerticalScrollOffset() + nestedScrollView.computeVerticalScrollExtent()
+
+            // Jika currentScrollHeight sama dengan totalHeight, berarti kita berada di posisi scroll terakhir
+            if (currentScrollHeight == totalHeight) {
+                Log.e("posisi_scroll", "Posisi scroll terakhir")
+                if (!isloading){
+                        addMoreData()
+                }
+            }
+        }
+        return view
+    }
+
+    private fun addMoreData() {
+        isloading = true
+        loadmore.visibility = View.VISIBLE
+
+        Handler().postDelayed({
+            isloading = false
+            loadmore.visibility = View.GONE
+            postViewMe(page)
+        },3000)
+        page++
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -115,13 +151,18 @@ class ProfileFragment : Fragment(), CallBackData {
         recyclerView.layoutManager = layoutManager
         recyclerView.setHasFixedSize(true)
         sharedPref = SharedPrefLogin(requireActivity())
+        loadmore = view.findViewById(R.id.loadmore)
 
         cv_notif_badge = view.findViewById(R.id.cv_notif_badge)
         tv_text_notif_badge = view.findViewById(R.id.tv_text_notif_badge)
 
         totalNotif()
-
-        postViewMe()
+        page=1
+        cl_post.visibility = View.VISIBLE
+        loadingLottie.visibility = View.VISIBLE
+        loadingLottie.playAnimation()
+        recyclerView.visibility = View.GONE
+        postViewMe(page)
 
         adapter = PostAdapter(newData,newDataPostFavorite,requireContext(),this,sharedPref)
         recyclerView.adapter = adapter
@@ -148,8 +189,13 @@ class ProfileFragment : Fragment(), CallBackData {
                         connectivityChecker.showAlertDialogNoConnection()
                     }
                 }else{
+                    page=1
                     clearData()
-                    postViewMe()
+                    cl_post.visibility = View.VISIBLE
+                    loadingLottie.visibility = View.VISIBLE
+                    loadingLottie.playAnimation()
+                    recyclerView.visibility = View.GONE
+                    postViewMe(page)
                     postFavorite()
                 }
                 sw_layout.isRefreshing = false
@@ -162,7 +208,8 @@ class ProfileFragment : Fragment(), CallBackData {
             when (checkedId) {
                 R.id.btn_semua -> {
                     clearData()
-                    postViewMe()
+                    page=1
+                    postViewMe(page)
                     postFavorite()
                 }
                 R.id.btn_favorite -> {
@@ -461,16 +508,12 @@ class ProfileFragment : Fragment(), CallBackData {
         adapter.notifyDataSetChanged()
     }
 
-    private fun postViewMe() {
-        cl_post.visibility = View.VISIBLE
-        loadingLottie.visibility = View.VISIBLE
-        loadingLottie.playAnimation()
-        recyclerView.visibility = View.GONE
+    private fun postViewMe(page:Int) {
         val connectivityChecker = ConnectivityChecker(requireActivity())
         if (connectivityChecker.isNetworkAvailable()){
             //koneksi aktif
             val retro = Retro().getRetroClientInstance().create(PostAPI::class.java)
-            retro.postMe("Bearer ${sharedPref.getString("token")}").enqueue(object :
+            retro.postMe("Bearer ${sharedPref.getString("token")}",page).enqueue(object :
                 Callback<List<PostRespone>> {
                 override fun onResponse(
                     call: Call<List<PostRespone>>,
@@ -481,6 +524,7 @@ class ProfileFragment : Fragment(), CallBackData {
                         Log.e("paaaa","succes")
                         val res = response.body()
                         if (!res.isNullOrEmpty()){
+                            x = true
                             // Menggunakan sortedByDescending untuk mengurutkan berdasarkan tanggal terbaru
                             for (i in res!!) {
                                 val data = Post(
@@ -502,12 +546,16 @@ class ProfileFragment : Fragment(), CallBackData {
                             recyclerView.visibility = View.VISIBLE
                         }
                     }
-                    if (response.code() == 404){
+                    if (response.code() == 404 && x == false){
                         cl_post.visibility = View.VISIBLE
                         nodataLottie.visibility = View.VISIBLE
                         nodataLottie.playAnimation()
                         loadingLottie.visibility = View.GONE
                         recyclerView.visibility = View.GONE
+                    }
+
+                    if(response.code() == 403 && x == true){
+                        Toast.makeText(requireActivity(), "Anda telah mencapai akhir postingan", Toast.LENGTH_SHORT).show()
                     }
                 }
 
@@ -843,8 +891,12 @@ class ProfileFragment : Fragment(), CallBackData {
                         var res = response.body()
                         if (res?.success == true){
                             Toast.makeText(requireActivity(),"Berhasil Hapus Postingan", Toast.LENGTH_SHORT).show()
-                            clearData()
-                            postViewMe()
+//                            clearData()
+//                            postViewMe(page)
+                            val removed = newData.removeIf { it.id == id }
+                            if (removed != null) {
+                                adapter.notifyDataSetChanged()
+                            }
                         }else{
                             //
                         }

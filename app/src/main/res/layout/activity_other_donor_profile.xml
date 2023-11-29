@@ -74,6 +74,7 @@ tools:context=".OtherDonorProfileActivity">
     android:layout_below="@+id/toolbar">
 
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/nestedScrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -222,13 +223,24 @@ tools:context=".OtherDonorProfileActivity">
                         app:lottie_loop="true"
                         app:lottie_rawRes="@raw/animation_not_jadwal" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
-                <androidx.recyclerview.widget.RecyclerView
-                    android:background="@color/grey"
-                    android:id="@+id/rv_post_saya"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    tools:itemCount="2"
-                    tools:listitem="@layout/card_post_diskusi" />
+                    android:orientation="vertical">
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:background="@color/grey"
+                        android:id="@+id/rv_post_saya"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        tools:itemCount="2"
+                        tools:listitem="@layout/card_post_diskusi" />
+                    <ProgressBar
+                        android:visibility="gone"
+                        android:id="@+id/loadmore"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"/>
+                </LinearLayout>
             </FrameLayout>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

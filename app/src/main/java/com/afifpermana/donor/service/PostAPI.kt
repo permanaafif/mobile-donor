@@ -28,10 +28,10 @@ interface PostAPI {
     fun postAll(@Header("Authorization") auth_token : String): Call<List<PostRespone>>
 
     @GET("api/post/me")
-    fun postMe(@Header("Authorization") auth_token : String): Call<List<PostRespone>>
+    fun postMe(@Header("Authorization") auth_token : String,@Query("page") page: Int): Call<List<PostRespone>>
 
     @GET("api/post/other-donor/{id}")
-    fun postOtherDonor(@Header("Authorization") auth_token : String, @Path("id") id: Int): Call<List<PostRespone>>
+    fun postOtherDonor(@Header("Authorization") auth_token : String, @Path("id") id: Int,@Query("page") page: Int): Call<List<PostRespone>>
 
     @DELETE("api/post/delete/{id}")
     fun deletePost(@Header("Authorization") auth_token : String,@Path("id") id: Int): Call<PostResponse2>
