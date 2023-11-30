@@ -1,7 +1,9 @@
 package com.afifpermana.donor
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.res.ColorStateList
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -21,6 +23,7 @@ import android.widget.RadioGroup
 import android.widget.RatingBar
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -102,6 +105,8 @@ class ProfileFragment : Fragment(), CallBackData {
     private lateinit var loadmore : ProgressBar
     private lateinit var nestedScrollView: NestedScrollView
 
+//    @SuppressLint("RestrictedApi")
+//    @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -133,7 +138,14 @@ class ProfileFragment : Fragment(), CallBackData {
         Handler().postDelayed({
             isloading = false
             loadmore.visibility = View.GONE
-            postViewMe(page)
+            try {
+                // Kode yang mungkin menyebabkan exception
+                // disini saya gunakan untuk mengatasi force close apllikasi
+                postViewMe(page)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Log.e("Exception", "Error: ${e.message}")
+            }
         },3000)
         page++
     }
@@ -209,6 +221,10 @@ class ProfileFragment : Fragment(), CallBackData {
                 R.id.btn_semua -> {
                     clearData()
                     page=1
+                    cl_post.visibility = View.VISIBLE
+                    loadingLottie.visibility = View.VISIBLE
+                    loadingLottie.playAnimation()
+                    recyclerView.visibility = View.GONE
                     postViewMe(page)
                     postFavorite()
                 }
@@ -520,7 +536,7 @@ class ProfileFragment : Fragment(), CallBackData {
                     response: Response<List<PostRespone>>
                 ) {
                     Log.e("paaaa",response.code().toString())
-                    if (response.isSuccessful) {
+                    if (response.code()==200) {
                         Log.e("paaaa","succes")
                         val res = response.body()
                         if (!res.isNullOrEmpty()){
@@ -561,7 +577,7 @@ class ProfileFragment : Fragment(), CallBackData {
 
                 override fun onFailure(call: Call<List<PostRespone>>, t: Throwable) {
                     Toast.makeText(requireActivity(), t.message.toString(), Toast.LENGTH_SHORT).show()
-                    Log.e("masalah", t.message.toString())
+                    Log.e("close_sendiri", t.message.toString())
                 }
             })
         }else{
@@ -882,6 +898,7 @@ class ProfileFragment : Fragment(), CallBackData {
             val retro = Retro().getRetroClientInstance().create(PostAPI::class.java)
             retro.deletePost("Bearer ${sharedPref.getString("token")}",id).enqueue(object :
                 Callback<PostResponse2> {
+                @RequiresApi(Build.VERSION_CODES.N)
                 override fun onResponse(
                     call: Call<PostResponse2>,
                     response: Response<PostResponse2>
