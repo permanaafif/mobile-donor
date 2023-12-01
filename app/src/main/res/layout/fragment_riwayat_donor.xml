@@ -30,93 +30,91 @@
 
     </androidx.appcompat.widget.Toolbar>
 
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/swlayout"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <androidx.core.widget.NestedScrollView
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_riwayat"
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-            <LinearLayout
-                android:orientation="vertical"
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:visibility="gone"
+                android:id="@+id/loading"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.54"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.478"
+                app:lottie_autoPlay="true"
+                app:lottie_loop="true"
+                app:lottie_rawRes="@raw/animation_loading" />
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:visibility="gone"
+                android:id="@+id/no_data"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.54"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.478"
+                app:lottie_autoPlay="true"
+                app:lottie_loop="true"
+                app:lottie_rawRes="@raw/animation_not_jadwal" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swlayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <androidx.core.widget.NestedScrollView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
-                <androidx.cardview.widget.CardView
-                    android:visibility="gone"
-                    android:id="@+id/cv_total_donor_darah"
-                    android:layout_margin="10dp"
-                    app:cardCornerRadius="5dp"
-                    android:backgroundTint="@color/green"
+                <LinearLayout
+                    android:orientation="vertical"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                    <TextView
-                        android:id="@+id/tv_total_donor_darah"
-                        android:layout_margin="5dp"
-                        android:fontFamily="@font/poppins"
-                        android:textStyle="bold"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Total Donor Darah : "
-                        android:textColor="@android:color/white"
-                        android:textSize="12sp"
-                        android:gravity="center_horizontal"
-                        android:layout_centerVertical="true"
-                        />
-                </androidx.cardview.widget.CardView>
-
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:id="@+id/cl_riwayat"
+                    android:layout_height="match_parent">
+                    <androidx.cardview.widget.CardView
                         android:visibility="gone"
+                        android:id="@+id/cv_total_donor_darah"
+                        android:layout_margin="10dp"
+                        app:cardCornerRadius="5dp"
+                        android:backgroundTint="@color/green"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent">
-
-                        <com.airbnb.lottie.LottieAnimationView
-                            android:visibility="gone"
-                            android:id="@+id/loading"
-                            android:layout_width="150dp"
-                            android:layout_height="150dp"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintHorizontal_bias="0.54"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintVertical_bias="0.478"
-                            app:lottie_autoPlay="true"
-                            app:lottie_loop="true"
-                            app:lottie_rawRes="@raw/animation_loading" />
-
-                        <com.airbnb.lottie.LottieAnimationView
-                            android:visibility="gone"
-                            android:id="@+id/no_data"
-                            android:layout_width="150dp"
-                            android:layout_height="150dp"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintHorizontal_bias="0.54"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintVertical_bias="0.478"
-                            app:lottie_autoPlay="true"
-                            app:lottie_loop="true"
-                            app:lottie_rawRes="@raw/animation_not_jadwal" />
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-                        <androidx.recyclerview.widget.RecyclerView
-                            android:padding="10dp"
-                            android:id="@+id/rv_riwayat_donor"
+                        android:layout_height="wrap_content">
+                        <TextView
+                            android:id="@+id/tv_total_donor_darah"
+                            android:layout_margin="5dp"
+                            android:fontFamily="@font/poppins"
+                            android:textStyle="bold"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            tools:itemCount="7"
-                            android:paddingBottom="10dp"
-                            tools:listitem="@layout/card_riwayat" />
+                            android:layout_height="wrap_content"
+                            android:text="Total Donor Darah : "
+                            android:textColor="@android:color/white"
+                            android:textSize="12sp"
+                            android:gravity="center_horizontal"
+                            android:layout_centerVertical="true"
+                            />
+                    </androidx.cardview.widget.CardView>
 
-                </FrameLayout>
-            </LinearLayout>
-        </androidx.core.widget.NestedScrollView>
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:padding="10dp"
+                        android:id="@+id/rv_riwayat_donor"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        tools:itemCount="7"
+                        android:paddingBottom="10dp"
+                        tools:listitem="@layout/card_riwayat" />
+                </LinearLayout>
+            </androidx.core.widget.NestedScrollView>
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+    </FrameLayout>
 </LinearLayout>
