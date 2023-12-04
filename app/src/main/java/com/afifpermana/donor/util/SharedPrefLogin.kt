@@ -20,6 +20,14 @@ class SharedPrefLogin (context: Context){
         return sharedPreferences.getBoolean(login,false)
     }
 
+    fun setStatusWalkTrough(status:Boolean){
+        editor.putBoolean("walkThrough",status).apply()
+    }
+
+    fun getStatusWalkTrough(): Boolean{
+        return sharedPreferences.getBoolean("walkThrough",false)
+    }
+
     fun setToken(
 //        id: Int,
 //        nama: String,
@@ -67,7 +75,11 @@ class SharedPrefLogin (context: Context){
     }
 
     fun logOut(){
+        // Tetap menyimpan nilai walkThrough saat logout
+        val walkThroughStatus = getStatusWalkTrough()
         editor.clear()
         editor.apply()
+        // Mengembalikan status walkThrough setelah logout
+        setStatusWalkTrough(walkThroughStatus)
     }
 }

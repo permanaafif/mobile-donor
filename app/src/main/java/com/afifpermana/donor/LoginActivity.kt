@@ -117,6 +117,7 @@ class LoginActivity : AppCompatActivity() {
                         sharedPref.setToken(
                             res.token.toString()
                         )
+                        sharedPref.setStatusWalkTrough(true)
                         sharedPref.setStatusLogin(true)
                         startActivity(Intent(this@LoginActivity, MainActivity::class.java))
                         finish()

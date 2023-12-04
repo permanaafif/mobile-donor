@@ -62,7 +62,7 @@ class MainActivity : AppCompatActivity() {
         sharedPref = SharedPrefLogin(this)
 
         if (sharedPref.getStatusLogin() == false){
-            startActivity(Intent(this, SplashScreenActivity::class.java))
+            startActivity(Intent(this, LoginActivity::class.java))
             finish()
         }else{
             FirebaseApp.initializeApp(this)
