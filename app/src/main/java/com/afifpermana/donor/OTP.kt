@@ -103,7 +103,7 @@ class OTP : AppCompatActivity() {
         resend_otp.text = "Resend OTP ($i)"
         i--
 
-        if (i >= 1) {
+        if (i >= 0) {
             Handler().postDelayed({
                 updateTextResendOTP()
             }, 1000) // 1000 milidetik = 1 detik

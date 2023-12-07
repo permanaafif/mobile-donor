@@ -20,4 +20,6 @@
     <color name="green">#03A13B</color>
     <color name="grey">#ECE6E6</color>
     <color name="bluedark">#3B4B65</color>
+    <color name="colorItemLeft">#D6D6D6</color>
+    <color name="colorItemRigh">#4E586A</color>
 </resources>

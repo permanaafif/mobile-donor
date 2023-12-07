@@ -80,6 +80,11 @@ class OtherDonorProfileActivity : AppCompatActivity(), CallBackData {
 
         fotoProfile = findViewById(R.id.foto)
         nama = findViewById(R.id.nama)
+        nama.setOnClickListener {
+            val i = Intent(this,ChatActivity::class.java)
+            i.putExtra("id_receiver",id_pendonor.toString())
+            startActivity(i)
+        }
         tv_golongan_darah = findViewById(R.id.tv_golongan_darah)
         tv_total_donor_darah = findViewById(R.id.tv_total_donor_darah)
 
