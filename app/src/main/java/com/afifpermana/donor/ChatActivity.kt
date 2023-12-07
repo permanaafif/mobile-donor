@@ -3,10 +3,12 @@ package com.afifpermana.donor
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.afifpermana.donor.adapter.ChatAdapter
@@ -18,6 +20,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
 
 class ChatActivity : AppCompatActivity() {
@@ -53,6 +56,17 @@ class ChatActivity : AppCompatActivity() {
 
         nama = findViewById(R.id.nama)
         foto_profile = findViewById(R.id.foto)
+
+        var _nama = b!!.getString("nama")
+        var path = b!!.getString("path")
+
+        nama.text = _nama
+        if (path != "null"){
+            Picasso.get().load(path).into(foto_profile)
+            foto_profile.setOnClickListener {
+                showAlertGambar(path!!)
+            }
+        }
 
         message = findViewById(R.id.pesan)
         btnSendMessage = findViewById(R.id.send)
@@ -124,6 +138,22 @@ class ChatActivity : AppCompatActivity() {
                 Log.e("Kesalahan",error.toString())
             }
         })
+    }
+
+    private fun showAlertGambar(path:String) {
+        val builder = AlertDialog.Builder(this, R.style.AlertDialogTheme)
+        val customeView = LayoutInflater.from(this).inflate(R.layout.alert_gambar,null)
+        builder.setView(customeView)
+        val dialog = builder.create()
+
+        val image = customeView.findViewById<ImageView>(R.id.dialogImageView)
+        image.setOnClickListener {
+            dialog.dismiss()
+        }
+        Picasso.get().load(path).into(image)
+        dialog.window?.setDimAmount(1f)
+        dialog.show()
+//        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
     }
 
     override fun onDestroy() {

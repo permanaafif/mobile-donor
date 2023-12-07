@@ -189,7 +189,10 @@ class OtherDonorProfileActivity : AppCompatActivity(), CallBackData {
         chat.setOnClickListener {
             var i = Intent(this, ChatActivity::class.java)
             i.putExtra("id_receiver",idPendonor.toString())
+            i.putExtra("nama",namaPendonor.toString())
+            i.putExtra("path",path.toString())
             startActivity(i)
+            dialog.dismiss()
         }
         info.visibility = View.GONE
         dialog.show()

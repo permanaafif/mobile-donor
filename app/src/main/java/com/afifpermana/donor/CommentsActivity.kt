@@ -855,7 +855,10 @@ class CommentsActivity : AppCompatActivity(), CallBackData {
                 val context = it.context
                 val i = Intent(context, OtherDonorProfileActivity::class.java)
                 i.putExtra("id_pendonor",idPendonor)
+                i.putExtra("nama",namaPendonor.toString())
+                i.putExtra("path",path.toString())
                 context.startActivity(i)
+                dialog.dismiss()
             }
         }else{
             info.visibility = View.GONE

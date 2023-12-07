@@ -344,12 +344,16 @@ class PostAdapter(
         chat.setOnClickListener {
             var i = Intent(context,ChatActivity::class.java)
             i.putExtra("id_receiver",idPendonor.toString())
+            i.putExtra("nama",namaPendonor.toString())
+            i.putExtra("path",path.toString())
             context.startActivity(i)
+            dialog.dismiss()
         }
         info.setOnClickListener {
             var i = Intent(context,OtherDonorProfileActivity::class.java)
             i.putExtra("id_pendonor",idPendonor)
             context.startActivity(i)
+            dialog.dismiss()
         }
         dialog.show()
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
