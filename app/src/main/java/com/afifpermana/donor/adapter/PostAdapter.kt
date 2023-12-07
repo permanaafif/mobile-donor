@@ -7,9 +7,11 @@ import android.text.Editable
 import android.text.TextUtils
 import android.text.TextWatcher
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -19,6 +21,7 @@ import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.afifpermana.donor.ArtikelActivity
+import com.afifpermana.donor.ChatActivity
 import com.afifpermana.donor.CommentsActivity
 import com.afifpermana.donor.OtherDonorProfileActivity
 import com.afifpermana.donor.R
@@ -51,11 +54,24 @@ class PostAdapter(
     override fun onBindViewHolder(holder: PostAdapter.ViewHolder, position: Int) {
         val post = listPost[position]
         var path_foto_profile = "http://138.2.74.142/images/${post.foto_profile}"
+
+        holder.foto_profile.setOnClickListener {
+            val id_pendonor = sharedPref.getInt("id")
+            if (id_pendonor != post.id_pendonor){
+                if (id_pendonor_now != post.id_pendonor){
+                    if (post.foto_profile != "null"){
+                        showAlertGambarProfile(holder.itemView.context,path_foto_profile,post.nama,post.id_pendonor)
+                    }
+
+                    if (post.foto_profile == "null" || post.foto_profile.isNullOrEmpty()){
+                        showAlertGambarProfile(holder.itemView.context,"null",post.nama,post.id_pendonor)
+                    }
+                }
+            }
+        }
+
         if (post.foto_profile != "null"){
             Picasso.get().load(path_foto_profile).into(holder.foto_profile)
-            holder.foto_profile.setOnClickListener{
-                showAlertGambar(holder.itemView.context,path_foto_profile)
-            }
         }
 
         if (post.foto_profile == "null" || post.foto_profile.isNullOrEmpty()){
@@ -301,6 +317,42 @@ class PostAdapter(
         dialog.window?.setDimAmount(1f)
         dialog.show()
 //        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+    }
+
+    private fun showAlertGambarProfile(context: Context, path:String, namaPendonor:String, idPendonor:Int) {
+        val builder = AlertDialog.Builder(context, R.style.AlertDialogTheme)
+        val customeView = LayoutInflater.from(context).inflate(R.layout.alert_gambar_profile,null)
+        builder.setView(customeView)
+        val dialog = builder.create()
+
+        val nama = customeView.findViewById<TextView>(R.id.nama)
+        val image = customeView.findViewById<ImageView>(R.id.fotoprofile)
+        val chat = customeView.findViewById<ImageView>(R.id.btn_chat)
+        val info = customeView.findViewById<ImageView>(R.id.btn_info)
+
+        nama.text = namaPendonor.toString()
+        if (path != "null"){
+            Picasso.get().load(path).into(image)
+            image.setOnClickListener{
+                showAlertGambar(context,path)
+            }
+        }else{
+            image.setImageResource(R.drawable.baseline_person_24_white)
+            image.setBackgroundColor(ContextCompat.getColor(context, R.color.background_donor))
+
+        }
+        chat.setOnClickListener {
+            var i = Intent(context,ChatActivity::class.java)
+            i.putExtra("id_receiver",idPendonor.toString())
+            context.startActivity(i)
+        }
+        info.setOnClickListener {
+            var i = Intent(context,OtherDonorProfileActivity::class.java)
+            i.putExtra("id_pendonor",idPendonor)
+            context.startActivity(i)
+        }
+        dialog.show()
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
     }
 
     fun idPendonorNow(id: Int){

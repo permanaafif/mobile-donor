@@ -589,11 +589,35 @@ class CommentsActivity : AppCompatActivity(), CallBackData {
                 override fun onResponse(call: Call<PostRespone>, response: Response<PostRespone>) {
                     var res = response.body()
                     if (response.isSuccessful){
+                        val path = "http://138.2.74.142/images/${res?.gambar_profile}"
                         if(res?.gambar_profile.toString() != "null"){
-                            val path = "http://138.2.74.142/images/${res?.gambar_profile}"
                             Picasso.get().load(path).into(gambar_profile)
-                            gambar_profile.setOnClickListener {
-                                showAlertGambar(path)
+                        }
+                        if(res?.gambar_profile.toString() == "null"){
+                            gambar_profile.setImageResource(R.drawable.ic_baseline_person_24)
+                        }
+                        gambar_profile.setOnClickListener {
+                            val id_pendonor = sharedPref.getInt("id")
+                            if (id_pendonor != res?.id_pendonor){
+                                Log.e("testing","1")
+                                Log.e("testinga",id_pendonor_now.toString())
+                                Log.e("testingb",res?.id_pendonor.toString())
+                                if (id_pendonor_now != res?.id_pendonor){
+                                Log.e("testing","2")
+                                    if (res?.gambar_profile.toString() != "null"){
+                                        showAlertGambarProfile(path,res?.nama.toString().capitalize(),res?.id_pendonor!!)
+                                    }
+                                    if (res?.gambar_profile.toString() == "null" || res?.gambar_profile.isNullOrEmpty()){
+                                        showAlertGambarProfile("null",res?.nama.toString().capitalize(),res?.id_pendonor!!)
+                                    }
+                                }else{
+                                    if (res?.gambar_profile.toString() != "null"){
+                                        showAlertGambarProfile(path,res?.nama.toString().capitalize(),res?.id_pendonor!!,true)
+                                    }
+                                    if (res?.gambar_profile.toString() == "null" || res?.gambar_profile.isNullOrEmpty()){
+                                        showAlertGambarProfile("null",res?.nama.toString().capitalize(),res?.id_pendonor!!,true)
+                                    }
+                                }
                             }
                         }
                         nama.text = res?.nama.toString().capitalize()
@@ -797,5 +821,47 @@ class CommentsActivity : AppCompatActivity(), CallBackData {
                 Log.e("masalah",t.message.toString())
             }
         })
+    }
+
+    private fun showAlertGambarProfile(path:String, namaPendonor:String, idPendonor:Int,otherPendonor:Boolean = false) {
+        val builder = AlertDialog.Builder(this, R.style.AlertDialogTheme)
+        val customeView = LayoutInflater.from(this).inflate(R.layout.alert_gambar_profile,null)
+        builder.setView(customeView)
+        val dialog = builder.create()
+
+        val nama = customeView.findViewById<TextView>(R.id.nama)
+        val image = customeView.findViewById<ImageView>(R.id.fotoprofile)
+        val chat = customeView.findViewById<ImageView>(R.id.btn_chat)
+        val info = customeView.findViewById<ImageView>(R.id.btn_info)
+
+        nama.text = namaPendonor.toString()
+        if (path != "null"){
+            Picasso.get().load(path).into(image)
+            image.setOnClickListener{
+                showAlertGambar(path)
+            }
+        }else{
+            image.setImageResource(R.drawable.baseline_person_24_white)
+            image.setBackgroundColor(ContextCompat.getColor(this, R.color.background_donor))
+
+        }
+        chat.setOnClickListener {
+            var i = Intent(this, ChatActivity::class.java)
+            i.putExtra("id_receiver",idPendonor.toString())
+            startActivity(i)
+        }
+        if (otherPendonor == false){
+            info.setOnClickListener {
+                val context = it.context
+                val i = Intent(context, OtherDonorProfileActivity::class.java)
+                i.putExtra("id_pendonor",idPendonor)
+                context.startActivity(i)
+            }
+        }else{
+            info.visibility = View.GONE
+        }
+
+        dialog.show()
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
     }
 }

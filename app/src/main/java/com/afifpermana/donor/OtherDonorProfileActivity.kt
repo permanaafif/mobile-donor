@@ -1,5 +1,6 @@
 package com.afifpermana.donor
 
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -15,6 +16,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -79,12 +81,8 @@ class OtherDonorProfileActivity : AppCompatActivity(), CallBackData {
         id_pendonor = b!!.getInt("id_pendonor")
 
         fotoProfile = findViewById(R.id.foto)
+
         nama = findViewById(R.id.nama)
-        nama.setOnClickListener {
-            val i = Intent(this,ChatActivity::class.java)
-            i.putExtra("id_receiver",id_pendonor.toString())
-            startActivity(i)
-        }
         tv_golongan_darah = findViewById(R.id.tv_golongan_darah)
         tv_total_donor_darah = findViewById(R.id.tv_total_donor_darah)
 
@@ -153,9 +151,49 @@ class OtherDonorProfileActivity : AppCompatActivity(), CallBackData {
         Handler().postDelayed({
             isloading = false
             loadmore.visibility = View.GONE
-            postViewOtherDonor(id_pendonor,page)
+            try {
+                // Kode yang mungkin menyebabkan exception
+                // disini saya gunakan untuk mengatasi force close apllikasi
+                postViewOtherDonor(id_pendonor,page)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Log.e("Exception", "Error: ${e.message}")
+            }
+
         },3000)
         page++
+    }
+
+    private fun showAlertGambarProfile(path:String, namaPendonor:String, idPendonor:Int) {
+        val builder = AlertDialog.Builder(this, R.style.AlertDialogTheme)
+        val customeView = LayoutInflater.from(this).inflate(R.layout.alert_gambar_profile,null)
+        builder.setView(customeView)
+        val dialog = builder.create()
+
+        val nama = customeView.findViewById<TextView>(R.id.nama)
+        val image = customeView.findViewById<ImageView>(R.id.fotoprofile)
+        val chat = customeView.findViewById<ImageView>(R.id.btn_chat)
+        val info = customeView.findViewById<ImageView>(R.id.btn_info)
+
+        nama.text = namaPendonor.toString()
+        if (path != "null"){
+            Picasso.get().load(path).into(image)
+            image.setOnClickListener{
+                showAlertGambar(path)
+            }
+        }else{
+            image.setImageResource(R.drawable.baseline_person_24_white)
+            image.setBackgroundColor(ContextCompat.getColor(this, R.color.background_donor))
+
+        }
+        chat.setOnClickListener {
+            var i = Intent(this, ChatActivity::class.java)
+            i.putExtra("id_receiver",idPendonor.toString())
+            startActivity(i)
+        }
+        info.visibility = View.GONE
+        dialog.show()
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
     }
 
     private fun clearData() {
@@ -185,14 +223,18 @@ class OtherDonorProfileActivity : AppCompatActivity(), CallBackData {
                         }else{
                             tv_total_donor_darah.text = "0"
                         }
+                        val pathFoto = "http://138.2.74.142/images/${res.user!!.gambar}"
+                        fotoProfile.setOnClickListener {
+                            if(res.user.gambar.isNullOrEmpty()){
+                             showAlertGambarProfile("null",res.user.nama!!,res.user.id!!)
+                            }else{
+                             showAlertGambarProfile(pathFoto!!,res.user.nama!!,res.user.id!!)
+                            }
+                        }
                         if(res.user.gambar.isNullOrEmpty()){
                             fotoProfile.setImageResource(R.drawable.baseline_person_24)
                         }else{
-                            Picasso.get().load("http://138.2.74.142/images/${res.user!!.gambar}").into(fotoProfile)
-                            val pathFoto = "http://138.2.74.142/images/${res.user!!.gambar}"
-                            fotoProfile.setOnClickListener {
-                                showAlertGambar(pathFoto!!)
-                            }
+                            Picasso.get().load(pathFoto).into(fotoProfile)
 
                         }
                         nama.text = res.user.nama.toString().capitalize()

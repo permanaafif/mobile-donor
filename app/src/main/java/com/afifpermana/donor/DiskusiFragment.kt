@@ -137,7 +137,14 @@ class DiskusiFragment : Fragment(),CallBackData {
         Handler().postDelayed({
             isloading = false
             loadmore.visibility = View.GONE
-            postView(page)
+            try {
+                // Kode yang mungkin menyebabkan exception
+                // disini saya gunakan untuk mengatasi force close apllikasi
+                postView(page)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Log.e("Exception", "Error: ${e.message}")
+            }
         },3000)
         page++
     }

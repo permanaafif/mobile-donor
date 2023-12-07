@@ -68,18 +68,18 @@ class MainActivity : AppCompatActivity() {
             FirebaseApp.initializeApp(this)
             FirebaseMessaging.getInstance().isAutoInitEnabled = true
 
-            FirebaseMessaging.getInstance().token
-                .addOnCompleteListener { task ->
-                    if (!task.isSuccessful) {
-                        Log.e("token_fcm", "Fetching FCM token failed", task.exception)
-                        return@addOnCompleteListener
-                    }
-
-                    // Dapatkan token FCM pengguna
-                    val token = task.result
-                    Log.e("token_fcm", token)
-                    // Kirim token ke server (Laravel)
-                }
+//            FirebaseMessaging.getInstance().token
+//                .addOnCompleteListener { task ->
+//                    if (!task.isSuccessful) {
+//                        Log.e("token_fcm", "Fetching FCM token failed", task.exception)
+//                        return@addOnCompleteListener
+//                    }
+//
+//                    // Dapatkan token FCM pengguna
+//                    val token = task.result
+//                    Log.e("token_fcm", token)
+//                    // Kirim token ke server (Laravel)
+//                }
 
 //            database = Firebase.database.reference
 //            writeNewUser("1","afif","afif@gmail.com")
