@@ -1,19 +1,25 @@
 package com.afifpermana.donor
 
+import android.content.res.ColorStateList
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.afifpermana.donor.adapter.ChatAdapter
 import com.afifpermana.donor.adapter.CommentAdapter
 import com.afifpermana.donor.model.Chat
+import com.afifpermana.donor.util.CheckWaktu
 import com.afifpermana.donor.util.SharedPrefLogin
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -28,6 +34,7 @@ class ChatActivity : AppCompatActivity() {
     private lateinit var nama:TextView
     private lateinit var foto_profile:CircleImageView
     private lateinit var message:EditText
+    private lateinit var textHelper:TextView
     private lateinit var btnSendMessage:ImageView
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: ChatAdapter
@@ -69,6 +76,7 @@ class ChatActivity : AppCompatActivity() {
         }
 
         message = findViewById(R.id.pesan)
+        textHelper = findViewById(R.id.helper)
         btnSendMessage = findViewById(R.id.send)
 
         Log.e("datasaya",receiverId.toString())
@@ -80,6 +88,34 @@ class ChatActivity : AppCompatActivity() {
         recyclerView.setHasFixedSize(true)
         adapter = ChatAdapter(this,senderId.toString(), chatList)
         recyclerView.adapter = adapter
+
+        message.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+                val textLength = s?.length ?: 0
+                if (textLength > 0) {
+                    // Panjang teks lebih dari 0, atur backgroundTint ke warna yang Anda inginkan
+                    btnSendMessage.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(this@ChatActivity, R.color.green))
+                } else {
+                    // Panjang teks 0, atur backgroundTint ke warna lain atau null (kembalikan ke default)
+                    btnSendMessage.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(this@ChatActivity, R.color.grey))
+                }
+
+                if (textLength >= 300){
+                    textHelper.visibility = View.VISIBLE
+                    textHelper.text = "Pesan hanya boleh maksimal 300 karakter"
+                }else{
+                    textHelper.visibility = View.GONE
+                }
+            }
+        })
 
         btnSendMessage.setOnClickListener {
             if (message.text.isNotEmpty()){
@@ -98,10 +134,16 @@ class ChatActivity : AppCompatActivity() {
         val reference: DatabaseReference = FirebaseDatabase.getInstance().getReference()
 
         // Buat HashMap dengan data yang ingin Anda kirim
+
+        var time = CheckWaktu()
+        time.getTime()
+        Log.e("times",time.getWaktu())
+
         val messageMap = HashMap<String, String>()
         messageMap["senderId"] = senderId
         messageMap["receiverId"] = receiverId
         messageMap["message"] = message
+        messageMap["time"] = time.getWaktu()
 
         // Kirim data ke Firebase Realtime Database
         reference.child("Chats").push().setValue(messageMap)
@@ -116,6 +158,10 @@ class ChatActivity : AppCompatActivity() {
 
     private fun readMessage(senderId: String, receiverId: String){
         val reference: DatabaseReference = FirebaseDatabase.getInstance().getReference("Chats")
+
+        // Menggunakan Query untuk mengurutkan data berdasarkan waktu
+//        val query = reference.orderByChild("time")
+
         reference.addValueEventListener(object : ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
                 Log.d("DataChange", "Data changed: ${snapshot.childrenCount} children found")
@@ -132,6 +178,11 @@ class ChatActivity : AppCompatActivity() {
 //                adapter = ChatAdapter(this@ChatActivity,this@ChatActivity.senderId.toString(),chatList)
 //                recyclerView.adapter = adapter
                 adapter.notifyDataSetChanged()
+
+                // Pindahkan RecyclerView ke posisi terakhir setelah memperbarui data
+                if (chatList.isNotEmpty()) {
+                    recyclerView.smoothScrollToPosition(chatList.size - 1)
+                }
             }
 
             override fun onCancelled(error: DatabaseError) {

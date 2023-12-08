@@ -10,6 +10,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.afifpermana.donor.R
 import com.afifpermana.donor.model.Chat
+import com.afifpermana.donor.util.CheckWaktu
 import com.afifpermana.donor.util.SharedPrefLogin
 import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
@@ -37,6 +38,25 @@ class ChatAdapter(
 
     override fun onBindViewHolder(holder: ChatAdapter.viewHolder, position: Int) {
         val chat = chatList[position]
+        var waktu = ""
+        var timeNow = CheckWaktu()
+        timeNow.getTime()
+        timeNow.setWaktu(timeNow.getWaktu())
+
+        Log.e("testWaktu",timeNow.getTanggal())
+
+        var time = CheckWaktu()
+        time.setWaktu(chat.time)
+        var banding = timeNow.bandingTanggal(timeNow.getTanggal(),time.getTanggal())
+        Log.e("testWaktu",banding.toString())
+//
+        if (banding == true){
+            waktu = time.getJam()
+        }else{
+            waktu = chat.time
+        }
+
+
 
         Log.e("chat",chat.senderId.toString())
 
@@ -47,6 +67,7 @@ class ChatAdapter(
 //        }
 
         holder.message.text = chat.message
+        holder.time.text = waktu
     }
 
     override fun getItemCount(): Int {
@@ -56,6 +77,7 @@ class ChatAdapter(
     class viewHolder(view : View):RecyclerView.ViewHolder(view) {
 //        val imgUser = view.findViewById<CircleImageView>(R.id.foto)
         val message = view.findViewById<TextView>(R.id.message)
+        val time = view.findViewById<TextView>(R.id.time)
     }
 
     override fun getItemViewType(position: Int): Int {

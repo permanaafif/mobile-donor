@@ -207,7 +207,7 @@
                                     android:layout_marginTop="5dp"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="Rating Aplikasi"
+                                    android:text="Testimoni"
                                     android:layout_gravity="center_horizontal"
                                     android:fontFamily="@font/poppins"
                                     android:textColor="@color/black"
