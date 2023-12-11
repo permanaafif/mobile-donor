@@ -160,9 +160,12 @@ class ChatActivity : AppCompatActivity() {
             }
     }
 
-    private fun updateListUserMessage(senderId: String, receiverId: String, message: String, time: String){
+    private fun updateListUserMessage(senderId: String, receiverId: String, message: String, time: String) {
         val sender: DatabaseReference = FirebaseDatabase.getInstance().getReference("Chats").child("ListUser").child(senderId)
         val receiver: DatabaseReference = FirebaseDatabase.getInstance().getReference("Chats").child("ListUser").child(receiverId)
+
+        // Kombinasi senderId dan receiverId sebagai key unik
+        val key = "$senderId-$receiverId"
 
         // Data chat yang ingin dimasukkan
         val userList = HashMap<String, String>()
@@ -171,61 +174,27 @@ class ChatActivity : AppCompatActivity() {
         userList["last_chat"] = message
         userList["time"] = time
 
-        // Kombinasi senderId dan receiverId sebagai key unik
-        val key = "$senderId-$receiverId"
+        // Perbarui data pada sender
+        sender.child(key).setValue(userList)
+            .addOnSuccessListener {
+                // Handle keberhasilan
+                Log.d("updateListUserMessage", "Chat pada sender berhasil diperbarui!")
+            }
+            .addOnFailureListener { e ->
+                // Handle kegagalan
+                Log.e("updateListUserMessage", "Gagal memperbarui chat pada sender: $e")
+            }
 
-        // Periksa apakah pasangan senderId dan receiverId sudah ada
-        sender.child(key)
-            .addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    if (!snapshot.exists()) {
-                        // Pasangan senderId dan receiverId belum ada, tambahkan chat baru
-                        sender.child(key).setValue(userList)
-                            .addOnSuccessListener {
-                                // Handle keberhasilan
-                                Log.d("addChatToDatabase", "Chat berhasil ditambahkan!")
-                            }
-                            .addOnFailureListener { e ->
-                                // Handle kegagalan
-                                Log.e("addChatToDatabase", "Gagal menambahkan chat: $e")
-                            }
-                    } else {
-                        // Pasangan senderId dan receiverId sudah ada, handle sesuai kebutuhan
-                        Log.d("addChatToDatabase", "Chat sudah ada dalam database.")
-                    }
-                }
-
-                override fun onCancelled(error: DatabaseError) {
-                    // Handle kesalahan jika terjadi
-                    Log.e("addChatToDatabase", "Gagal membaca data: $error")
-                }
-            })
-
-        receiver.child(key)
-            .addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    if (!snapshot.exists()) {
-                        // Pasangan senderId dan receiverId belum ada, tambahkan chat baru
-                        receiver.child(key).setValue(userList)
-                            .addOnSuccessListener {
-                                // Handle keberhasilan
-                                Log.d("addChatToDatabase", "Chat berhasil ditambahkan!")
-                            }
-                            .addOnFailureListener { e ->
-                                // Handle kegagalan
-                                Log.e("addChatToDatabase", "Gagal menambahkan chat: $e")
-                            }
-                    } else {
-                        // Pasangan senderId dan receiverId sudah ada, handle sesuai kebutuhan
-                        Log.d("addChatToDatabase", "Chat sudah ada dalam database.")
-                    }
-                }
-
-                override fun onCancelled(error: DatabaseError) {
-                    // Handle kesalahan jika terjadi
-                    Log.e("addChatToDatabase", "Gagal membaca data: $error")
-                }
-            })
+        // Perbarui data pada receiver
+        receiver.child(key).setValue(userList)
+            .addOnSuccessListener {
+                // Handle keberhasilan
+                Log.d("updateListUserMessage", "Chat pada receiver berhasil diperbarui!")
+            }
+            .addOnFailureListener { e ->
+                // Handle kegagalan
+                Log.e("updateListUserMessage", "Gagal memperbarui chat pada receiver: $e")
+            }
     }
     private fun readMessage(senderId: String, receiverId: String, roomId:String){
         val reference: DatabaseReference = FirebaseDatabase.getInstance().getReference("Chats").child("Message").child(roomId)

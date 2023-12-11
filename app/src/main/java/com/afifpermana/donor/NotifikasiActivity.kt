@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.View
 import android.widget.ImageButton
 import android.widget.Toast
@@ -12,10 +13,15 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.afifpermana.donor.adapter.CommentAdapter
 import com.afifpermana.donor.adapter.NotifikasiAdapter
+import com.afifpermana.donor.model.BalasCommentTo
+import com.afifpermana.donor.model.BeritaResponse
+import com.afifpermana.donor.model.Comments
 import com.afifpermana.donor.model.Notifikasi
 import com.afifpermana.donor.model.NotifikasiResponse
 import com.afifpermana.donor.model.UpdateStatusNotifikasiResponse
+import com.afifpermana.donor.service.BeritaAPI
 import com.afifpermana.donor.service.CallBackNotif
 import com.afifpermana.donor.service.NotifikasiAPI
 import com.afifpermana.donor.util.ConnectivityChecker
