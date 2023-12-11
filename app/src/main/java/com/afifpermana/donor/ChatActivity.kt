@@ -17,7 +17,6 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.afifpermana.donor.adapter.ChatAdapter
-import com.afifpermana.donor.adapter.CommentAdapter
 import com.afifpermana.donor.model.Chat
 import com.afifpermana.donor.util.CheckWaktu
 import com.afifpermana.donor.util.SharedPrefLogin
@@ -82,6 +81,8 @@ class ChatActivity : AppCompatActivity() {
         Log.e("datasaya",receiverId.toString())
         Log.e("datasaya",senderId.toString())
 
+        var roomId = "RoomChat${receiverId.toString().toInt() + senderId.toString().toInt()}"
+
         val layoutManager = LinearLayoutManager(this)
         recyclerView = findViewById(R.id.rv_chat)
         recyclerView.layoutManager = layoutManager
@@ -120,21 +121,23 @@ class ChatActivity : AppCompatActivity() {
         btnSendMessage.setOnClickListener {
             if (message.text.isNotEmpty()){
                 Log.e("message","ok")
-                sendMessage(senderId!!,receiverId!!,message.text.toString())
+                sendMessage(senderId!!,receiverId!!,message.text.toString(),roomId)
             }
         }
 
-        readMessage(senderId!!,receiverId!!)
+        readMessage(senderId!!,receiverId!!,roomId)
 
     }
 
     // Fungsi untuk mengirim pesan ke Firebase
-    private fun sendMessage(senderId: String, receiverId: String, message: String) {
+    private fun sendMessage(senderId: String, receiverId: String, message: String, roomId:String) {
         // Dapatkan referensi database
-        val reference: DatabaseReference = FirebaseDatabase.getInstance().getReference()
+        val reference: DatabaseReference = FirebaseDatabase.getInstance().getReference("Chats").child("Message").child(roomId)
+
+        // Buat child baru dengan ID yang dihasilkan otomatis
+        val newChatRef = reference.push()
 
         // Buat HashMap dengan data yang ingin Anda kirim
-
         var time = CheckWaktu()
         time.getTime()
         Log.e("times",time.getWaktu())
@@ -146,18 +149,86 @@ class ChatActivity : AppCompatActivity() {
         messageMap["time"] = time.getWaktu()
 
         // Kirim data ke Firebase Realtime Database
-        reference.child("Chats").push().setValue(messageMap)
+        newChatRef.setValue(messageMap)
             .addOnSuccessListener {
                 Log.d("sendMessage", "Data berhasil dikirim!")
                 this.message.text.clear()
+                updateListUserMessage(senderId,receiverId,message,time.getWaktu())
             }
             .addOnFailureListener { e ->
                 Log.e("sendMessage", "Gagal mengirim data: $e")
             }
     }
 
-    private fun readMessage(senderId: String, receiverId: String){
-        val reference: DatabaseReference = FirebaseDatabase.getInstance().getReference("Chats")
+    private fun updateListUserMessage(senderId: String, receiverId: String, message: String, time: String){
+        val sender: DatabaseReference = FirebaseDatabase.getInstance().getReference("Chats").child("ListUser").child(senderId)
+        val receiver: DatabaseReference = FirebaseDatabase.getInstance().getReference("Chats").child("ListUser").child(receiverId)
+
+        // Data chat yang ingin dimasukkan
+        val userList = HashMap<String, String>()
+        userList["senderId"] = senderId
+        userList["receiverId"] = receiverId
+        userList["last_chat"] = message
+        userList["time"] = time
+
+        // Kombinasi senderId dan receiverId sebagai key unik
+        val key = "$senderId-$receiverId"
+
+        // Periksa apakah pasangan senderId dan receiverId sudah ada
+        sender.child(key)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (!snapshot.exists()) {
+                        // Pasangan senderId dan receiverId belum ada, tambahkan chat baru
+                        sender.child(key).setValue(userList)
+                            .addOnSuccessListener {
+                                // Handle keberhasilan
+                                Log.d("addChatToDatabase", "Chat berhasil ditambahkan!")
+                            }
+                            .addOnFailureListener { e ->
+                                // Handle kegagalan
+                                Log.e("addChatToDatabase", "Gagal menambahkan chat: $e")
+                            }
+                    } else {
+                        // Pasangan senderId dan receiverId sudah ada, handle sesuai kebutuhan
+                        Log.d("addChatToDatabase", "Chat sudah ada dalam database.")
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    // Handle kesalahan jika terjadi
+                    Log.e("addChatToDatabase", "Gagal membaca data: $error")
+                }
+            })
+
+        receiver.child(key)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (!snapshot.exists()) {
+                        // Pasangan senderId dan receiverId belum ada, tambahkan chat baru
+                        receiver.child(key).setValue(userList)
+                            .addOnSuccessListener {
+                                // Handle keberhasilan
+                                Log.d("addChatToDatabase", "Chat berhasil ditambahkan!")
+                            }
+                            .addOnFailureListener { e ->
+                                // Handle kegagalan
+                                Log.e("addChatToDatabase", "Gagal menambahkan chat: $e")
+                            }
+                    } else {
+                        // Pasangan senderId dan receiverId sudah ada, handle sesuai kebutuhan
+                        Log.d("addChatToDatabase", "Chat sudah ada dalam database.")
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    // Handle kesalahan jika terjadi
+                    Log.e("addChatToDatabase", "Gagal membaca data: $error")
+                }
+            })
+    }
+    private fun readMessage(senderId: String, receiverId: String, roomId:String){
+        val reference: DatabaseReference = FirebaseDatabase.getInstance().getReference("Chats").child("Message").child(roomId)
 
         // Menggunakan Query untuk mengurutkan data berdasarkan waktu
 //        val query = reference.orderByChild("time")

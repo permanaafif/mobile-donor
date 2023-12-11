@@ -43,30 +43,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         }
     }
 
-    private fun sendTokenToServer(token: String) {
-        val retro = Retro().getRetroClientInstance().create(SendTokenFCMAPI::class.java)
-        retro.senToken("Bearer ${sharedPref.getString("token")}",token).enqueue(object : Callback<SendTokenFCMToServerResponse> {
-            override fun onResponse(
-                call: Call<SendTokenFCMToServerResponse>,
-                response: Response<SendTokenFCMToServerResponse>
-            ) {
-                if (response.isSuccessful){
-                    var res = response.body()
-                    if (res?.success == true){
-                        Log.e("success","success")
-                    }else{
-                        //
-                    }
-                }
-            }
-
-            override fun onFailure(call: Call<SendTokenFCMToServerResponse>, t: Throwable) {
-                Log.e("error",t.message.toString())
-            }
-        })
-    }
-
-
     @SuppressLint("LongLogTag")
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         Log.e("tokendensheref", sharedPref.getString("token").toString())
