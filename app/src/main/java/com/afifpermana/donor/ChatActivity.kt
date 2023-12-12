@@ -230,7 +230,6 @@ class ChatActivity : AppCompatActivity() {
             }
         })
     }
-
     private fun showAlertGambar(path:String) {
         val builder = AlertDialog.Builder(this, R.style.AlertDialogTheme)
         val customeView = LayoutInflater.from(this).inflate(R.layout.alert_gambar,null)

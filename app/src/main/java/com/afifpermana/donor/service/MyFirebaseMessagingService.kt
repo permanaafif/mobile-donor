@@ -24,31 +24,21 @@ import retrofit2.Response
 
 
 class MyFirebaseMessagingService : FirebaseMessagingService() {
-    lateinit var sharedPref: SharedPrefLogin
     val TAG = "FirebaseMessagingService"
-
-    override fun onCreate() {
-        super.onCreate()
-        sharedPref = SharedPrefLogin(this) // Inisialisasi objek sharedPref
-    }
 
     override fun onNewToken(token: String) {
         super.onNewToken(token)
         Log.e("tokenden", token.toString())
-        Log.e("tokendensheref", sharedPref.getString("token").toString())
-        sharedPref.setString("token_fcm",token)
-        if(!sharedPref.getString("token").isNullOrEmpty()){
-//            sendTokenToServer(token)
-            Log.e("testing","send Token To Server")
-        }
     }
 
     @SuppressLint("LongLogTag")
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
-        Log.e("tokendensheref", sharedPref.getString("token").toString())
         Log.d(TAG, "Dikirim dari: ${remoteMessage.from}")
 
-        if (remoteMessage.notification != null) {
+//        if (remoteMessage.notification != null) {
+//            showNotification(remoteMessage.notification?.title, remoteMessage.notification?.body)
+//        }
+        if(remoteMessage.data.isNotEmpty()){
             showNotification(remoteMessage.notification?.title, remoteMessage.notification?.body)
         }
     }
