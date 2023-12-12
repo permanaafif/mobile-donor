@@ -55,8 +55,7 @@
 
         <service
             android:name=".service.MyFirebaseMessagingService"
-            android:exported="false"
-            tools:ignore="Instantiatable">
+            android:exported="true">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>

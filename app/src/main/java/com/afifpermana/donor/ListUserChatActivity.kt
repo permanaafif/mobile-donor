@@ -4,8 +4,10 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.ImageButton
 import android.widget.Toast
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.afifpermana.donor.adapter.CommentAdapter
@@ -31,6 +33,7 @@ import retrofit2.Response
 class ListUserChatActivity : AppCompatActivity() {
     var userChatList = ArrayList<UserChat>()
     private lateinit var adapter: ListChatAdapter
+    private lateinit var no_chat: CardView
     private lateinit var recyclerView : RecyclerView
     var newData : ArrayList<Comments> = ArrayList()
     lateinit var sharedPref: SharedPrefLogin
@@ -39,6 +42,7 @@ class ListUserChatActivity : AppCompatActivity() {
         setContentView(R.layout.activity_list_user_chat)
         sharedPref = SharedPrefLogin(this)
         readUserChat(sharedPref.getInt("id").toString())
+        no_chat = findViewById(R.id.no_chat)
         val backButton = findViewById<ImageButton>(R.id.backButton)
         backButton.setOnClickListener { onBackPressed() }
         val layoutManager = LinearLayoutManager(this)
@@ -59,21 +63,28 @@ class ListUserChatActivity : AppCompatActivity() {
                 Log.d("DataChange", "Data changed: ${snapshot.childrenCount} children found")
                 userChatList.clear()
 
-                for (dataSnapShot: DataSnapshot in snapshot.children){
-                    val chat = dataSnapShot.getValue(Chat::class.java)
+                if (snapshot.exists()) {
+                    recyclerView.visibility = View.VISIBLE
+                    no_chat.visibility = View.GONE
+                    for (dataSnapShot: DataSnapshot in snapshot.children){
+                        val chat = dataSnapShot.getValue(Chat::class.java)
 
-                    if(chat!!.senderId.equals(senderId)){
-                        profileUserChat(
-                            chat!!.receiverId.toInt(),
-                            chat!!.message,
-                            chat!!.time,
-                            true)
-                    }else if (chat!!.receiverId.equals(senderId)){
-                        profileUserChat(
-                            chat!!.senderId.toInt(),
-                            chat!!.message,
-                            chat!!.time)
+                        if(chat!!.senderId.equals(senderId)){
+                            profileUserChat(
+                                chat!!.receiverId.toInt(),
+                                chat!!.message,
+                                chat!!.time,
+                                true)
+                        }else if (chat!!.receiverId.equals(senderId)){
+                            profileUserChat(
+                                chat!!.senderId.toInt(),
+                                chat!!.message,
+                                chat!!.time)
+                        }
                     }
+                }else{
+                    recyclerView.visibility = View.GONE
+                    no_chat.visibility = View.VISIBLE
                 }
             }
 
