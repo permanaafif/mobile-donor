@@ -75,6 +75,7 @@ class ProfileFragment : Fragment(), CallBackData {
     private lateinit var ganti_password : CardView
     private lateinit var rating_app : CardView
     private lateinit var notif : CardView
+    private lateinit var chat : CardView
     private lateinit var radioGroup: RadioGroup
     private lateinit var logout : ImageView
     private lateinit var sharedPref: SharedPrefLogin
@@ -249,6 +250,7 @@ class ProfileFragment : Fragment(), CallBackData {
         ganti_password = view.findViewById(R.id.cv_ganti_password)
         rating_app = view.findViewById(R.id.cv_rating)
         notif = view.findViewById(R.id.cv_notifikasi)
+        chat = view.findViewById(R.id.cv_chat)
         fotoProfile = view.findViewById(R.id.foto)
         nama = view.findViewById(R.id.nama)
         kode_pendonor = view.findViewById(R.id.kode)
@@ -302,6 +304,18 @@ class ProfileFragment : Fragment(), CallBackData {
                 connectivityChecker.showAlertDialogNoConnection()
             }
 
+        }
+
+        chat.setOnClickListener {
+            val connectivityChecker = ConnectivityChecker(requireActivity())
+            if (connectivityChecker.isNetworkAvailable()){
+                //koneksi aktif
+                val i = Intent(context, ListUserChatActivity::class.java)
+                startActivity(i)
+            }else{
+                //koneksi tidak aktif
+                connectivityChecker.showAlertDialogNoConnection()
+            }
         }
 
         logout.setOnClickListener{

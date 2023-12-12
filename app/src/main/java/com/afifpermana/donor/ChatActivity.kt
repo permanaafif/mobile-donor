@@ -171,7 +171,7 @@ class ChatActivity : AppCompatActivity() {
         val userList = HashMap<String, String>()
         userList["senderId"] = senderId
         userList["receiverId"] = receiverId
-        userList["last_chat"] = message
+        userList["message"] = message
         userList["time"] = time
 
         // Perbarui data pada sender
