@@ -18,7 +18,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.afifpermana.donor.adapter.ChatAdapter
 import com.afifpermana.donor.model.Chat
+import com.afifpermana.donor.model.NotificationData
+import com.afifpermana.donor.model.NotificationPayload
+import com.afifpermana.donor.model.UserTokenFCM
 import com.afifpermana.donor.util.CheckWaktu
+import com.afifpermana.donor.util.MainApplication
 import com.afifpermana.donor.util.SharedPrefLogin
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -27,6 +31,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
+import retrofit2.Call
 
 class ChatActivity : AppCompatActivity() {
 
@@ -39,6 +44,8 @@ class ChatActivity : AppCompatActivity() {
     private lateinit var adapter: ChatAdapter
 
     var chatList = ArrayList<Chat>()
+    var token = "null"
+
 
 
     lateinit var sharedPref: SharedPrefLogin
@@ -154,6 +161,7 @@ class ChatActivity : AppCompatActivity() {
                 Log.d("sendMessage", "Data berhasil dikirim!")
                 this.message.text.clear()
                 updateListUserMessage(senderId,receiverId,message,time.getWaktu())
+                readDataById(receiverId,message)
             }
             .addOnFailureListener { e ->
                 Log.e("sendMessage", "Gagal mengirim data: $e")
@@ -165,7 +173,7 @@ class ChatActivity : AppCompatActivity() {
         val receiver: DatabaseReference = FirebaseDatabase.getInstance().getReference("Chats").child("ListUser").child(receiverId)
 
         // Kombinasi senderId dan receiverId sebagai key unik
-        val key = "$senderId-$receiverId"
+        val key = senderId.toInt()+receiverId.toInt()
 
         // Data chat yang ingin dimasukkan
         val userList = HashMap<String, String>()
@@ -175,7 +183,7 @@ class ChatActivity : AppCompatActivity() {
         userList["time"] = time
 
         // Perbarui data pada sender
-        sender.child(key).setValue(userList)
+        sender.child(key.toString()).setValue(userList)
             .addOnSuccessListener {
                 // Handle keberhasilan
                 Log.d("updateListUserMessage", "Chat pada sender berhasil diperbarui!")
@@ -186,7 +194,7 @@ class ChatActivity : AppCompatActivity() {
             }
 
         // Perbarui data pada receiver
-        receiver.child(key).setValue(userList)
+        receiver.child(key.toString()).setValue(userList)
             .addOnSuccessListener {
                 // Handle keberhasilan
                 Log.d("updateListUserMessage", "Chat pada receiver berhasil diperbarui!")
@@ -244,6 +252,53 @@ class ChatActivity : AppCompatActivity() {
         dialog.window?.setDimAmount(1f)
         dialog.show()
 //        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+    }
+
+    fun sendNotificationToDevice(deviceToken: String, title: String, body: String) {
+        if (deviceToken != "null"){
+            val notificationPayload = NotificationPayload(deviceToken, NotificationData(title, body))
+            val call = (application as MainApplication).fcmService.sendNotification(notificationPayload)
+
+            call.enqueue(object : retrofit2.Callback<Void> {
+                override fun onResponse(call: Call<Void>, response: retrofit2.Response<Void>) {
+                    if (response.isSuccessful) {
+                        Log.d("Notification", "Notification sent. Response: ${response.code()}")
+                    } else {
+                        Log.e("Notification", "Failed to send notification. Response: ${response.code()}")
+                    }
+                }
+
+                override fun onFailure(call: Call<Void>, t: Throwable) {
+                    Log.e("Notification", "Failed to send notification. Error: ${t.message}")
+                }
+            })
+        }
+    }
+
+    private fun readDataById(id: String,message: String) {
+        // Dapatkan referensi database
+        val reference: DatabaseReference = FirebaseDatabase.getInstance().getReference("Chats").child("Users")
+
+        // Gunakan addListenerForSingleValueEvent untuk mendapatkan data satu kali
+        reference.child(id).addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists()) {
+                    // Data ditemukan, lakukan sesuatu dengan data
+                    val user = snapshot.getValue(UserTokenFCM::class.java)
+                    Log.d("ReadData", "Data ditemukan: $user")
+                    val serverKey = "AAAAbv6fc40:APA91bGibxNHSOQbsYMG9OiYDpDOnH-RqvH6sAZFUZOtUSJr1_iIN39Jm5dA8gM6Lr1fXgrB0svPaa0G8ShyLmxkH1p_BubbMzK4ZgaV7lPGH0MUhtXTZKwrmijJPbaCDyCy_jnh_unv"
+                    sendNotificationToDevice(user!!.token_fcm,sharedPref.getString("nama")!!,message)
+                } else {
+                    // Data tidak ditemukan
+                    Log.d("ReadData", "Data tidak ditemukan untuk ID: $id")
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                // Handle error
+                Log.e("ReadData", "Gagal membaca data: $error")
+            }
+        })
     }
 
     override fun onDestroy() {

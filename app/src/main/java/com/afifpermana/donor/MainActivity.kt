@@ -28,7 +28,11 @@ import com.afifpermana.donor.util.Retro
 import com.afifpermana.donor.util.SharedPrefLogin
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.FirebaseApp
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.messaging.FirebaseMessaging
 import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
@@ -38,7 +42,6 @@ import retrofit2.Response
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
-import kotlin.math.log
 
 class MainActivity : AppCompatActivity() {
 
@@ -68,23 +71,11 @@ class MainActivity : AppCompatActivity() {
             FirebaseApp.initializeApp(this)
             FirebaseMessaging.getInstance().isAutoInitEnabled = true
 
-//            FirebaseMessaging.getInstance().token
-//                .addOnCompleteListener { task ->
-//                    if (!task.isSuccessful) {
-//                        Log.e("token_fcm", "Fetching FCM token failed", task.exception)
-//                        return@addOnCompleteListener
-//                    }
-//
-//                    // Dapatkan token FCM pengguna
-//                    val token = task.result
-//                    Log.e("token_fcm", token)
-//                    // Kirim token ke server (Laravel)
-//                }
-
 //            database = Firebase.database.reference
 //            writeNewUser("1","afif","afif@gmail.com")
-            sendTokenToServer(sharedPref.getString("token_fcm").toString())
+//            sendTokenToServer(sharedPref.getString("token_fcm").toString())
             homeView()
+
             setContentView(R.layout.activity_main)
             frameLayout = findViewById(R.id.frame_container)
             linearLayout = findViewById(R.id.home)
@@ -164,6 +155,46 @@ class MainActivity : AppCompatActivity() {
             replaceFragmentHome(ArtikelFragment())
         }
     }
+
+    private fun sendTokenFCMtoDatabase(token: String, id: String) {
+        // Dapatkan referensi database
+        val reference: DatabaseReference = FirebaseDatabase.getInstance().getReference("Chats").child("Users")
+
+        // Buat HashMap dengan data yang ingin Anda kirim
+        val user = HashMap<String, Any>()
+        user["id"] = id
+        user["token_fcm"] = token
+
+        // Periksa apakah data dengan ID tertentu sudah ada dalam database
+        reference.child(id).addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists()) {
+                    // Jika ID sudah ada, update data
+                    reference.child(id).updateChildren(user)
+                        .addOnSuccessListener {
+                            Log.d("tokenFCM", "Data berhasil diupdate!")
+                        }
+                        .addOnFailureListener { e ->
+                            Log.e("tokenFCM", "Gagal mengupdate data: $e")
+                        }
+                } else {
+                    // Jika ID belum ada, tambahkan data baru
+                    reference.child(id).setValue(user)
+                        .addOnSuccessListener {
+                            Log.d("tokenFCM", "Data berhasil ditambahkan!")
+                        }
+                        .addOnFailureListener { e ->
+                            Log.e("tokenFCM", "Gagal menambahkan data: $e")
+                        }
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.e("tokenFCM", "Error: $error")
+            }
+        })
+    }
+
     private fun totalNotif() {
         val retro = Retro().getRetroClientInstance().create(NotifikasiAPI::class.java)
         retro.totalNotif("Bearer ${sharedPref.getString("token")}").enqueue(object :
@@ -234,7 +265,24 @@ class MainActivity : AppCompatActivity() {
                     Log.e("Status response" , sharedPref.getString("token").toString())
                     if (resCode == 200){
                         if (res != null){
+
+                            FirebaseMessaging.getInstance().token
+                                .addOnCompleteListener { task ->
+                                    if (!task.isSuccessful) {
+                                        Log.e("token_fcm", "Fetching FCM token failed", task.exception)
+                                        return@addOnCompleteListener
+                                    }
+
+                                    // Dapatkan token FCM pengguna
+                                    val token = task.result
+                                    Log.e("token_fcm", token)
+                                    // Kirim token ke database
+
+                                    sendTokenFCMtoDatabase(token,res.user!!.id!!.toString())
+                                }
+
                             sharedPref.setIdPendonor(res.user!!.id!!)
+                            sharedPref.setString("nama",res.user!!.nama!!)
                             nama.text = res.user!!.nama
                             if(res.user!!.gambar.isNullOrEmpty()){
                                 fotoProfile.setImageResource(R.drawable.baseline_person_24)
