@@ -15,5 +15,5 @@ class MainApplication : Application() {
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
-    val fcmService: FCMService = retrofit.create(FCMService::class.java)
+    val fcmService = retrofit.create(FCMService::class.java)
 }

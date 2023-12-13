@@ -161,7 +161,10 @@ class ChatActivity : AppCompatActivity() {
                 Log.d("sendMessage", "Data berhasil dikirim!")
                 this.message.text.clear()
                 updateListUserMessage(senderId,receiverId,message,time.getWaktu())
-                readDataById(receiverId,message)
+                var _nama = b!!.getString("nama")
+                var path = b!!.getString("path")
+
+                readDataById(receiverId,_nama!!,path!!,message)
             }
             .addOnFailureListener { e ->
                 Log.e("sendMessage", "Gagal mengirim data: $e")
@@ -254,9 +257,9 @@ class ChatActivity : AppCompatActivity() {
 //        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
     }
 
-    fun sendNotificationToDevice(deviceToken: String, title: String, body: String) {
+    fun sendNotificationToDevice(deviceToken: String, title: String, body: String, data: Map<String, String>) {
         if (deviceToken != "null"){
-            val notificationPayload = NotificationPayload(deviceToken, NotificationData(title, body))
+            val notificationPayload = NotificationPayload(deviceToken, NotificationData(title, body, data))
             val call = (application as MainApplication).fcmService.sendNotification(notificationPayload)
 
             call.enqueue(object : retrofit2.Callback<Void> {
@@ -275,22 +278,23 @@ class ChatActivity : AppCompatActivity() {
         }
     }
 
-    private fun readDataById(id: String,message: String) {
+    private fun readDataById(receiverId: String,nama: String,path: String,message: String) {
         // Dapatkan referensi database
         val reference: DatabaseReference = FirebaseDatabase.getInstance().getReference("Chats").child("Users")
 
         // Gunakan addListenerForSingleValueEvent untuk mendapatkan data satu kali
-        reference.child(id).addListenerForSingleValueEvent(object : ValueEventListener {
+        reference.child(receiverId).addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (snapshot.exists()) {
                     // Data ditemukan, lakukan sesuatu dengan data
                     val user = snapshot.getValue(UserTokenFCM::class.java)
                     Log.d("ReadData", "Data ditemukan: $user")
-                    val serverKey = "AAAAbv6fc40:APA91bGibxNHSOQbsYMG9OiYDpDOnH-RqvH6sAZFUZOtUSJr1_iIN39Jm5dA8gM6Lr1fXgrB0svPaa0G8ShyLmxkH1p_BubbMzK4ZgaV7lPGH0MUhtXTZKwrmijJPbaCDyCy_jnh_unv"
-                    sendNotificationToDevice(user!!.token_fcm,sharedPref.getString("nama")!!,message)
+                    val additionalData = mapOf("id_receiver" to receiverId, "nama" to nama,"path" to path)
+                    Log.d("additionalData", "Data ditemukan: $additionalData")
+                    sendNotificationToDevice(user!!.token_fcm,sharedPref.getString("nama")!!,message,additionalData)
                 } else {
                     // Data tidak ditemukan
-                    Log.d("ReadData", "Data tidak ditemukan untuk ID: $id")
+                    Log.d("ReadData", "Data tidak ditemukan untuk ID: $receiverId")
                 }
             }
 
