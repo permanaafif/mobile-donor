@@ -219,12 +219,12 @@ class OtherDonorProfileActivity : AppCompatActivity(), CallBackData {
                     if (resCode == 200){
                         Log.e("profilecaliak","success")
                         val res = response.body()!!
-                        tv_golongan_darah.text = res.user.id_golongan_darah.nama
+                        tv_golongan_darah.text = "Golongan Darah: ${res.user.id_golongan_darah.nama}"
                         if (res.user.total_donor_darah.toString() != "null"
                             && res.user.total_donor_darah.toString().toInt() >= 0){
-                            tv_total_donor_darah.text = res.user.total_donor_darah.toString()
+                            tv_total_donor_darah.text = "Total Donor Darah: ${res.user.total_donor_darah.toString()}"
                         }else{
-                            tv_total_donor_darah.text = "0"
+                            tv_total_donor_darah.text = "Total Donor Darah: 0"
                         }
                         val pathFoto = "http://138.2.74.142/images/${res.user!!.gambar}"
                         fotoProfile.setOnClickListener {

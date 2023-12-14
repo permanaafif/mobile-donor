@@ -590,7 +590,7 @@ class ProfileFragment : Fragment(), CallBackData {
                 }
 
                 override fun onFailure(call: Call<List<PostRespone>>, t: Throwable) {
-                    Toast.makeText(requireActivity(), t.message.toString(), Toast.LENGTH_SHORT).show()
+//                    Toast.makeText(requireActivity(), t.message.toString(), Toast.LENGTH_SHORT).show()
                     Log.e("close_sendiri", t.message.toString())
                 }
             })

@@ -44,13 +44,21 @@ class FaqFragment : Fragment() {
         faqTitle = arrayOf(
             "Apa itu donor darah?",
             "Siapa yang memenuhi syarat untuk menjadi pendonor darah?",
-            "Bagaimana proses donor darah berlangsung?"
+            "Bagaimana proses donor darah berlangsung?",
+            "Apa yang membuat DARA menjadi solusi unik di dunia donor darah?",
+            "Bagaimana memperoleh informasi terkini seputar donor darah di DARA?",
+            "Mengapa penting bagi para donor darah untuk merasakan atmosfer komunitas?",
+            "Bagaimana DARA memanfaatkan fitur Riwayat untuk personalisasi pengalaman donor darah?"
         )
 
         faqDesc = arrayOf(
             "Donor darah adalah tindakan sukarela di mana seseorang menyumbangkan sejumlah kecil darahnya untuk tujuan medis. Tujuannya adalah untuk menyediakan pasokan darah yang aman dan memadai untuk keperluan medis, termasuk transfusi darah dan pengobatan berbagai penyakit.",
             "Orang yang sehat, berusia di atas 17 tahun (usia dapat bervariasi sesuai dengan wilayah), memiliki berat badan yang memadai, dan memenuhi persyaratan kesehatan tertentu dapat menjadi donor darah.",
-            "Donor darah mengunjungi pusat donor darah atau unit bergerak, kemudian mereka akan mengisi formulir pertanyaan kesehatan, dilakukan pemeriksaan kesehatan, dan darah diambil melalui jarum yang terhubung ke kantong darah steril."
+            "Donor darah mengunjungi pusat donor darah atau unit bergerak, kemudian mereka akan mengisi formulir pertanyaan kesehatan, dilakukan pemeriksaan kesehatan, dan darah diambil melalui jarum yang terhubung ke kantong darah steril.",
+            "DARA menggabungkan kebutuhan donor darah dengan teknologi modern, menyajikan pengalaman donor yang interaktif, informatif, dan terkoneksi.",
+            "Pengguna dapat menjelajahi informasi terkini di beranda DARA, termasuk FAQ, Jadwal, dan artikel terbaru seputar donor darah untuk pengalaman yang lebih menarik.",
+            "DARA memahami bahwa memberikan darah adalah pengalaman pribadi, dan atmosfer komunitas membantu mendukung, menginspirasi, dan merayakan pencapaian bersama.",
+            "Melalui fitur Riwayat, DARA mencatat setiap langkah perjalanan donor, termasuk lokasi dan waktu, menciptakan catatan pribadi yang bermakna untuk setiap pengguna."
         )
 
 

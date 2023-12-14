@@ -84,7 +84,9 @@ tools:context=".OtherDonorProfileActivity">
             android:layout_height="match_parent">
 
             <LinearLayout
+                android:background="@color/white"
                 android:layout_gravity="center_horizontal"
+                android:weightSum="2"
                 android:gravity="center_horizontal"
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
@@ -92,96 +94,49 @@ tools:context=".OtherDonorProfileActivity">
                 <androidx.cardview.widget.CardView
                     android:layout_marginVertical="10dp"
                     android:id="@+id/cv_golongan_darah"
+                    android:layout_weight="1"
                     app:cardCornerRadius="5dp"
-                    android:layout_width="100dp"
+                    android:layout_width="wrap_content"
+                    android:backgroundTint="@color/green"
                     android:layout_marginEnd="10dp"
+                    android:layout_marginStart="10dp"
                     app:cardElevation="10dp"
                     android:layout_height="wrap_content">
-                    <LinearLayout
+                    <TextView
+                        android:id="@+id/tv_golongan_darah"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="A"
                         android:layout_marginVertical="4dp"
-                        android:orientation="vertical"
-                        android:layout_width="match_parent"
-                        android:layout_height="50dp">
-                        <TextView
-                            android:id="@+id/tv_golongan_darah"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="A"
-                            android:textStyle="bold"
-                            android:layout_gravity="center_horizontal"
-                            android:fontFamily="@font/poppins"
-                            android:textColor="@color/green"
-                            android:textSize="18sp"
-                            />
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Golongan Darah"
-                            android:layout_gravity="center_horizontal"
-                            android:fontFamily="@font/poppins"
-                            android:textColor="@color/black"
-                            android:textSize="10sp"
-                            />
-                    </LinearLayout>
+                        android:textStyle="bold"
+                        android:layout_gravity="center_horizontal"
+                        android:fontFamily="@font/poppins"
+                        android:textColor="@color/white"
+                        android:textSize="12sp"
+                        />
                 </androidx.cardview.widget.CardView>
 
                 <androidx.cardview.widget.CardView
                     android:layout_marginVertical="10dp"
                     android:id="@+id/cv_total_donor_darah"
+                    android:layout_weight="1"
                     app:cardCornerRadius="5dp"
-                    android:layout_width="100dp"
+                    android:backgroundTint="@color/green"
+                    android:layout_width="wrap_content"
                     android:layout_marginEnd="10dp"
                     app:cardElevation="10dp"
                     android:layout_height="wrap_content">
-                    <LinearLayout
+                    <TextView
+                        android:id="@+id/tv_total_donor_darah"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:layout_marginVertical="4dp"
-                        android:orientation="vertical"
-                        android:layout_width="match_parent"
-                        android:layout_height="50dp">
-                       <androidx.constraintlayout.widget.ConstraintLayout
-                           android:layout_gravity="center_horizontal"
-                           android:orientation="horizontal"
-                           android:layout_width="wrap_content"
-                           android:layout_height="wrap_content">
-
-                           <TextView
-                               android:id="@+id/tv_total_donor_darah"
-                               android:layout_width="wrap_content"
-                               android:layout_height="wrap_content"
-                               android:layout_gravity="center_horizontal"
-                               android:fontFamily="@font/poppins"
-                               android:text="12"
-                               android:textColor="@color/green"
-                               android:textSize="18sp"
-                               android:textStyle="bold"
-                               app:layout_constraintBottom_toBottomOf="parent"
-                               app:layout_constraintStart_toStartOf="parent"
-                               app:layout_constraintTop_toTopOf="parent" />
-
-                           <TextView
-                               android:layout_marginBottom="5dp"
-                               android:layout_marginStart="5dp"
-                               android:layout_width="wrap_content"
-                               android:layout_height="wrap_content"
-                               android:layout_gravity="center_horizontal"
-                               android:fontFamily="@font/poppins"
-                               android:text="kantong"
-                               android:textColor="#B6B6B6"
-                               android:textSize="10sp"
-                               android:textStyle="bold"
-                               app:layout_constraintBottom_toBottomOf="parent"
-                               app:layout_constraintStart_toEndOf="@+id/tv_total_donor_darah" />
-                       </androidx.constraintlayout.widget.ConstraintLayout>
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Total Donor Darah"
-                            android:layout_gravity="center_horizontal"
-                            android:fontFamily="@font/poppins"
-                            android:textColor="@color/black"
-                            android:textSize="10sp"
-                            />
-                    </LinearLayout>
+                        android:layout_gravity="center_horizontal"
+                        android:fontFamily="@font/poppins"
+                        android:text="12"
+                        android:textColor="@color/white"
+                        android:textSize="12sp"
+                        android:textStyle="bold"/>
                 </androidx.cardview.widget.CardView>
             </LinearLayout>
 

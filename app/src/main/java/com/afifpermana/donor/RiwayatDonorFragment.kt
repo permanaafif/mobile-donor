@@ -102,11 +102,9 @@ class RiwayatDonorFragment : Fragment() {
                     if (resCode == 200){
                         val res = response.body()
                         Log.e("total_donor", res!!.total_donor_darah.toString())
-                        if (res!!.total_donor_darah.toString() != "null"){
-                            if(res.total_donor_darah.toString().toInt() <= 0){
-                                cv_total_donor_darah.visibility = View.VISIBLE
-                                total_donor_darah.text = "Total Donor Darah: ${res.total_donor_darah.toString()} kantong"
-                            }
+                        if (res!!.total_donor_darah != 0){
+                            cv_total_donor_darah.visibility = View.VISIBLE
+                            total_donor_darah.text = "Total Donor Darah: ${res.total_donor_darah.toString()} kantong"
                         }else{
                             cv_total_donor_darah.visibility = View.GONE
                         }

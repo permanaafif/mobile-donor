@@ -93,12 +93,16 @@ class LupaPassword2 : AppCompatActivity() {
             password.error = "Masukkan Password"
             return false
         }
-        if (password.text.toString().trim().length <= 8){
-            password.error = "Password harus lebih dari 8 karakter"
+        if (password.text.toString().trim().length <= 4){
+            password.error = "Password harus memiliki 5 atau lebih karakter"
             return false
         }
         if (confirmpassword.text.toString().trim().isNullOrEmpty()){
             confirmpassword.error = "Masukkan konfirmasi Password"
+            return false
+        }
+        if (confirmpassword.text.toString().length <= 4){
+            confirmpassword.error = "Password harus memiliki 5 atau lebih karakter"
             return false
         }
         if (confirmpassword.text.toString().trim() != password.text.toString().trim()){
