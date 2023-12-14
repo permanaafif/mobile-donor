@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
@@ -49,6 +50,7 @@ import retrofit2.Response
 class OtherDonorProfileActivity : AppCompatActivity(), CallBackData {
     private lateinit var sw_layout : SwipeRefreshLayout
     private lateinit var cl_post : ConstraintLayout
+    private lateinit var ll_goldar : LinearLayout
     private lateinit var loadingLottie : LottieAnimationView
     private lateinit var nodataLottie : LottieAnimationView
     private lateinit var fotoProfile : CircleImageView
@@ -81,7 +83,7 @@ class OtherDonorProfileActivity : AppCompatActivity(), CallBackData {
         id_pendonor = b!!.getInt("id_pendonor")
 
         fotoProfile = findViewById(R.id.foto)
-
+        ll_goldar = findViewById(R.id.ll_gol_darah)
         nama = findViewById(R.id.nama)
         tv_golongan_darah = findViewById(R.id.tv_golongan_darah)
         tv_total_donor_darah = findViewById(R.id.tv_total_donor_darah)
@@ -219,6 +221,7 @@ class OtherDonorProfileActivity : AppCompatActivity(), CallBackData {
                     if (resCode == 200){
                         Log.e("profilecaliak","success")
                         val res = response.body()!!
+                        ll_goldar.visibility = View.VISIBLE
                         tv_golongan_darah.text = "Golongan Darah: ${res.user.id_golongan_darah.nama}"
                         if (res.user.total_donor_darah.toString() != "null"
                             && res.user.total_donor_darah.toString().toInt() >= 0){

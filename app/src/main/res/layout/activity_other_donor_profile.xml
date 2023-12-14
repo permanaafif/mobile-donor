@@ -84,6 +84,8 @@ tools:context=".OtherDonorProfileActivity">
             android:layout_height="match_parent">
 
             <LinearLayout
+                android:id="@+id/ll_gol_darah"
+                android:visibility="gone"
                 android:background="@color/white"
                 android:layout_gravity="center_horizontal"
                 android:weightSum="2"
