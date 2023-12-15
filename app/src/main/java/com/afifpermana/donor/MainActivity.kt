@@ -52,6 +52,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var linearLayout: LinearLayout
     lateinit var sharedPref: SharedPrefLogin
 
+    private lateinit var ll_nama : LinearLayout
     private lateinit var nama : TextView
     private lateinit var kodePendonor : TextView
     private lateinit var goldar : TextView
@@ -81,6 +82,7 @@ class MainActivity : AppCompatActivity() {
             linearLayout = findViewById(R.id.home)
             linearLayout.visibility = View.VISIBLE
 
+            ll_nama = findViewById(R.id.ln_nama)
             nama = findViewById(R.id.nama)
             kodePendonor = findViewById(R.id.kode_donor)
             goldar = findViewById(R.id.text_goldar)
@@ -153,6 +155,18 @@ class MainActivity : AppCompatActivity() {
                 }
             }
             replaceFragmentHome(ArtikelFragment())
+
+            ll_nama.setOnClickListener{
+                bottomNavigationView.selectedItemId = R.id.btn_profile
+                replaceFragment(ProfileFragment())
+                linearLayout.visibility = View.GONE
+                frameLayout.visibility = View.VISIBLE
+                bottomNavigationView.getOrCreateBadge(R.id.btn_profile).apply {
+                    number = 0
+                    isVisible = false
+                    backgroundColor = resources.getColor(R.color.red)
+                }
+            }
         }
     }
 
