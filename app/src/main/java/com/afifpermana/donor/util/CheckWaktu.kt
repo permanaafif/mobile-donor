@@ -14,6 +14,7 @@ class CheckWaktu {
     private lateinit var tanggal:String
     private lateinit var jam:String
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun setWaktu(dateTimeString: String){
         val (date, time) = splitDateTime(dateTimeString)
         this.tanggal = date
@@ -32,6 +33,7 @@ class CheckWaktu {
         return this.waktu
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun getTime() {
         // Mendapatkan waktu saat ini
         val currentTime = LocalDateTime.now()
@@ -42,6 +44,7 @@ class CheckWaktu {
         this.waktu = formattedTime
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun splitDateTime(dateTimeString: String): Pair<String, String> {
         // Parsing string menjadi objek LocalDateTime
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
@@ -54,6 +57,7 @@ class CheckWaktu {
         return Pair(date, time)
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun bandingTanggal(date1:String, date2:String):Boolean{
         val result = compareDates(date1, date2)
 
@@ -64,10 +68,11 @@ class CheckWaktu {
             1 -> false
             -1 -> false
             0 -> true
-            else -> true
+            else -> false
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun compareDates(dateString1: String, dateString2: String): Int {
         val date1 = parseDate(dateString1)
         val date2 = parseDate(dateString2)
@@ -75,6 +80,7 @@ class CheckWaktu {
         return date1.compareTo(date2)
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun parseDate(dateString: String): LocalDate {
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
         return LocalDate.parse(dateString, formatter)

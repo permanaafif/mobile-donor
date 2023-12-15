@@ -53,7 +53,7 @@ class ChatAdapter(
         if (banding == true){
             waktu = time.getJam()
         }else{
-            waktu = chat.time
+            waktu = "${time.getTanggal()} ${time.getJam()}"
         }
 
 

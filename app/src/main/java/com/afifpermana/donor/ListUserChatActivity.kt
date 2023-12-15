@@ -29,13 +29,14 @@ import com.squareup.picasso.Picasso
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 class ListUserChatActivity : AppCompatActivity() {
     var userChatList = ArrayList<UserChat>()
     private lateinit var adapter: ListChatAdapter
     private lateinit var no_chat: CardView
     private lateinit var recyclerView : RecyclerView
-    var newData : ArrayList<Comments> = ArrayList()
     lateinit var sharedPref: SharedPrefLogin
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -125,7 +126,11 @@ class ListUserChatActivity : AppCompatActivity() {
                         val data = UserChat(id,kamu,fotoProfile,nama,pesan,waktu)
                         userChatList.add(data)
                         Log.e("userChatList",userChatList.toString())
-                        adapter = ListChatAdapter(userChatList,this@ListUserChatActivity)
+                        val sortedUserChatList = userChatList.sortedByDescending {
+                            // Mengonversi string waktu ke LocalDateTime
+                            LocalDateTime.parse(it.waktu, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+                        }
+                        adapter = ListChatAdapter(sortedUserChatList,this@ListUserChatActivity)
                         recyclerView.adapter = adapter
                         adapter.notifyDataSetChanged()
                     }

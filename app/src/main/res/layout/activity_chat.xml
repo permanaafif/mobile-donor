@@ -100,7 +100,7 @@
                 android:layout_marginRight="10dp"
                 android:background="@drawable/borderinput"
                 android:drawablePadding="10dp"
-                android:hint="Tulis komentar..."
+                android:hint="Tulis pesan..."
                 android:paddingVertical="10dp"
                 android:paddingLeft="20dp"
                 android:paddingRight="20dp"
