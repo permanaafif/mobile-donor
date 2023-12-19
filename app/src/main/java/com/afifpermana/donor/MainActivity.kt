@@ -60,6 +60,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var jadwalTerdekat : TextView
     private lateinit var fotoProfile : CircleImageView
     val connectivityChecker = ConnectivityChecker(this)
+    var b : Bundle? =null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,7 +77,7 @@ class MainActivity : AppCompatActivity() {
 //            writeNewUser("1","afif","afif@gmail.com")
 //            sendTokenToServer(sharedPref.getString("token_fcm").toString())
             homeView()
-
+            b = intent.extras
             setContentView(R.layout.activity_main)
             frameLayout = findViewById(R.id.frame_container)
             linearLayout = findViewById(R.id.home)
@@ -166,6 +167,18 @@ class MainActivity : AppCompatActivity() {
                     isVisible = false
                     backgroundColor = resources.getColor(R.color.red)
                 }
+            }
+        }
+
+        if(b?.getString("my_profile").toString() == "profile"){
+            bottomNavigationView.selectedItemId = R.id.btn_profile
+            replaceFragment(ProfileFragment())
+            linearLayout.visibility = View.GONE
+            frameLayout.visibility = View.VISIBLE
+            bottomNavigationView.getOrCreateBadge(R.id.btn_profile).apply {
+                number = 0
+                isVisible = false
+                backgroundColor = resources.getColor(R.color.red)
             }
         }
     }

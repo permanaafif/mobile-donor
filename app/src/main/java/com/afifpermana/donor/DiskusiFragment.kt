@@ -1,5 +1,6 @@
 package com.afifpermana.donor
 
+import android.animation.ObjectAnimator
 import android.app.Activity
 import android.content.ContentResolver
 import android.content.Intent
@@ -46,6 +47,7 @@ import com.afifpermana.donor.util.Retro
 import com.afifpermana.donor.util.SharedPrefLogin
 import com.airbnb.lottie.LottieAnimationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import kotlinx.coroutines.NonCancellable.start
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -63,6 +65,7 @@ class DiskusiFragment : Fragment(),CallBackData {
     private lateinit var loadingLottie : LottieAnimationView
     private lateinit var nodataLottie : LottieAnimationView
     private lateinit var add_post: FloatingActionButton
+    private lateinit var cari_user: FloatingActionButton
     private lateinit var adapter: PostAdapter
     private lateinit var recyclerView: RecyclerView
     var newData : ArrayList<Post> = ArrayList()
@@ -88,6 +91,7 @@ class DiskusiFragment : Fragment(),CallBackData {
         sw_layout = view.findViewById(R.id.swlayout)
         cl_post = view.findViewById(R.id.cl_post)
         add_post = view.findViewById(R.id.add_post)
+        cari_user = view.findViewById(R.id.cari_user)
         loadingLottie = view.findViewById(R.id.loading)
         nodataLottie = view.findViewById(R.id.no_data)
         loadmore = view.findViewById(R.id.loadmore)
@@ -107,9 +111,23 @@ class DiskusiFragment : Fragment(),CallBackData {
 //                Log.e("posisi", lastVisibleItemPosition.toString())
                 // Mengubah visibilitas dan elevation FAB berdasarkan arah scroll
                 if (dy > 0 && add_post.isShown) {
+                    val animator = ObjectAnimator.ofFloat(cari_user, "translationY", 0f, 100f)
+                    animator.duration = 1000 // Durasi animasi dalam milidetik
+                    // Jalankan animasi saat aktivitas dibuat
+                    animator.start()
+                    cari_user.hide()
                     add_post.hide()
+
                 } else if (dy < 0 && !add_post.isShown) {
                     add_post.show()
+                    Handler().postDelayed({
+                        cari_user.show()
+                        val animator = ObjectAnimator.ofFloat(cari_user, "translationY", 0f, -160f)
+                        animator.duration = 500 // Durasi animasi dalam milidetik
+
+                        // Jalankan animasi saat aktivitas dibuat
+                        animator.start()
+                    },500)
                 }
 
                 val layoutManager = recyclerView.layoutManager as LinearLayoutManager
@@ -157,6 +175,7 @@ class DiskusiFragment : Fragment(),CallBackData {
         sw_layout.setColorSchemeResources(R.color.blue,R.color.red)
         recyclerView = view.findViewById(R.id.rv_post)
         add_post = view.findViewById(R.id.add_post)
+        cari_user = view.findViewById(R.id.cari_user)
         recyclerView.layoutManager = layoutManager
         recyclerView.setHasFixedSize(true)
         sharedPref = SharedPrefLogin(requireActivity())
@@ -186,6 +205,11 @@ class DiskusiFragment : Fragment(),CallBackData {
 
         add_post.setOnClickListener {
             showCostumeAlertDialog()
+        }
+
+        cari_user.setOnClickListener {
+            val i = Intent(requireActivity(),CariUserActivity::class.java)
+            startActivity(i)
         }
     }
 

@@ -41,4 +41,9 @@
         <item name="android:colorBackground">#000000</item>
     </style>
 
+    <style name="ShapeAppearanceOverlay.MyApp.FloatingActionButton" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">16dp</item>
+    </style>
+
 </resources>

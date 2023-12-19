@@ -13,7 +13,6 @@ import android.support.v4.app.INotificationSideChannel
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import com.afifpermana.donor.ChatActivity
-import com.afifpermana.donor.ListUserChatActivity
 import com.afifpermana.donor.MainActivity
 import com.afifpermana.donor.R
 import com.afifpermana.donor.model.HomeResponse
@@ -63,8 +62,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         }
 
         // Memilih intent berdasarkan apakah ada data tambahan atau tidak
-//        val finalIntent = if (additionalData.isNotEmpty()) chatIntent else defaultIntent
-        val finalIntent = Intent(this, ListUserChatActivity::class.java)
+        val finalIntent = if (additionalData.isNotEmpty()) chatIntent else defaultIntent
 
         val pendingIntent = PendingIntent.getActivity(
             this, 0, finalIntent,
