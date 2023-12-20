@@ -48,12 +48,14 @@
         android:textColor="@color/background_donor"
         />
 
+
+
     <EditText
         android:layout_width="314dp"
         android:layout_height="48dp"
         android:layout_below="@id/slogan"
         android:layout_centerHorizontal="true"
-        android:hint="Kode Donor"
+        android:hint="Masukkan kode donor"
         android:textColor="@color/black"
         android:maxLines="1"
         android:textColorHint="@color/black"
@@ -79,7 +81,7 @@
             android:layout_height="48dp"
             android:textSize="14dp"
             android:layout_centerHorizontal="true"
-            android:hint="Password"
+            android:hint="Masukkan password"
             android:maxLines="1"
             android:inputType="textPassword"
             android:background="@drawable/borderinput"
