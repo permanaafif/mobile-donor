@@ -39,6 +39,11 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         val title = remoteMessage.notification?.title
         val body = remoteMessage.notification?.body
 
+        val customValue1 = remoteMessage.data["custom_key1"]
+        val customValue2 = remoteMessage.data["custom_key2"]
+
+        Log.d("postman", "Data tambahan: $customValue1 , $customValue2")
+
         // Mendapatkan data tambahan dari payload
         val additionalData = remoteMessage.data
 

@@ -111,7 +111,7 @@ class DiskusiFragment : Fragment(),CallBackData {
 //                Log.e("posisi", lastVisibleItemPosition.toString())
                 // Mengubah visibilitas dan elevation FAB berdasarkan arah scroll
                 if (dy > 0 && add_post.isShown) {
-                    val animator = ObjectAnimator.ofFloat(cari_user, "translationY", 0f, 100f)
+                    val animator = ObjectAnimator.ofFloat(cari_user, "translationY", 0f, 110f)
                     animator.duration = 1000 // Durasi animasi dalam milidetik
                     // Jalankan animasi saat aktivitas dibuat
                     animator.start()
@@ -122,7 +122,7 @@ class DiskusiFragment : Fragment(),CallBackData {
                     add_post.show()
                     Handler().postDelayed({
                         cari_user.show()
-                        val animator = ObjectAnimator.ofFloat(cari_user, "translationY", 0f, -160f)
+                        val animator = ObjectAnimator.ofFloat(cari_user, "translationY", 0f, -170f)
                         animator.duration = 500 // Durasi animasi dalam milidetik
 
                         // Jalankan animasi saat aktivitas dibuat

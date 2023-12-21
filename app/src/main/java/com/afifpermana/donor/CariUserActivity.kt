@@ -62,6 +62,7 @@ class CariUserActivity : AppCompatActivity() {
         adapter = UserCariAdapter(userList,sharedPref)
         recyclerView.adapter = adapter
 
+        ed_cari.requestFocus()
         ed_cari.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
 
@@ -72,7 +73,7 @@ class CariUserActivity : AppCompatActivity() {
             }
 
             override fun afterTextChanged(s: Editable?) {
-                val textLength = s?.length ?: 0
+                val textLength = s?.toString()?.trim()?.length ?: 0
                 if (textLength > 0) {
                     // Panjang teks lebih dari 0, atur backgroundTint ke warna yang Anda inginkan
                     btn_cari.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(this@CariUserActivity, R.color.green))
@@ -148,6 +149,7 @@ class CariUserActivity : AppCompatActivity() {
             }
 
             override fun onFailure(call: Call<List<UserResponse>>, t: Throwable) {
+//                Log.e("afiff",t.message.toString())
                 sharedPref.logOut()
                 sharedPref.setStatusLogin(false)
                 startActivity(Intent(this@CariUserActivity, LoginActivity::class.java))

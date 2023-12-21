@@ -7,6 +7,7 @@
     tools:context=".ProfileEdit">
 
     <androidx.appcompat.widget.Toolbar
+        android:paddingVertical="5dp"
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -116,7 +117,8 @@
                 android:stateListAnimator="@animator/edittext_elevation"
                 android:layout_marginTop="5dp"
                 android:layout_width="314dp"
-                android:layout_height="45dp"
+                android:layout_height="wrap_content"
+                android:paddingVertical="15dp"
                 android:layout_below="@id/ll_pp"
                 android:layout_centerHorizontal="true"
                 android:hint="Nama User"
@@ -147,7 +149,8 @@
             <EditText
                 android:stateListAnimator="@animator/edittext_elevation"
                 android:layout_width="314dp"
-                android:layout_height="45dp"
+                android:layout_height="wrap_content"
+                android:paddingVertical="15dp"
                 android:layout_below="@id/namauser"
                 android:layout_centerHorizontal="true"
                 android:hint="Email"
@@ -179,9 +182,9 @@
             <TextView
                 android:stateListAnimator="@animator/edittext_elevation"
                 android:layout_width="314dp"
-                android:layout_height="45dp"
+                android:layout_height="wrap_content"
+                android:paddingVertical="15dp"
                 android:layout_below="@id/email"
-                android:paddingVertical="13dp"
                 android:layout_centerHorizontal="true"
                 android:hint="Tanggal Lahir"
                 android:textColor="@color/black"
@@ -212,7 +215,8 @@
             <EditText
                 android:stateListAnimator="@animator/edittext_elevation"
                 android:layout_width="314dp"
-                android:layout_height="45dp"
+                android:layout_height="wrap_content"
+                android:paddingVertical="15dp"
                 android:layout_below="@id/tanggal_lahir"
                 android:layout_centerHorizontal="true"
                 android:hint="Alamat"
@@ -244,7 +248,7 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_centerHorizontal="true"
                 android:layout_width="314dp"
-                android:layout_height="45dp"
+                android:layout_height="wrap_content"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                 android:layout_below="@id/alamat"
                 android:id="@+id/pilihjeniskelamin"
@@ -254,14 +258,13 @@
                 >
 
                 <AutoCompleteTextView
-                    android:paddingVertical="1dp"
+                    android:paddingVertical="15dp"
                     android:id="@+id/jekel"
                     android:text="Jenis Kelamin"
                     android:layout_width="314dp"
-                    android:layout_height="45dp"
+                    android:layout_height="wrap_content"
                     android:drawableStart="@drawable/baseline_group_24"
                     android:background="@drawable/borderinput"
-                    android:layout_marginBottom="20dp"
                     android:textSize="14sp"
                     android:textColor="@color/black"
                     android:drawablePadding="10dp"
@@ -287,7 +290,8 @@
                 android:id="@+id/notelp"
                 android:hint="Nomor Telepon"
                 android:layout_width="314dp"
-                android:layout_height="45dp"
+                android:layout_height="wrap_content"
+                android:paddingVertical="15dp"
                 android:layout_below="@id/pilihjeniskelamin"
                 android:layout_centerHorizontal="true"
                 android:textColor="@color/black"
@@ -319,7 +323,8 @@
                 android:id="@+id/bb"
                 android:hint="Berat Badan"
                 android:layout_width="314dp"
-                android:layout_height="45dp"
+                android:layout_height="wrap_content"
+                android:paddingVertical="15dp"
                 android:layout_below="@id/notelp"
                 android:layout_centerHorizontal="true"
                 android:textColor="@color/black"
@@ -340,6 +345,7 @@
                 android:layout_marginBottom="20dp"
                 android:layout_width="314dp"
                 android:layout_height="wrap_content"
+                android:paddingVertical="15dp"
                 android:layout_below="@id/bb"
                 android:layout_marginTop="15dp"
                 android:backgroundTint="@color/button"

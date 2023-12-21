@@ -177,7 +177,7 @@ class CommentsActivity : AppCompatActivity(), CallBackData {
             }
 
             override fun afterTextChanged(s: Editable?) {
-                val textLength = s?.length ?: 0
+                val textLength = s?.toString()?.trim()?.length ?: 0
                 if (textLength > 0) {
                     // Panjang teks lebih dari 0, atur backgroundTint ke warna yang Anda inginkan
                     send_comment.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(this@CommentsActivity, R.color.green))
@@ -594,7 +594,7 @@ class CommentsActivity : AppCompatActivity(), CallBackData {
                             Picasso.get().load(path).into(gambar_profile)
                         }
                         if(res?.gambar_profile.toString() == "null"){
-                            gambar_profile.setImageResource(R.drawable.ic_baseline_person_24)
+                            gambar_profile.setImageResource(R.drawable.baseline_person_24)
                         }
                         gambar_profile.setOnClickListener {
                             val id_pendonor = sharedPref.getInt("id")

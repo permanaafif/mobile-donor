@@ -52,7 +52,7 @@
 
     <EditText
         android:layout_width="314dp"
-        android:layout_height="48dp"
+        android:layout_height="wrap_content"
         android:layout_below="@id/slogan"
         android:layout_centerHorizontal="true"
         android:hint="Masukkan kode donor"
@@ -65,7 +65,7 @@
         android:id="@+id/kodedonor"
         android:paddingLeft="20dp"
         android:paddingRight="20dp"
-        android:paddingVertical="10dp"
+        android:paddingVertical="15dp"
         android:textSize="14dp"
         android:drawablePadding="10dp"
         />
@@ -78,7 +78,7 @@
             android:textColor="@color/black"
             android:id="@+id/password"
             android:layout_width="314dp"
-            android:layout_height="48dp"
+            android:layout_height="wrap_content"
             android:textSize="14dp"
             android:layout_centerHorizontal="true"
             android:hint="Masukkan password"
@@ -88,7 +88,7 @@
             android:drawableLeft="@drawable/baseline_lock_24"
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
-            android:paddingVertical="10dp"
+            android:paddingVertical="15dp"
             android:drawablePadding="10dp"
             />
 
@@ -96,12 +96,11 @@
             android:layout_centerHorizontal="true"
             android:gravity="center_vertical|end"
             android:layout_width="314dp"
-            android:layout_height="48dp">
+            android:paddingVertical="15dp"
+            android:layout_height="wrap_content">
             <ImageView
                 android:id="@+id/iv_eyes_visible"
                 android:layout_marginRight="15dp"
-                android:minWidth="30dp"
-                android:minHeight="30dp"
                 android:src="@drawable/baseline_visibility_off_24"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
@@ -113,6 +112,7 @@
         android:layout_width="314dp"
         android:layout_height="wrap_content"
         android:text="LOGIN"
+        android:paddingVertical="15dp"
         android:layout_marginTop="20dp"
         android:textColor="@color/white"
         android:layout_below="@id/password"

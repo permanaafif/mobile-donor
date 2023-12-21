@@ -8,6 +8,7 @@
     tools:context=".OTP">
 
     <androidx.appcompat.widget.Toolbar
+        android:paddingVertical="5dp"
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -215,6 +216,7 @@
                 android:layout_below="@id/ll_otp"
                 android:layout_marginTop="40dp"
                 android:text="VERIFIKASI"
+                android:paddingVertical="15dp"
                 android:layout_marginLeft="40dp"
                 android:layout_marginRight="40dp"
                 android:textStyle="bold"

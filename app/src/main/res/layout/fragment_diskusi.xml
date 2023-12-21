@@ -80,7 +80,7 @@
         app:fabCustomSize="40dp"
         app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.MyApp.FloatingActionButton"
         android:layout_marginRight="16dp"
-        android:translationY="-160px"
+        android:translationY="-170px"
         android:layout_marginBottom="16dp"
         />
 

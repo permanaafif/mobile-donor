@@ -107,7 +107,7 @@ class ChatActivity : AppCompatActivity() {
             }
 
             override fun afterTextChanged(s: Editable?) {
-                val textLength = s?.length ?: 0
+                val textLength = s?.toString()?.trim()?.length ?: 0
                 if (textLength > 0) {
                     // Panjang teks lebih dari 0, atur backgroundTint ke warna yang Anda inginkan
                     btnSendMessage.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(this@ChatActivity, R.color.green))
@@ -126,9 +126,9 @@ class ChatActivity : AppCompatActivity() {
         })
 
         btnSendMessage.setOnClickListener {
-            if (message.text.isNotEmpty()){
+            if (message.text.toString().trim().isNotEmpty()){
                 Log.e("message","ok")
-                sendMessage(senderId!!,receiverId!!,message.text.toString(),roomId)
+                sendMessage(senderId!!,receiverId!!,message.text.toString().trim(),roomId)
             }
         }
 

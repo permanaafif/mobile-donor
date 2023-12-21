@@ -8,6 +8,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <androidx.appcompat.widget.Toolbar
+        android:paddingVertical="5dp"
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -189,6 +190,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="DAFTAR"
+            android:paddingVertical="15dp"
             android:textSize="14sp"
             android:textStyle="bold"
             android:backgroundTint="@color/button"
