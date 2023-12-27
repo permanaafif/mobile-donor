@@ -73,11 +73,23 @@ class MainActivity : AppCompatActivity() {
             FirebaseApp.initializeApp(this)
             FirebaseMessaging.getInstance().isAutoInitEnabled = true
 
+            b = intent.extras
+            val notif_id_receiver = b?.getString("id_receiver").toString()
+            val notif_nama = b?.getString("nama").toString()
+            val notif_path = b?.getString("path").toString()
+
+            if (notif_id_receiver != "null"){
+                val intent = Intent(this,ChatActivity::class.java)
+                intent.putExtra("id_receiver",notif_id_receiver)
+                intent.putExtra("nama",notif_nama)
+                intent.putExtra("path",notif_path)
+                startActivity(intent)
+            }
+
 //            database = Firebase.database.reference
 //            writeNewUser("1","afif","afif@gmail.com")
 //            sendTokenToServer(sharedPref.getString("token_fcm").toString())
             homeView()
-            b = intent.extras
             setContentView(R.layout.activity_main)
             frameLayout = findViewById(R.id.frame_container)
             linearLayout = findViewById(R.id.home)
@@ -315,6 +327,7 @@ class MainActivity : AppCompatActivity() {
                                 fotoProfile.setImageResource(R.drawable.baseline_person_24)
                             }else{
                                 val path = "http://138.2.74.142/images/${res.user!!.gambar}"
+                                sharedPref.setString("foto_profil",path)
                                 Picasso.get().load(path).into(fotoProfile)
                                 fotoProfile.setOnClickListener {
                                     showAlertGambar(path)
@@ -346,12 +359,12 @@ class MainActivity : AppCompatActivity() {
                             }
                         }
                     }
-                    else{
-                        sharedPref.logOut()
-                        sharedPref.setStatusLogin(false)
-                        startActivity(Intent(this@MainActivity, LoginActivity::class.java))
-                        finish()
-                    }
+//                    else{
+//                        sharedPref.logOut()
+//                        sharedPref.setStatusLogin(false)
+//                        startActivity(Intent(this@MainActivity, LoginActivity::class.java))
+//                        finish()
+//                    }
                 }
 
                 override fun onFailure(call: Call<HomeResponse>, t: Throwable) {

@@ -7,7 +7,9 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.KeyEvent
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
@@ -63,6 +65,30 @@ class CariUserActivity : AppCompatActivity() {
         recyclerView.adapter = adapter
 
         ed_cari.requestFocus()
+        ed_cari.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                // Panggil fungsi atau lakukan tindakan yang Anda inginkan
+                val textValue = ed_cari.text.toString().trim()
+                if (textValue.isNotBlank() ){
+                    val connectivityChecker = ConnectivityChecker(this)
+                    if (connectivityChecker.isNetworkAvailable()){
+                        //koneksi aktif
+                        ed_cari.text.clear()
+                        cl_loading.visibility = View.VISIBLE
+                        recyclerView.visibility = View.GONE
+                        no_user.visibility = View.GONE
+                        cariUserView(textValue)
+
+                    }else{
+                        //koneksi tidak aktif
+                        connectivityChecker.showAlertDialogNoConnection()
+                    }
+                }
+                return@setOnEditorActionListener true
+            }
+            false
+        }
+
         ed_cari.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
 

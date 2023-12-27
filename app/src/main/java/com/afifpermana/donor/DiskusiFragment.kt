@@ -111,7 +111,7 @@ class DiskusiFragment : Fragment(),CallBackData {
 //                Log.e("posisi", lastVisibleItemPosition.toString())
                 // Mengubah visibilitas dan elevation FAB berdasarkan arah scroll
                 if (dy > 0 && add_post.isShown) {
-                    val animator = ObjectAnimator.ofFloat(cari_user, "translationY", 0f, 110f)
+                    val animator = ObjectAnimator.ofFloat(cari_user, "translationY", 0f, 190f)
                     animator.duration = 1000 // Durasi animasi dalam milidetik
                     // Jalankan animasi saat aktivitas dibuat
                     animator.start()
@@ -413,39 +413,74 @@ class DiskusiFragment : Fragment(),CallBackData {
 
                 var gambar = UploadRequestBodyFragment(file, "image", requireActivity())
 
-                retro.addPostWithImage(
-                    "Bearer ${sharedPref.getString("token")}",
-                    MultipartBody.Part.createFormData("gambar", file.name, gambar),
-                    RequestBody.create(MediaType.parse("text/plain"), textValue)
-                ).enqueue(object : Callback<AddPostResponse> {
-                    override fun onResponse(
-                        call: Call<AddPostResponse>,
-                        response: Response<AddPostResponse>
-                    ) {
-                        Log.e("sampai", "gambarden2")
-                        val res = response.body()
-                        if (response.isSuccessful) {
-                            if (res?.success == true) {
-                                dialog.dismiss()
-                                selectedImageUri = null
-                                clearData()
-                                page = 1
-                                cl_post.visibility = View.VISIBLE
-                                recyclerView.visibility = View.GONE
-                                loadingLottie.visibility = View.VISIBLE
-                                postView(page)
-                                Toast.makeText(requireActivity(), "Berhasil Upload", Toast.LENGTH_SHORT).show()
-                            } else {
-                                Toast.makeText(requireActivity(), "terjadi kesalahan", Toast.LENGTH_SHORT).show()
+                if (textValue.isNotBlank() || textValue.isNotEmpty() ){
+                    retro.addPostWithImage(
+                        "Bearer ${sharedPref.getString("token")}",
+                        MultipartBody.Part.createFormData("gambar", file.name, gambar),
+                        RequestBody.create(MediaType.parse("text/plain"), textValue)
+                    ).enqueue(object : Callback<AddPostResponse> {
+                        override fun onResponse(
+                            call: Call<AddPostResponse>,
+                            response: Response<AddPostResponse>
+                        ) {
+                            Log.e("sampai", "gambarden2")
+                            val res = response.body()
+                            if (response.isSuccessful) {
+                                if (res?.success == true) {
+                                    dialog.dismiss()
+                                    selectedImageUri = null
+                                    clearData()
+                                    page = 1
+                                    cl_post.visibility = View.VISIBLE
+                                    recyclerView.visibility = View.GONE
+                                    loadingLottie.visibility = View.VISIBLE
+                                    postView(page)
+                                    Toast.makeText(requireActivity(), "Berhasil Upload", Toast.LENGTH_SHORT).show()
+                                } else {
+                                    Toast.makeText(requireActivity(), "terjadi kesalahan", Toast.LENGTH_SHORT).show()
+                                }
                             }
                         }
-                    }
 
-                    override fun onFailure(call: Call<AddPostResponse>, t: Throwable) {
-                        Toast.makeText(requireActivity(), "Tidak ada koneksi internet", Toast.LENGTH_SHORT).show()
-                        Log.e("sampai", t.message.toString())
-                    }
-                })
+                        override fun onFailure(call: Call<AddPostResponse>, t: Throwable) {
+                            Toast.makeText(requireActivity(), "Tidak ada koneksi internet", Toast.LENGTH_SHORT).show()
+                            Log.e("sampai", t.message.toString())
+                        }
+                    })
+                }else{
+                    retro.addPostWithoutText(
+                        "Bearer ${sharedPref.getString("token")}",
+                        MultipartBody.Part.createFormData("gambar", file.name, gambar)
+                    ).enqueue(object : Callback<AddPostResponse> {
+                        override fun onResponse(
+                            call: Call<AddPostResponse>,
+                            response: Response<AddPostResponse>
+                        ) {
+                            Log.e("sampai", "gambarden2")
+                            val res = response.body()
+                            if (response.isSuccessful) {
+                                if (res?.success == true) {
+                                    dialog.dismiss()
+                                    selectedImageUri = null
+                                    clearData()
+                                    page = 1
+                                    cl_post.visibility = View.VISIBLE
+                                    recyclerView.visibility = View.GONE
+                                    loadingLottie.visibility = View.VISIBLE
+                                    postView(page)
+                                    Toast.makeText(requireActivity(), "Berhasil Upload", Toast.LENGTH_SHORT).show()
+                                } else {
+                                    Toast.makeText(requireActivity(), "terjadi kesalahan", Toast.LENGTH_SHORT).show()
+                                }
+                            }
+                        }
+
+                        override fun onFailure(call: Call<AddPostResponse>, t: Throwable) {
+                            Toast.makeText(requireActivity(), "Tidak ada koneksi internet", Toast.LENGTH_SHORT).show()
+                            Log.e("sampai", t.message.toString())
+                        }
+                    })
+                }
             } else {
                 // Jika selectedImageUri == null, kirim tanpa gambar
                 retro.addPostWithoutImage(

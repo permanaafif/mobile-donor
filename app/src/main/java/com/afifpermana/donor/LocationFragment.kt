@@ -30,6 +30,7 @@ import com.afifpermana.donor.adapter.JadwalAdapter
 import com.afifpermana.donor.model.Artikel
 import com.afifpermana.donor.model.BeritaResponse
 import com.afifpermana.donor.model.Jadwal
+import com.afifpermana.donor.model.LatLongRequest
 import com.afifpermana.donor.model.LokasiDonorResponse
 import com.afifpermana.donor.service.BeritaAPI
 import com.afifpermana.donor.service.LokasiDonorAPI
@@ -65,6 +66,7 @@ class LocationFragment : Fragment() {
      var latitude: Array<Double> = arrayOf()
      var longitude: Array<Double> = arrayOf()
      var status: Array<Boolean> = arrayOf()
+     var jarak: Array<Double> = arrayOf()
 
     var lat : Double = 0.0
     var long : Double = 0.0
@@ -105,7 +107,7 @@ class LocationFragment : Fragment() {
         }
 
         val dropdownJadwal: AutoCompleteTextView = view.findViewById(R.id.dropdown_filter_jadwal)
-        val items = listOf("Tanggal", "Lokasi Terdekat")
+        val items = listOf("Tanggal Terdekat", "Lokasi Terdekat")
         val adapterDropdown = ArrayAdapter(requireActivity(), R.layout.list_item, items)
         dropdownJadwal.setAdapter(adapterDropdown)
 
@@ -114,13 +116,13 @@ class LocationFragment : Fragment() {
 //            Toast.makeText(requireActivity(), "$itemSelected", Toast.LENGTH_LONG).show()
 
             when (itemSelected) {
-                "Tanggal" -> {
+                "Tanggal Terdekat" -> {
                     // Urutkan data sumber berdasarkan tanggal terbesar/ terbaru
                     val sortedIndices = tanggal.indices.sortedBy { parseDate(tanggal[it]) }
                     // Mengisi newData dengan data yang sudah diurutkan
                     newData.clear()
                     for (i in sortedIndices) {
-                        val data = Jadwal(id[i],tanggal[i], jamMulai[i], jamSelesai[i], lokasi[i], alamat[i], kontak[i], latitude[i], longitude[i],status[i])
+                        val data = Jadwal(id[i],tanggal[i], jamMulai[i], jamSelesai[i], lokasi[i], alamat[i], kontak[i], latitude[i], longitude[i],status[i],jarak[i])
                         newData.add(data)
                     }
                     // Memperbarui adapter dengan data yang sudah diurutkan
@@ -132,7 +134,10 @@ class LocationFragment : Fragment() {
                     if (ContextCompat.checkSelfPermission(requireContext(), permission) == PackageManager.PERMISSION_GRANTED) {
                         // Izin lokasi telah diberikan
                         // Lakukan pengambilan lokasi di sini
-                        sortLocationsByNearestLocation(lat,long)
+//                        sortLocationsByNearestLocation(lat,long)
+                        clearData()
+                        lokasiView(lat,long,true)
+                        Log.e("latlong","$lat , $long")
                     } else {
                         // Jika izin belum diberikan, minta izin kepada pengguna
                         ActivityCompat.requestPermissions(requireActivity(), arrayOf(permission), LOCATION_PERMISSION_REQUEST_CODE)
@@ -243,6 +248,7 @@ class LocationFragment : Fragment() {
         latitude = emptyArray()
         longitude = emptyArray()
         status = emptyArray()
+        jarak = emptyArray()
         adapter.notifyDataSetChanged()
     }
     fun extractJamMenit(waktu: String): String {
@@ -255,16 +261,20 @@ class LocationFragment : Fragment() {
             "Format waktu tidak valid"
         }
     }
-    private fun lokasiView() {
+    private fun lokasiView(_lat: Double = 0.0, _long: Double = 0.0, filter:Boolean = false) {
         cl_jadwal.visibility = View.VISIBLE
         recyclerView.visibility = View.GONE
         loadingLottie.visibility = View.VISIBLE
         nodataLottie.visibility = View.GONE
+        val data = LatLongRequest()
+        data.lat = _lat
+        data.long = _long
+        Log.e("latlonglat","${data.lat}")
         val connectivityChecker = ConnectivityChecker(requireActivity())
         if (connectivityChecker.isNetworkAvailable()) {
             //koneksi aktif
             val retro = Retro().getRetroClientInstance().create(LokasiDonorAPI::class.java)
-            retro.lokasi("Bearer ${sharedPref.getString("token")}")
+            retro.lokasi("Bearer ${sharedPref.getString("token")}",data)
                 .enqueue(object : Callback<List<LokasiDonorResponse>> {
                     override fun onResponse(
                         call: Call<List<LokasiDonorResponse>>,
@@ -283,6 +293,8 @@ class LocationFragment : Fragment() {
                                 latitude += i.latitude ?: 0.0
                                 longitude += i.longitude ?: 0.0
                                 status += i.status ?: false
+                                jarak += i.jarak ?: 0.0
+                                Log.e("latlong","${i.jarak}")
                             }
 
                             for (x in tanggal.indices) {
@@ -296,9 +308,14 @@ class LocationFragment : Fragment() {
                                     kontak[x],
                                     latitude[x],
                                     longitude[x],
-                                    status[x]
+                                    status[x],
+                                    jarak[x]
                                 )
                                 newData.add(data)
+                            }
+                            if (filter == true){
+                                newData.sortBy { it.jarak }
+                                Log.e("latlong",newData.toString())
                             }
                             adapter.notifyDataSetChanged()
                             cl_jadwal.visibility = View.GONE
@@ -334,52 +351,45 @@ class LocationFragment : Fragment() {
     }
 
 
-    private fun sortLocationsByNearestLocation(userLatitude: Double, userLongitude: Double) {
-        // Membuat daftar pasangan nilai jarak dan lokasi
-        val distancesAndLocations = mutableListOf<Pair<Double, String>>()
-
-        // Menghitung jarak untuk setiap lokasi dan menyimpannya dalam daftar pasangan
-        for (i in 0 until latitude.size) {
-            val locationLatitude = latitude[i]
-            val locationLongitude = longitude[i]
-            val distance = calculateDistance(userLatitude, userLongitude, locationLatitude, locationLongitude)
-            distancesAndLocations.add(Pair(distance, lokasi[i]))
-        }
-
-        // Mengurutkan daftar berdasarkan jarak (des)
-        distancesAndLocations.sortByDescending { it.first }
-
-        // Mengambil lokasi yang sudah diurutkan
-        val sortedLocations = distancesAndLocations.map { it.second }
-
-        // Memperbarui adapter atau tampilan Anda dengan lokasi yang sudah diurutkan
-        // Misalnya, Anda dapat menggunakan RecyclerView untuk menampilkan lokasi terurut
-        // atau mengganti nilai dalam array "lokasi" dengan nilai yang sudah diurutkan.
-        newData.clear()
-        for (sortedLocation in sortedLocations) {
-            val index = lokasi.indexOf(sortedLocation)
-            if (index != -1) {
-                val data = Jadwal(id[index],tanggal[index], jamMulai[index], jamSelesai[index], lokasi[index], alamat[index], kontak[index], latitude[index], longitude[index],status[index])
-                newData.add(data)
-            }
-        }
-        adapter.notifyDataSetChanged()
-    }
-
-    private fun calculateDistance(
-        lat1: Double,
-        lon1: Double,
-        lat2: Double,
-        lon2: Double
-    ): Double {
-        val radius = 6371 // Radius of the Earth in kilometers
-        val dLat = Math.toRadians(lat2 - lat1)
-        val dLon = Math.toRadians(lon2 - lon1)
-        val a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(Math.toRadians(lat1)) *
-                Math.cos(Math.toRadians(lat2)) * Math.sin(dLon / 2) * Math.sin(dLon / 2)
-        val c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
-        return radius * c
-    }
+//    private fun sortLocationsByNearestLocation(userLatitude: Double, userLongitude: Double) {
+//        Log.e("mapstesting", "$userLatitude, $userLongitude")
+//
+//        // Menggunakan List untuk memudahkan pengurutan
+//        val distancesAndLocations = mutableListOf<Pair<Double, Jadwal>>()
+//
+//        // Menghitung jarak untuk setiap lokasi dan menyimpannya dalam daftar pasangan
+//        for (i in latitude.indices) {
+//            val locationLatitude = latitude[i]
+//            val locationLongitude = longitude[i]
+//            Log.e("mapstesting", "$locationLatitude, $locationLongitude")
+//            val distance = calculateDistance(userLatitude, userLongitude, locationLatitude, locationLongitude)
+//            val jadwalData = Jadwal(id[i], tanggal[i], jamMulai[i], jamSelesai[i], lokasi[i], alamat[i], kontak[i], latitude[i], longitude[i], status[i])
+//            distancesAndLocations.add(Pair(distance, jadwalData))
+//        }
+//
+//        // Mengurutkan daftar berdasarkan jarak (asc)
+//        distancesAndLocations.sortBy { it.first }
+//
+//        // Mengambil lokasi yang sudah diurutkan
+//        val sortedLocations = distancesAndLocations.map { it.second }
+//
+//        // Memperbarui adapter atau tampilan Anda dengan lokasi yang sudah diurutkan
+//        // Misalnya, Anda dapat menggunakan RecyclerView untuk menampilkan lokasi terurut
+//        // atau mengganti nilai dalam array "lokasi" dengan nilai yang sudah diurutkan.
+//        newData.clear()
+//        newData.addAll(sortedLocations)
+//        adapter.notifyDataSetChanged()
+//    }
+//
+//    private fun calculateDistance(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Double {
+//        val radius = 6371 // Radius of the Earth in kilometers
+//        val dLat = Math.toRadians(lat2 - lat1)
+//        val dLon = Math.toRadians(lon2 - lon1)
+//        val a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(Math.toRadians(lat1)) *
+//                Math.cos(Math.toRadians(lat2)) * Math.sin(dLon / 2) * Math.sin(dLon / 2)
+//        val c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+//        return radius * c
+//    }
 
     private fun parseDate(date: String): Date {
         val dateFormat = SimpleDateFormat("yyyy-MM-dd")

@@ -45,6 +45,7 @@ class JadwalFragment : Fragment() {
     var latitude: Array<Double> = arrayOf()
     var longitude: Array<Double> = arrayOf()
     var status: Array<Boolean> = arrayOf()
+    var jarak: Array<Double> = arrayOf()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -90,6 +91,7 @@ class JadwalFragment : Fragment() {
         latitude = emptyArray()
         longitude = emptyArray()
         status = emptyArray()
+        jarak = emptyArray()
         adapter.notifyDataSetChanged()
     }
 
@@ -132,6 +134,7 @@ class JadwalFragment : Fragment() {
                                 latitude += i.latitude!!
                                 longitude += i.longitude!!
                                 status += false
+                                jarak += i.jarak?: 0.0
                             }
                             for (x in tanggal.indices) {
                                 val data = Jadwal(
@@ -144,7 +147,8 @@ class JadwalFragment : Fragment() {
                                     kontak[x],
                                     latitude[x],
                                     longitude[x],
-                                    status[x]
+                                    status[x],
+                                    jarak[x]
                                 )
                                 newData.add(data)
                             }

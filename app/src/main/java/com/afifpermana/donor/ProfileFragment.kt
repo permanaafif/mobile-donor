@@ -587,6 +587,13 @@ class ProfileFragment : Fragment(), CallBackData {
                     if(response.code() == 403 && x == true){
                         Toast.makeText(requireActivity(), "Anda telah mencapai akhir postingan", Toast.LENGTH_SHORT).show()
                     }
+                    if(response.code() == 403 && x == false){
+                        cl_post.visibility = View.VISIBLE
+                        nodataLottie.visibility = View.VISIBLE
+                        nodataLottie.playAnimation()
+                        loadingLottie.visibility = View.GONE
+                        recyclerView.visibility = View.GONE
+                    }
                 }
 
                 override fun onFailure(call: Call<List<PostRespone>>, t: Throwable) {

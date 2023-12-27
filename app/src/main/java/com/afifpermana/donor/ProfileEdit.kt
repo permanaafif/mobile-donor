@@ -275,7 +275,7 @@ class ProfileEdit : AppCompatActivity(), UploadRequestBody.UploadCallback {
                 val resCode = response.code()
 //                Log.e("emaill",resCode.toString())
                 if (resCode == 200){
-                    Toast.makeText(applicationContext,"Simpan Berhasil",Toast.LENGTH_SHORT).show()
+                    Toast.makeText(applicationContext,"Simpan data Berhasil",Toast.LENGTH_SHORT).show()
                     finish()
                 }else{
                     email.error = "Email Sudah Digunakan"
@@ -302,6 +302,7 @@ class ProfileEdit : AppCompatActivity(), UploadRequestBody.UploadCallback {
             if (fileSize > maxSizeInBytes) {
                 // Ukuran gambar terlalu besar
                 Toast.makeText(this, "Ukuran gambar terlalu besar, Max 1MB", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Gambar profile tidak tersimpan", Toast.LENGTH_SHORT).show()
                 return
             }
 

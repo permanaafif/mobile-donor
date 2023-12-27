@@ -15,6 +15,7 @@ import androidx.core.app.NotificationCompat
 import com.afifpermana.donor.ChatActivity
 import com.afifpermana.donor.MainActivity
 import com.afifpermana.donor.R
+import com.afifpermana.donor.SplashScreenActivity
 import com.afifpermana.donor.model.HomeResponse
 import com.afifpermana.donor.model.SendTokenFCMToServerResponse
 import com.afifpermana.donor.util.Retro
@@ -39,11 +40,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         val title = remoteMessage.notification?.title
         val body = remoteMessage.notification?.body
 
-        val customValue1 = remoteMessage.data["custom_key1"]
-        val customValue2 = remoteMessage.data["custom_key2"]
-
-        Log.d("postman", "Data tambahan: $customValue1 , $customValue2")
-
         // Mendapatkan data tambahan dari payload
         val additionalData = remoteMessage.data
 
@@ -51,42 +47,32 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
 
         // Menampilkan notifikasi
-        showNotification(title, body, additionalData)
+//        showNotification(title, body, additionalData)
+
+
     }
 
-    private fun showNotification(title: String?, body: String?, additionalData: Map<String, String>) {
+    fun showNotification(title: String?, body: String?, additionalData: Map<String, String>) {
         // Intent default untuk membuka MainActivity
-        val defaultIntent = Intent(this, MainActivity::class.java)
+        val defaultIntent = Intent(this, SplashScreenActivity::class.java)
 
-        // Intent khusus untuk membuka ChatActivity jika ada data tambahan
-        val chatIntent = Intent(this, ChatActivity::class.java)
-
-        // Menambahkan data tambahan ke intent ChatActivity
-        for ((key, value) in additionalData) {
-            chatIntent.putExtra(key, value)
+        if (additionalData.isNotEmpty()) {
+            for ((key, value) in additionalData) {
+                defaultIntent.putExtra(key, value)
+            }
         }
 
-        // Memilih intent berdasarkan apakah ada data tambahan atau tidak
-        val finalIntent = if (additionalData.isNotEmpty()) chatIntent else defaultIntent
-
         val pendingIntent = PendingIntent.getActivity(
-            this, 0, finalIntent,
-            PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE
+            this, 0, defaultIntent,
+            PendingIntent.FLAG_IMMUTABLE
         )
 
-        val soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
         val notificationBuilder = NotificationCompat.Builder(this)
             .setSmallIcon(R.mipmap.ic_launcher)
             .setContentTitle(title)
             .setContentText(body)
             .setAutoCancel(true)
-            .setSound(soundUri)
             .setContentIntent(pendingIntent)
-
-        // Menampilkan data tambahan pada log
-        for ((key, value) in additionalData) {
-            Log.d("TAG", "Data tambahan: $key = $value")
-        }
 
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.notify(0, notificationBuilder.build())

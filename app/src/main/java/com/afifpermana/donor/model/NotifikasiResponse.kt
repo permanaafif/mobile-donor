@@ -25,6 +25,10 @@ class NotifikasiResponse {
     @Expose
     val status_read: Int? = null
 
+    @SerializedName("id_pembalas")
+    @Expose
+    val id_pembalas: Int? = null
+
     @SerializedName("update")
     @Expose
     val update: String? = null

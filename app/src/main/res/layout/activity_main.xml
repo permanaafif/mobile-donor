@@ -53,7 +53,7 @@
                         android:maxLines="1"
                         android:text="Hi, Afif Permana"
                         android:textColor="@color/nama_pendonor"
-                        android:textSize="14sp" />
+                        android:textSize="16sp" />
 
                     <TextView
                         android:id="@+id/kode_donor"
@@ -63,7 +63,7 @@
                         android:maxLines="1"
                         android:text="1242357853946"
                         android:textColor="@color/kode_pendonor"
-                        android:textSize="10sp"
+                        android:textSize="12sp"
                         android:textStyle="bold" />
                 </LinearLayout>
 

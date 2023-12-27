@@ -9,6 +9,7 @@ data class Notifikasi (
     val id_comment: Int,
     val id_balas_comment: Int? = null,
     val status_read: Int,
+    val id_pembalas: Int,
     val update : String,
     val pendonor: PendonorItem
 ){

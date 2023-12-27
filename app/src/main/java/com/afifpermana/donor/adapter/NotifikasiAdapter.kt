@@ -20,13 +20,15 @@ import com.afifpermana.donor.R
 import com.afifpermana.donor.model.Notifikasi
 import com.afifpermana.donor.service.CallBackNotif
 import com.afifpermana.donor.util.ConnectivityChecker
+import com.afifpermana.donor.util.SharedPrefLogin
 import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
 
 class NotifikasiAdapter(
     private val listNotif : List<Notifikasi>,
     private val context : Context,
-    private val dataCallBack : CallBackNotif
+    private val dataCallBack : CallBackNotif,
+    private var sharedPref: SharedPrefLogin
 ): RecyclerView.Adapter<NotifikasiAdapter.ViewHolder>() {
     override fun onCreateViewHolder(
         parent: ViewGroup,

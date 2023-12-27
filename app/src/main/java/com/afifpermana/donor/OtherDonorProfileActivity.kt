@@ -315,6 +315,12 @@ class OtherDonorProfileActivity : AppCompatActivity(), CallBackData {
                     if(response.code() == 403 && x == true){
                         Toast.makeText(this@OtherDonorProfileActivity, "Anda telah mencapai akhir postingan", Toast.LENGTH_SHORT).show()
                     }
+                    if(response.code() == 403 && x == false){
+                        cl_post.visibility = View.VISIBLE
+                        loadingLottie.visibility = View.GONE
+                        nodataLottie.visibility = View.VISIBLE
+                        recyclerView.visibility = View.GONE
+                    }
                 }
 
                 override fun onFailure(call: Call<List<PostRespone>>, t: Throwable) {

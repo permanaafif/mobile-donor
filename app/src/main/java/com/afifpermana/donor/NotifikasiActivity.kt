@@ -58,7 +58,7 @@ class NotifikasiActivity : AppCompatActivity(), CallBackNotif {
         recyclerView = findViewById(R.id.rv_notifikasi)
         recyclerView.layoutManager = layoutManager
         recyclerView.setHasFixedSize(true)
-        adapter = NotifikasiAdapter(newData,this,this)
+        adapter = NotifikasiAdapter(newData,this,this,sharedPref)
         recyclerView.adapter = adapter
 
         notifikasiView()
@@ -87,25 +87,29 @@ class NotifikasiActivity : AppCompatActivity(), CallBackNotif {
                     call: Call<List<NotifikasiResponse>>,
                     response: Response<List<NotifikasiResponse>>
                 ) {
+                    Log.e("responsecode",response.code().toString())
                     if (response.isSuccessful) {
                         val res = response.body()
                         if (!res.isNullOrEmpty()) {
                             for (i in res) {
-                                val pendonor = Notifikasi.PendonorItem(
-                                    i.pendonor?.id!!.toInt(),
-                                    i.pendonor.gambar,
-                                    i.pendonor.nama!!
-                                )
-                                val data = Notifikasi(
-                                    i.id!!,
-                                    i.id_post!!,
-                                    i.id_comment ?: 0,
-                                    i.id_balas_comment ?: 0,
-                                    i.status_read!!.toInt(),
-                                    i.update.toString(),
-                                    pendonor
-                                )
-                                newData.add(data)
+                                if(i.id_pembalas!!.toInt() != sharedPref.getInt("id")){
+                                    val pendonor = Notifikasi.PendonorItem(
+                                        i.pendonor?.id!!.toInt(),
+                                        i.pendonor.gambar,
+                                        i.pendonor.nama!!
+                                    )
+                                    val data = Notifikasi(
+                                        i.id!!,
+                                        i.id_post!!,
+                                        i.id_comment ?: 0,
+                                        i.id_balas_comment ?: 0,
+                                        i.status_read!!.toInt(),
+                                        i.id_pembalas!!.toInt(),
+                                        i.update.toString(),
+                                        pendonor
+                                    )
+                                    newData.add(data)
+                                }
                             }
                             adapter.notifyDataSetChanged()
                             cl_notifikasi.visibility = View.GONE

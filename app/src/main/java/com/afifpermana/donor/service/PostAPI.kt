@@ -45,6 +45,13 @@ interface PostAPI {
         @Part("text") text: RequestBody
     ): Call<AddPostResponse>
 
+    @Multipart
+    @POST("api/post/add")
+    fun addPostWithoutText(
+        @Header("Authorization") auth_token: String,
+        @Part gambar: MultipartBody.Part
+    ): Call<AddPostResponse>
+
     @FormUrlEncoded
     @POST("api/post/add")
     fun addPostWithoutImage(

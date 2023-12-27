@@ -67,6 +67,7 @@ class ChatActivity : AppCompatActivity() {
         receiverId = b!!.getString("id_receiver")
         senderId = sharedPref.getInt("id").toString()
 
+        Log.e("chatsaya","$receiverId , $senderId")
         nama = findViewById(R.id.nama)
         foto_profile = findViewById(R.id.foto)
 
@@ -161,10 +162,10 @@ class ChatActivity : AppCompatActivity() {
                 Log.d("sendMessage", "Data berhasil dikirim!")
                 this.message.text.clear()
                 updateListUserMessage(senderId,receiverId,message,time.getWaktu())
-                var _nama = b!!.getString("nama")
-                var path = b!!.getString("path")
+                var _nama = sharedPref.getString("nama")
+                var path = sharedPref.getString("foto_profil")
 
-                readDataById(receiverId,_nama!!,path!!,message)
+                readDataById(receiverId,senderId,_nama!!,path!!,message)
             }
             .addOnFailureListener { e ->
                 Log.e("sendMessage", "Gagal mengirim data: $e")
@@ -256,12 +257,12 @@ class ChatActivity : AppCompatActivity() {
         dialog.show()
 //        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
     }
-
     fun sendNotificationToDevice(deviceToken: String, title: String, body: String, data: Map<String, String>) {
         if (deviceToken != "null"){
-            val notificationPayload = NotificationPayload(deviceToken, NotificationData(title, body, data))
+            val notificationPayload = NotificationPayload(deviceToken, NotificationData(title, body),data)
             val call = (application as MainApplication).fcmService.sendNotification(notificationPayload)
 
+            Log.e("ReadData", data.toString())
             call.enqueue(object : retrofit2.Callback<Void> {
                 override fun onResponse(call: Call<Void>, response: retrofit2.Response<Void>) {
                     if (response.isSuccessful) {
@@ -278,7 +279,7 @@ class ChatActivity : AppCompatActivity() {
         }
     }
 
-    private fun readDataById(receiverId: String,nama: String,path: String,message: String) {
+    private fun readDataById(receiverId: String,senderId: String,nama: String,path: String,message: String) {
         // Dapatkan referensi database
         val reference: DatabaseReference = FirebaseDatabase.getInstance().getReference("Chats").child("Users")
 
@@ -288,8 +289,8 @@ class ChatActivity : AppCompatActivity() {
                 if (snapshot.exists()) {
                     // Data ditemukan, lakukan sesuatu dengan data
                     val user = snapshot.getValue(UserTokenFCM::class.java)
-                    Log.d("ReadData", "Data ditemukan: $user")
-                    val additionalData = mapOf("id_receiver" to receiverId, "nama" to nama,"path" to path)
+                    Log.d("ReadData", "Data ditemukan: $senderId")
+                    val additionalData = mapOf("id_receiver" to senderId, "nama" to nama,"path" to path)
                     Log.d("additionalData", "Data ditemukan: $additionalData")
                     sendNotificationToDevice(user!!.token_fcm,sharedPref.getString("nama")!!,message,additionalData)
                 } else {
