@@ -89,7 +89,8 @@ class ChatActivity : AppCompatActivity() {
         Log.e("datasaya",receiverId.toString())
         Log.e("datasaya",senderId.toString())
 
-        var roomId = "RoomChat${receiverId.toString().toInt() + senderId.toString().toInt()}"
+//        var roomId = "RoomChat${receiverId.toString().toInt() + senderId.toString().toInt()}"
+        var roomId = "RoomChat${room(receiverId.toString().toInt(),senderId.toString().toInt())}"
 
         val layoutManager = LinearLayoutManager(this)
         recyclerView = findViewById(R.id.rv_chat)
@@ -163,9 +164,10 @@ class ChatActivity : AppCompatActivity() {
                 this.message.text.clear()
                 updateListUserMessage(senderId,receiverId,message,time.getWaktu())
                 var _nama = sharedPref.getString("nama")
-                var path = sharedPref.getString("foto_profil")
+                var path = sharedPref.getString("foto_profil").toString()
+                Log.e("sendMessage", path.toString())
 
-                readDataById(receiverId,senderId,_nama!!,path!!,message)
+                readDataById(receiverId,senderId,_nama!!,path,message)
             }
             .addOnFailureListener { e ->
                 Log.e("sendMessage", "Gagal mengirim data: $e")
@@ -304,6 +306,14 @@ class ChatActivity : AppCompatActivity() {
                 Log.e("ReadData", "Gagal membaca data: $error")
             }
         })
+    }
+
+    private fun room(receiverId: Int, senderId: Int): String{
+        if (receiverId > senderId){
+            return  "$senderId-$receiverId"
+        }else{
+            return "$receiverId-$senderId"
+        }
     }
 
     override fun onDestroy() {

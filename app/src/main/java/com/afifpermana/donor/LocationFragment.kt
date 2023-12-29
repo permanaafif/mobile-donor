@@ -38,7 +38,9 @@ import com.afifpermana.donor.util.ConnectivityChecker
 import com.afifpermana.donor.util.Retro
 import com.afifpermana.donor.util.SharedPrefLogin
 import com.airbnb.lottie.LottieAnimationView
+import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.maps.model.LatLng
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -55,7 +57,7 @@ class LocationFragment : Fragment() {
     private lateinit var nodataLottie : LottieAnimationView
     private var newData: MutableList<Jadwal> = mutableListOf()
     lateinit var sharedPref: SharedPrefLogin
-
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
     var id: Array<Int> = arrayOf()
     var tanggal: Array<String> = arrayOf()
     var jamMulai: Array<String> = arrayOf()
@@ -96,6 +98,7 @@ class LocationFragment : Fragment() {
         recyclerView.setHasFixedSize(true)
         adapter = JadwalAdapter(newData)
         recyclerView.adapter = adapter
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
 
         sw_layout.setOnRefreshListener{
             val Handler = Handler(Looper.getMainLooper())
@@ -135,9 +138,7 @@ class LocationFragment : Fragment() {
                         // Izin lokasi telah diberikan
                         // Lakukan pengambilan lokasi di sini
 //                        sortLocationsByNearestLocation(lat,long)
-                        clearData()
-                        lokasiView(lat,long,true)
-                        Log.e("latlong","$lat , $long")
+                        getLastKnownLocation()
                     } else {
                         // Jika izin belum diberikan, minta izin kepada pengguna
                         ActivityCompat.requestPermissions(requireActivity(), arrayOf(permission), LOCATION_PERMISSION_REQUEST_CODE)
@@ -232,6 +233,40 @@ class LocationFragment : Fragment() {
                     // Izin ditolak, berikan pesan kepada pengguna atau ambil tindakan lainnya
                     Toast.makeText(requireContext(),"Izin akses GPS di tolak", Toast.LENGTH_SHORT).show()
                 }
+            }
+        }
+    }
+
+    private fun getLastKnownLocation() {
+        if (ActivityCompat.checkSelfPermission(
+                requireActivity(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                requireActivity(),
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return
+        }
+        fusedLocationClient.lastLocation.addOnSuccessListener { location ->
+            location?.let {
+                val currentLatLng = LatLng(location.latitude, location.longitude)
+//                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, zoomLevel))
+                clearData()
+                lokasiView(location.latitude,location.longitude,true)
+                Log.e("latlong","$lat , $long")
+//                Toast.makeText(
+//                    requireActivity(),
+//                    "Latitude: ${location.latitude}, Longitude: ${location.longitude}",
+//                    Toast.LENGTH_SHORT
+//                ).show()
             }
         }
     }

@@ -662,7 +662,7 @@ class ProfileFragment : Fragment(), CallBackData {
                 }
 
                 override fun onFailure(call: Call<ProfileResponse>, t: Throwable) {
-                    Toast.makeText(requireActivity(),"Gagal", Toast.LENGTH_LONG).show()
+//                    Toast.makeText(requireActivity(),"Gagal", Toast.LENGTH_LONG).show()
                 }
             })
         }else{
