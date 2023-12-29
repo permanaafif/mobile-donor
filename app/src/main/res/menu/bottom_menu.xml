@@ -12,6 +12,16 @@
         android:title="@string/location_donor"/>
 
     <item
+        android:id="@+id/btn_forum"
+        android:icon="@drawable/baseline_forum_24"
+        android:title="@string/forum"/>
+
+    <item
+        android:id="@+id/btn_riwayat"
+        android:icon="@drawable/riwayat"
+        android:title="@string/riwayat"/>
+
+    <item
         android:id="@+id/btn_profile"
         android:icon="@drawable/ic_baseline_person_24"
         android:title="@string/profile"/>

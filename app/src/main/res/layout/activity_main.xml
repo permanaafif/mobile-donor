@@ -27,61 +27,66 @@
         <!-- TODO: Update blank fragment layout -->
         <FrameLayout
             android:id="@+id/fr_header"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <RelativeLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:background="@drawable/style_background_header_profile"
                 android:layout_width="match_parent"
                 android:layout_height="206dp">
 
                 <LinearLayout
                     android:id="@+id/ln_nama"
-                    android:orientation="vertical"
                     android:layout_marginTop="55dp"
-                    android:layout_marginLeft="40dp"
-                    android:layout_marginRight="150dp"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="40dp"
+                    android:orientation="vertical"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
 
                     <TextView
                         android:id="@+id/nama"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="14sp"
-                        android:textColor="@color/nama_pendonor"
-                        android:text="Hi, Afif Permana"
                         android:fontFamily="@font/poppins"
-                        android:maxLines="1"/>
+                        android:maxLines="1"
+                        android:text="Hi, Afif Permana"
+                        android:textColor="@color/nama_pendonor"
+                        android:textSize="16sp" />
 
                     <TextView
                         android:id="@+id/kode_donor"
-                        android:layout_marginTop="5dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="14sp"
+                        android:fontFamily="@font/poppins"
+                        android:maxLines="1"
                         android:text="1242357853946"
                         android:textColor="@color/kode_pendonor"
-                        android:fontFamily="@font/poppins"
-                        android:textStyle="bold"
-                        android:maxLines="1"/>
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
                 </LinearLayout>
 
-                <ImageView
+                <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/foto_profile"
-                    android:layout_marginRight="40dp"
-                    android:layout_marginTop="40dp"
-                    android:layout_toRightOf="@id/ln_nama"
                     android:layout_width="72dp"
                     android:layout_height="72dp"
-                    android:src="@drawable/ic_launcher_foreground"
-                    android:background="@drawable/style_rounded_profile"/>
-            </RelativeLayout>
+                    android:layout_marginTop="40dp"
+                    android:layout_marginEnd="40dp"
+                    android:layout_toRightOf="@id/ln_nama"
+                    android:background="@drawable/bulet"
+                    android:src="@drawable/baseline_person_24"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <LinearLayout
                 android:layout_marginTop="150dp"
                 android:layout_gravity="center_horizontal"
-                android:layout_width="356dp"
+                android:layout_width="match_parent"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
                 android:layout_height="124dp"
                 android:orientation="vertical"
                 android:elevation="5dp"
@@ -106,13 +111,13 @@
                             android:fontFamily="@font/poppins"
                             android:maxLines="2"/>
                         <TextView
-                            android:layout_width="50dp"
+                            android:layout_width="70dp"
                             android:layout_marginRight="20dp"
                             android:layout_height="wrap_content"
                             android:textSize="14sp"
                             android:gravity="center"
                             android:textColor="@color/nama_pendonor"
-                            android:text="Berta Badan"
+                            android:text="Berat Badan"
                             android:fontFamily="@font/poppins"
                             android:maxLines="2"/>
                         <TextView
@@ -147,7 +152,7 @@
                         android:maxLines="2"/>
                     <TextView
                         android:id="@+id/text_berat_badan"
-                        android:layout_width="50dp"
+                        android:layout_width="70dp"
                         android:layout_marginRight="20dp"
                         android:layout_height="wrap_content"
                         android:textSize="17sp"
@@ -177,13 +182,16 @@
         <LinearLayout
             android:layout_marginTop="20dp"
             android:layout_gravity="center_horizontal"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:gravity="center"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
             android:layout_height="wrap_content">
 
             <RadioGroup
                 android:id="@+id/rg"
                 android:padding="5dp"
+                android:gravity="center_horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:orientation="horizontal">
@@ -191,7 +199,7 @@
                 <RadioButton
                     android:checked="true"
                     android:id="@+id/btn_artikel"
-                    android:layout_width="80dp"
+                    android:layout_width="100dp"
                     android:layout_height="wrap_content"
                     android:text="Artikel"
                     android:button="@android:color/transparent"
@@ -205,7 +213,7 @@
 
                 <RadioButton
                     android:id="@+id/btn_faq"
-                    android:layout_width="80dp"
+                    android:layout_width="100dp"
                     android:layout_height="wrap_content"
                     android:text="FAQ"
                     android:button="@android:color/transparent"
@@ -217,23 +225,23 @@
                     android:layout_marginLeft="5dp"
                     android:layout_marginRight="5dp"/>
 
-                <RadioButton
-                    android:id="@+id/btn_call"
-                    android:layout_width="80dp"
-                    android:layout_height="wrap_content"
-                    android:text="Call"
-                    android:button="@android:color/transparent"
-                    android:background="@drawable/radio_selector"
-                    android:textColor="@drawable/text_color_radio"
-                    android:elevation="4dp"
-                    android:gravity="center"
-                    android:padding="10dp"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginRight="5dp"/>
+<!--                <RadioButton-->
+<!--                    android:id="@+id/btn_call"-->
+<!--                    android:layout_width="70dp"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:text="Call"-->
+<!--                    android:button="@android:color/transparent"-->
+<!--                    android:background="@drawable/radio_selector"-->
+<!--                    android:textColor="@drawable/text_color_radio"-->
+<!--                    android:elevation="4dp"-->
+<!--                    android:gravity="center"-->
+<!--                    android:padding="10dp"-->
+<!--                    android:layout_marginLeft="5dp"-->
+<!--                    android:layout_marginRight="5dp"/>-->
 
                 <RadioButton
                     android:id="@+id/btn_jadwal"
-                    android:layout_width="80dp"
+                    android:layout_width="100dp"
                     android:layout_height="wrap_content"
                     android:text="Jadwal"
                     android:button="@android:color/transparent"

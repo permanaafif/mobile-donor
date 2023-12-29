@@ -9,6 +9,7 @@
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
+        android:paddingVertical="5dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/background_donor"
@@ -63,12 +64,10 @@
                 android:layout_height="wrap_content"
                 android:text="Krisis Donor darah"
                 android:fontFamily="@font/poppins"
-                android:maxLines="3"
                 android:textColor="@color/black"
-                android:ellipsize="end"
                 android:gravity="center_horizontal"
                 android:textStyle="bold"
-                android:textSize="24sp"/>
+                android:textSize="16sp"/>
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/card_image"

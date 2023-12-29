@@ -7,7 +7,8 @@ import android.content.Context
 import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.PersistableBundle
+import android.os.Handler
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
@@ -27,9 +28,16 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.afifpermana.donor.databinding.ActivityMapsBinding
+import com.afifpermana.donor.model.DaftarJadwalDonorRequest
+import com.afifpermana.donor.model.DaftarJadwalDonorResponse
+import com.afifpermana.donor.service.JadwalUserAPI
+import com.afifpermana.donor.util.Retro
+import com.afifpermana.donor.util.SharedPrefLogin
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
@@ -37,6 +45,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var binding: ActivityMapsBinding
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
+
+    lateinit var sharedPref: SharedPrefLogin
 
     val zoomLevel = 13f
 
@@ -48,6 +58,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var kontak : TextView
     private lateinit var btnDaftar : Button
     private lateinit var btnClipBoard : ImageView
+    private var id : Int = 0
     private var latitude : Double = 0.0
     private var longitude : Double = 0.0
 
@@ -69,6 +80,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         backButton.setOnClickListener { onBackPressed() }
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        sharedPref = SharedPrefLogin(this)
 
         tanggal = findViewById(R.id.tanggal)
         jam = findViewById(R.id.jam)
@@ -78,7 +90,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         btnDaftar = findViewById(R.id.btn_daftar)
         btnClipBoard = findViewById(R.id.icon_copy)
 
+        var id : Int
         b = intent.extras
+        id = b!!.getInt("id")
         tanggal.text = b!!.getString("tanggal")
         jam.text = b!!.getString("jam")
         lokasi.text = b!!.getString("lokasi")
@@ -86,6 +100,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         kontak.text = b!!.getString("kontak")
         latitude = b!!.getDouble("latitude")
         longitude = b!!.getDouble("longitude")
+
+        checkDaftar(id)
 
         btnClipBoard.setOnClickListener {
             // Dapatkan instance ClipboardManager
@@ -101,11 +117,40 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         }
 
-        btnDaftar.setOnClickListener { showCostumeAlertDialog() }
+        btnDaftar.setOnClickListener { showCostumeAlertDialog(id) }
 
     }
 
-    private fun showCostumeAlertDialog() {
+    private fun checkDaftar(x : Int) {
+        val retro = Retro().getRetroClientInstance().create(JadwalUserAPI::class.java)
+        retro.statusDaftar("Bearer ${sharedPref.getString("token")}",sharedPref.getInt("id"),x).enqueue(object : Callback<DaftarJadwalDonorResponse> {
+            override fun onResponse(
+                call: Call<DaftarJadwalDonorResponse>,
+                response: Response<DaftarJadwalDonorResponse>
+            ) {
+                if (response.isSuccessful){
+                    val res = response.body()
+                    Log.e("checkdaftar" , res!!.status.toString())
+                    if (res != null){
+                        if (res.status == true){
+                            Log.e("checkdaftar" , "GONE")
+                            btnDaftar.visibility = View.GONE
+                        } else {
+                            btnDaftar.visibility = View.VISIBLE // Hanya set terlihat jika status bukan true
+                        }
+                    } else {
+                        btnDaftar.visibility = View.VISIBLE // Set terlihat jika respon null
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<DaftarJadwalDonorResponse>, t: Throwable) {
+                TODO("Not yet implemented")
+            }
+        })
+    }
+
+    private fun showCostumeAlertDialog(x: Int) {
         val builder = AlertDialog.Builder(this)
         val customeView = LayoutInflater.from(this).inflate(R.layout.alert,null)
         builder.setView(customeView)
@@ -117,13 +162,61 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         btnYes.setOnClickListener {
             Toast.makeText(this, "Kamu Telah Mendaftar", Toast.LENGTH_LONG).show()
             btnDaftar.visibility = View.GONE
+            daftar(x)
             dialog.dismiss()
+            showCostumeAlertDialogSuccess()
         }
 
         btnNo.setOnClickListener {
             dialog.dismiss()
         }
         dialog.show()
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+    }
+
+    private fun showCostumeAlertDialogSuccess() {
+        val builder = AlertDialog.Builder(this)
+        val customeView = LayoutInflater.from(this).inflate(R.layout.alert_success,null)
+        builder.setView(customeView)
+        val dialog = builder.create()
+        dialog.show()
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        val handler = Handler()
+        handler.postDelayed({
+            dialog.dismiss()
+        }, 3000)
+    }
+
+    private fun daftar(x: Int) {
+        val daftar = DaftarJadwalDonorRequest()
+        daftar.id_pendonor = sharedPref.getInt("id")
+        daftar.id_jadwal_pendonor = x
+        val retro = Retro().getRetroClientInstance().create(JadwalUserAPI::class.java)
+        retro.daftar("Bearer ${sharedPref.getString("token")}",daftar).enqueue(object : Callback<DaftarJadwalDonorResponse> {
+            override fun onResponse(
+                call: Call<DaftarJadwalDonorResponse>,
+                response: Response<DaftarJadwalDonorResponse>
+            ) {
+                if (response.isSuccessful){
+                    val res = response.body()
+                    Log.e("checkdaftar" , res!!.status.toString())
+                    if (res != null){
+                        if (res.status == true){
+                            Log.e("checkdaftar" , "GONE")
+                            btnDaftar.visibility = View.GONE
+                        } else {
+                            btnDaftar.visibility = View.VISIBLE // Hanya set terlihat jika status bukan true
+                        }
+                    } else {
+                        btnDaftar.visibility = View.VISIBLE // Set terlihat jika respon null
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<DaftarJadwalDonorResponse>, t: Throwable) {
+                TODO("Not yet implemented")
+            }
+        })
     }
 
     /**
@@ -173,7 +266,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         fusedLocationClient.lastLocation.addOnSuccessListener { location ->
             location?.let {
                 val currentLatLng = LatLng(location.latitude, location.longitude)
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, zoomLevel))
+//                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, zoomLevel))
             }
         }
     }

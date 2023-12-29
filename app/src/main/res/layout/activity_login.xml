@@ -1,28 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    >
+
+<LinearLayout
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center_vertical"
+    android:gravity="center"
     tools:context=".LoginActivity">
 
-    <ImageView
-        android:layout_marginTop="120dp"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:src="@drawable/logo"
-        android:layout_centerHorizontal="true"
-        android:id="@+id/logo"/>
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/animation_view_people_donor"
+        android:layout_width="wrap_content"
+        android:layout_height="300dp"
+        app:lottie_rawRes="@raw/animation_vector_people_donor"
+        app:lottie_loop="true"
+        app:lottie_autoPlay="true" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="DARA"
         android:textStyle="bold"
+        android:layout_below="@id/animation_view_people_donor"
         android:textSize="40dp"
         android:textColor="@color/dara"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="250dp"
+
         android:id="@+id/dara"
         />
 
@@ -31,90 +41,136 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/dara"
         android:layout_centerHorizontal="true"
-        android:textSize="14dp"
+        android:textSize="12dp"
         android:text="Setetes Darah Akan Sangat Berarti"
         android:id="@+id/slogan"
         android:layout_marginBottom="20dp"
-        android:textColor="@color/black"
+        android:textColor="@color/background_donor"
         />
+
+
 
     <EditText
         android:layout_width="314dp"
-        android:layout_height="48dp"
+        android:layout_height="wrap_content"
         android:layout_below="@id/slogan"
         android:layout_centerHorizontal="true"
-        android:hint="Kode Donor"
+        android:hint="Masukkan kode donor"
         android:textColor="@color/black"
+        android:maxLines="1"
         android:textColorHint="@color/black"
         android:background="@drawable/borderinput"
         android:drawableLeft="@drawable/baseline_person_24"
-        android:layout_marginBottom="28dp"
+        android:layout_marginBottom="20dp"
         android:id="@+id/kodedonor"
         android:paddingLeft="20dp"
         android:paddingRight="20dp"
-        android:paddingVertical="10dp"
+        android:paddingVertical="15dp"
         android:textSize="14dp"
         android:drawablePadding="10dp"
         />
 
-    <EditText
-        android:textColorHint="@color/black"
-        android:textColor="@color/black"
-        android:id="@+id/password"
-        android:layout_width="314dp"
-        android:layout_height="48dp"
-        android:layout_below="@id/kodedonor"
-        android:textSize="14dp"
-        android:layout_centerHorizontal="true"
-        android:hint="Password"
-        android:background="@drawable/borderinput"
-        android:drawableLeft="@drawable/baseline_lock_24"
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp"
-        android:paddingVertical="10dp"
-        android:drawablePadding="10dp"
-        />
-
-    <Button
-        android:id="@+id/tentangdara"
+    <RelativeLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Tentang DARA?"
-        android:background="@android:color/transparent"
-        android:textColor="@color/blue"
-        android:layout_below="@id/password"
-        android:textAllCaps="false"
-        android:layout_marginLeft="54dp"
-        android:textSize="14dp"
-        android:layout_marginBottom="29dp"
-        />
+        android:layout_height="wrap_content">
+        <EditText
+            android:textColorHint="@color/black"
+            android:textColor="@color/black"
+            android:id="@+id/password"
+            android:layout_width="314dp"
+            android:layout_height="wrap_content"
+            android:textSize="14dp"
+            android:layout_centerHorizontal="true"
+            android:hint="Masukkan password"
+            android:maxLines="1"
+            android:inputType="textPassword"
+            android:background="@drawable/borderinput"
+            android:drawableLeft="@drawable/baseline_lock_24"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:paddingVertical="15dp"
+            android:drawablePadding="10dp"
+            />
 
-    <Button
-        android:id="@+id/lupapassword"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Lupa Password?"
-        android:background="@android:color/transparent"
-        android:textColor="@color/blue"
-        android:layout_below="@id/password"
-        android:textAllCaps="false"
-        android:layout_marginLeft="200dp"
-        android:textSize="14dp"
-        />
+        <LinearLayout
+            android:layout_centerHorizontal="true"
+            android:gravity="center_vertical|end"
+            android:layout_width="314dp"
+            android:paddingVertical="15dp"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:id="@+id/iv_eyes_visible"
+                android:layout_marginRight="15dp"
+                android:src="@drawable/baseline_visibility_off_24"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+    </RelativeLayout>
 
     <Button
         android:id="@+id/btnLogin"
-        android:layout_width="wrap_content"
+        android:layout_width="314dp"
         android:layout_height="wrap_content"
         android:text="LOGIN"
+        android:paddingVertical="15dp"
+        android:layout_marginTop="20dp"
         android:textColor="@color/white"
-        android:layout_below="@id/tentangdara"
+        android:layout_below="@id/password"
         android:layout_centerHorizontal="true"
         android:textSize="14dp"
         android:backgroundTint="@color/button"
         android:textStyle="bold"
         />
 
+    <ProgressBar
+        android:id="@+id/loadingProgressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_below="@id/password"
+        android:layout_marginTop="20dp"
+        android:visibility="gone"
+         />
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl"
+        android:layout_marginTop="5dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/btnLogin"
+        android:layout_width="314dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="29dp"
+        android:orientation="horizontal">
 
-</RelativeLayout>
+        <Button
+            android:id="@+id/tentangdara"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:text="Tentang DARA?"
+            android:textAllCaps="false"
+            android:textStyle="normal"
+            android:textColor="@color/blue"
+            android:textSize="12dp"
+
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/lupapassword"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:text="Lupa Password?"
+            android:textAllCaps="false"
+            android:textStyle="normal"
+            android:textColor="@color/blue"
+            android:textSize="12dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</LinearLayout>
+</ScrollView>

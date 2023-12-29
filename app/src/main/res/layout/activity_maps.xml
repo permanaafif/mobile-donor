@@ -8,6 +8,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <androidx.appcompat.widget.Toolbar
+        android:paddingVertical="5dp"
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -44,18 +45,22 @@
     </androidx.appcompat.widget.Toolbar>
 
     <RelativeLayout
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:id="@+id/rl_waktu"
         android:layout_width="match_parent"
         android:paddingStart="20dp"
         android:layout_marginEnd="40dp"
         android:layout_height="wrap_content">
+
         <ImageView
             android:id="@+id/icon_tanggal"
-            android:layout_margin="20dp"
             android:layout_width="30dp"
             android:layout_height="wrap_content"
-            android:src="@drawable/baseline_calendar_today_24"/>
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="20dp"
+            android:src="@drawable/baseline_calendar_today_24" />
 
         <LinearLayout
             android:id="@+id/ln_waktu"
@@ -172,18 +177,20 @@
     </RelativeLayout>
 
     <RelativeLayout
-        android:layout_marginBottom="20dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <Button
+            android:visibility="gone"
             android:layout_marginEnd="40dp"
+            android:layout_marginBottom="10dp"
             android:layout_marginStart="40dp"
             android:layout_alignParentEnd="true"
             android:id="@+id/btn_daftar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="DAFTAR"
+            android:paddingVertical="15dp"
             android:textSize="14sp"
             android:textStyle="bold"
             android:backgroundTint="@color/button"

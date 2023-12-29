@@ -1,29 +1,51 @@
 package com.afifpermana.donor
 
+import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.afifpermana.donor.adapter.JadwalAdapter
 import com.afifpermana.donor.model.Jadwal
+import com.afifpermana.donor.model.LokasiDonorResponse
+import com.afifpermana.donor.service.JadwalUserAPI
+import com.afifpermana.donor.service.LokasiDonorAPI
+import com.afifpermana.donor.util.ConnectivityChecker
+import com.afifpermana.donor.util.Retro
+import com.afifpermana.donor.util.SharedPrefLogin
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class JadwalFragment : Fragment() {
 
+    private lateinit var sw_layout : SwipeRefreshLayout
     private lateinit var adapter : JadwalAdapter
     private lateinit var recyclerView: RecyclerView
-    private lateinit var newData : ArrayList<Jadwal>
+    private lateinit var cl_jadwal : ConstraintLayout
+    var newData : ArrayList<Jadwal> = ArrayList()
+    lateinit var sharedPref: SharedPrefLogin
 
-    lateinit var tanggal: Array<String>
-    lateinit var jamMulai: Array<String>
-    lateinit var jamSelesai: Array<String>
-    lateinit var lokasi: Array<String>
-    lateinit var alamat: Array<String>
-    lateinit var kontak: Array<String>
-    lateinit var latitude: Array<Double>
-    lateinit var longitude: Array<Double>
+    var id: Array<Int> = arrayOf()
+    var tanggal: Array<String> = arrayOf()
+    var jamMulai: Array<String> = arrayOf()
+    var jamSelesai: Array<String>  = arrayOf()
+    var lokasi: Array<String> = arrayOf()
+    var alamat: Array<String> = arrayOf()
+    var kontak: Array<String> = arrayOf()
+    var latitude: Array<Double> = arrayOf()
+    var longitude: Array<Double> = arrayOf()
+    var status: Array<Boolean> = arrayOf()
+    var jarak: Array<Double> = arrayOf()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -35,61 +57,118 @@ class JadwalFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initView()
+        sharedPref = SharedPrefLogin(requireActivity())
+        jadwalView()
+        sw_layout = view.findViewById(R.id.swlayout)
+        // Mengeset properti warna yang berputar pada SwipeRefreshLayout
+        sw_layout.setColorSchemeResources(R.color.blue,R.color.red)
         val layoutManager = LinearLayoutManager(context)
         recyclerView = view.findViewById(R.id.rv_jadwal_donor)
+        cl_jadwal = view.findViewById(R.id.cl_jadwal)
         recyclerView.layoutManager = layoutManager
         recyclerView.setHasFixedSize(true)
         adapter = JadwalAdapter(newData)
         recyclerView.adapter = adapter
+        sw_layout.setOnRefreshListener{
+            val Handler = Handler(Looper.getMainLooper())
+            Handler().postDelayed(Runnable {
+                clearData()
+                jadwalView()
+                sw_layout.isRefreshing = false
+            }, 1000)
+        }
     }
 
-    private fun initView() {
-        newData = arrayListOf<Jadwal>()
+    private fun clearData() {
+        newData.clear()
+        id = emptyArray()
+        tanggal = emptyArray()
+        jamMulai = emptyArray()
+        jamSelesai = emptyArray()
+        lokasi = emptyArray()
+        alamat = emptyArray()
+        kontak = emptyArray()
+        latitude = emptyArray()
+        longitude = emptyArray()
+        status = emptyArray()
+        jarak = emptyArray()
+        adapter.notifyDataSetChanged()
+    }
 
-        tanggal = arrayOf(
-            "29/08/2023",
-            "26/08/2023"
-        )
+    fun extractJamMenit(waktu: String): String {
+        val bagianWaktu = waktu.split(":")
+        return if (bagianWaktu.size >= 2) {
+            val jam = bagianWaktu[0]
+            val menit = bagianWaktu[1]
+            "$jam:$menit"
+        } else {
+            "Format waktu tidak valid"
+        }
+    }
+    private fun jadwalView() {
+        val connectivityChecker = ConnectivityChecker(requireActivity())
+        if (connectivityChecker.isNetworkAvailable()) {
+            //koneksi aktif
+            Log.e("lokasinya2", "${sharedPref.getInt("id")}")
+            val retro = Retro().getRetroClientInstance().create(JadwalUserAPI::class.java)
+            retro.jadwalDonor("Bearer ${sharedPref.getString("token")}", sharedPref.getInt("id"))
+                .enqueue(object : Callback<List<LokasiDonorResponse>> {
+                    override fun onResponse(
+                        call: Call<List<LokasiDonorResponse>>,
+                        response: Response<List<LokasiDonorResponse>>
+                    ) {
+                        if (response.isSuccessful) {
+                            cl_jadwal.visibility = View.GONE
+                            recyclerView.visibility = View.VISIBLE
+                            Log.e("lokasinya2", "test")
+                            val res = response.body()
+                            Log.e("jadwal", res.toString())
+                            for (i in res!!) {
+                                id += i.id!!
+                                tanggal += i.tanggal_donor!!
+                                jamMulai += extractJamMenit(i.jam_mulai!!)
+                                jamSelesai += extractJamMenit(i.jam_selesai!!)
+                                lokasi += i.lokasi!!
+                                alamat += i.alamat!!
+                                kontak += i.kontak!!
+                                latitude += i.latitude!!
+                                longitude += i.longitude!!
+                                status += false
+                                jarak += i.jarak?: 0.0
+                            }
+                            for (x in tanggal.indices) {
+                                val data = Jadwal(
+                                    id[x],
+                                    tanggal[x],
+                                    jamMulai[x],
+                                    jamSelesai[x],
+                                    lokasi[x],
+                                    alamat[x],
+                                    kontak[x],
+                                    latitude[x],
+                                    longitude[x],
+                                    status[x],
+                                    jarak[x]
+                                )
+                                newData.add(data)
+                            }
+                            adapter.notifyDataSetChanged()
+                        }
+                        if (response.code() == 400){
+                            cl_jadwal.visibility = View.VISIBLE
+                            recyclerView.visibility = View.GONE
+                        }
+                    }
 
-        jamMulai = arrayOf(
-            "14:00",
-            "14:00"
-        )
-
-        jamSelesai = arrayOf(
-            "15:00",
-            "15:00"
-        )
-
-        lokasi = arrayOf(
-            "Bintaro Plaza",
-            "Providence House"
-        )
-
-        kontak = arrayOf(
-            "0888888888888888",
-            "0666666666666666"
-        )
-
-        alamat = arrayOf(
-            "Jl. Bintaro Utama 3A No.81, Pd. Karya, Kec. Pd. Aren, Kota Tangerang Selatan, Banten 15225",
-            "MPVM+HP7, Jl. Masjid At-Tauhid, Kedaung, Kec. Pamulang, Kota Tangerang Selatan, Banten 15431"
-        )
-
-        latitude = arrayOf(
-            -6.272617683478921,
-            -6.305037074604995
-        )
-
-        longitude = arrayOf(
-            106.74247972785645,
-            106.734797881249
-        )
-
-        for (i in tanggal.indices) {
-            val data = Jadwal(tanggal[i], jamMulai[i], jamSelesai[i], lokasi[i], alamat[i], kontak[i], latitude[i], longitude[i])
-            newData.add(data)
+                    override fun onFailure(call: Call<List<LokasiDonorResponse>>, t: Throwable) {
+                        sharedPref.logOut()
+                        sharedPref.setStatusLogin(false)
+                        startActivity(Intent(requireActivity(), LoginActivity::class.java))
+                        activity?.finish()
+                    }
+                })
+        }else{
+            connectivityChecker.showAlertDialogNoConnection()
         }
     }
 }

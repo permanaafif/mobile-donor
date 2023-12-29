@@ -7,6 +7,7 @@
     tools:context=".ProfileEdit">
 
     <androidx.appcompat.widget.Toolbar
+        android:paddingVertical="5dp"
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -34,7 +35,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Edit"
+                android:text="Edit Profile"
                 android:textColor="@android:color/white"
                 android:textSize="18sp"
                 android:fontFamily="@font/poppins"
@@ -45,37 +46,80 @@
 
     </androidx.appcompat.widget.Toolbar>
 
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:layout_marginTop="20dp"
+    <ScrollView
+        android:layout_below="@id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:id="@+id/ll_pp"
                 android:layout_centerHorizontal="true"
-                android:layout_below="@id/toolbar"
-                android:id="@+id/foto"
-                android:layout_width="96dp"
-                android:layout_height="94dp"
-                android:src="@drawable/baseline_person_24"
-                android:background="@drawable/bulet" />
+                android:gravity="center_horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:layout_marginTop="20dp"
+                    android:layout_centerHorizontal="true"
+                    android:id="@+id/foto"
+                    android:layout_width="96dp"
+                    android:layout_height="94dp"
+                    android:src="@drawable/baseline_person_24"
+                    android:background="@drawable/bulet" />
+
+                <ProgressBar
+                    android:visibility="gone"
+                    android:id="@+id/progress_bar"
+                    android:layout_width="100dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_height="wrap_content"
+                    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                    android:max="100"
+                    android:layout_marginHorizontal="30dp"
+                    android:progress="10" />
+
+                <Button
+                    android:stateListAnimator="@animator/edittext_elevation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins"
+                    android:id="@+id/gantifoto"
+                    android:layout_centerHorizontal="true"
+                    android:text="Ganti Foto"
+                    android:background="@android:color/transparent"
+                    android:textColor="@color/blue"
+                    android:textStyle="bold"
+                    android:layout_marginTop="10dp"
+                    android:textSize="14sp"/>
+
+            </LinearLayout>
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="314dp"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/foto"
-                android:fontFamily="@font/poppins"
-                android:id="@+id/gantifoto"
-                android:layout_centerHorizontal="true"
-                android:text="Ganti Foto"
-                android:textColor="@color/black"
+                android:text="Nama"
                 android:textStyle="bold"
-                android:layout_marginTop="10dp"
-                android:textSize="18sp"
-                android:clickable="true"
-                android:onClick="selectImageFromGallery" />
-
+                android:layout_gravity="center_horizontal"
+                android:fontFamily="@font/poppins"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                />
 
             <EditText
-                android:layout_marginTop="20dp"
+                android:stateListAnimator="@animator/edittext_elevation"
+                android:layout_marginTop="5dp"
                 android:layout_width="314dp"
-                android:layout_height="45dp"
-                android:layout_below="@id/gantifoto"
+                android:layout_height="wrap_content"
+                android:paddingVertical="15dp"
+                android:layout_below="@id/ll_pp"
                 android:layout_centerHorizontal="true"
                 android:hint="Nama User"
                 android:textColor="@color/black"
@@ -91,40 +135,89 @@
                 android:drawablePadding="10dp"
                 />
 
-            <EditText
+            <TextView
                 android:layout_width="314dp"
-                android:layout_height="45dp"
+                android:layout_height="wrap_content"
+                android:text="Email"
+                android:textStyle="bold"
+                android:layout_gravity="center_horizontal"
+                android:fontFamily="@font/poppins"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                />
+
+            <EditText
+                android:stateListAnimator="@animator/edittext_elevation"
+                android:layout_width="314dp"
+                android:layout_height="wrap_content"
+                android:paddingVertical="15dp"
                 android:layout_below="@id/namauser"
                 android:layout_centerHorizontal="true"
-                android:hint="Password"
+                android:hint="Email"
                 android:textColor="@color/black"
                 android:textColorHint="@color/black"
                 android:background="@drawable/borderinput"
-                android:drawableLeft="@drawable/baseline_key_24"
+                android:drawableLeft="@drawable/baseline_email_24"
                 android:layout_marginBottom="18dp"
-                android:id="@+id/password"
+                android:layout_marginTop="5dp"
+                android:id="@+id/email"
+                android:fontFamily="@font/poppins"
                 android:paddingLeft="20dp"
                 android:paddingRight="20dp"
                 android:textSize="14sp"
                 android:drawablePadding="10dp"
                 />
 
-    <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/namauser"
-        android:src="@drawable/baseline_arrow_forward_ios_24"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="58dp"
-        android:background="@android:color/transparent"
-        android:layout_marginTop="10dp"
-        android:id="@+id/btnGantiPassword"
-        />
+            <TextView
+                android:layout_width="314dp"
+                android:layout_height="wrap_content"
+                android:text="Tanggal Lahir"
+                android:textStyle="bold"
+                android:layout_gravity="center_horizontal"
+                android:fontFamily="@font/poppins"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                />
+
+            <TextView
+                android:stateListAnimator="@animator/edittext_elevation"
+                android:layout_width="314dp"
+                android:layout_height="wrap_content"
+                android:paddingVertical="15dp"
+                android:layout_below="@id/email"
+                android:layout_centerHorizontal="true"
+                android:hint="Tanggal Lahir"
+                android:textColor="@color/black"
+                android:textColorHint="@color/black"
+                android:background="@drawable/borderinput"
+                android:fontFamily="@font/poppins"
+                android:drawableLeft="@drawable/baseline_date_range_24"
+                android:layout_marginBottom="18dp"
+                android:layout_marginTop="5dp"
+                android:id="@+id/tanggal_lahir"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:textSize="14sp"
+                android:drawablePadding="10dp"
+                />
+
+            <TextView
+                android:layout_width="314dp"
+                android:layout_height="wrap_content"
+                android:text="Alamat"
+                android:textStyle="bold"
+                android:layout_gravity="center_horizontal"
+                android:fontFamily="@font/poppins"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                />
 
             <EditText
+                android:stateListAnimator="@animator/edittext_elevation"
                 android:layout_width="314dp"
-                android:layout_height="45dp"
-                android:layout_below="@id/password"
+                android:layout_height="wrap_content"
+                android:paddingVertical="15dp"
+                android:layout_below="@id/tanggal_lahir"
                 android:layout_centerHorizontal="true"
                 android:hint="Alamat"
                 android:textColor="@color/black"
@@ -133,6 +226,7 @@
                 android:fontFamily="@font/poppins"
                 android:drawableLeft="@drawable/baseline_location_city_24"
                 android:layout_marginBottom="18dp"
+                android:layout_marginTop="5dp"
                 android:id="@+id/alamat"
                 android:paddingLeft="20dp"
                 android:paddingRight="20dp"
@@ -140,40 +234,64 @@
                 android:drawablePadding="10dp"
                 />
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:layout_centerHorizontal="true"
-        android:layout_width="314dp"
-        android:layout_height="45dp"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-        android:layout_below="@id/alamat"
-        android:id="@+id/pilihjeniskelamin"
-        app:hintEnabled="false"
-        android:layout_marginBottom="18dp"
-        >
+            <TextView
+                android:layout_width="314dp"
+                android:layout_height="wrap_content"
+                android:text="Jenis Kelamin"
+                android:textStyle="bold"
+                android:layout_gravity="center_horizontal"
+                android:fontFamily="@font/poppins"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                />
 
-        <AutoCompleteTextView
-            android:paddingVertical="1dp"
-            android:id="@+id/jekel"
-            android:text="Jenis Kelamin"
-            android:layout_width="314dp"
-            android:layout_height="45dp"
-            android:drawableStart="@drawable/baseline_group_24"
-            android:background="@drawable/borderinput"
-            android:layout_marginBottom="20dp"
-            android:textSize="14sp"
-            android:textColor="@color/black"
-            android:drawablePadding="10dp"
-            android:inputType="none"
-            android:paddingStart="20dp"
-            />
-    </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_centerHorizontal="true"
+                android:layout_width="314dp"
+                android:layout_height="wrap_content"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                android:layout_below="@id/alamat"
+                android:id="@+id/pilihjeniskelamin"
+                app:hintEnabled="false"
+                android:layout_marginBottom="18dp"
+                android:layout_marginTop="5dp"
+                >
+
+                <AutoCompleteTextView
+                    android:paddingVertical="15dp"
+                    android:id="@+id/jekel"
+                    android:text="Jenis Kelamin"
+                    android:layout_width="314dp"
+                    android:layout_height="wrap_content"
+                    android:drawableStart="@drawable/baseline_group_24"
+                    android:background="@drawable/borderinput"
+                    android:textSize="14sp"
+                    android:textColor="@color/black"
+                    android:drawablePadding="10dp"
+                    android:inputType="none"
+                    android:paddingStart="20dp"
+                    />
+            </com.google.android.material.textfield.TextInputLayout>
 
 
-    <EditText
+            <TextView
+                android:layout_width="314dp"
+                android:layout_height="wrap_content"
+                android:text="No. Handphone"
+                android:textStyle="bold"
+                android:layout_gravity="center_horizontal"
+                android:fontFamily="@font/poppins"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                />
+
+            <EditText
+                android:stateListAnimator="@animator/edittext_elevation"
                 android:id="@+id/notelp"
                 android:hint="Nomor Telepon"
                 android:layout_width="314dp"
-                android:layout_height="45dp"
+                android:layout_height="wrap_content"
+                android:paddingVertical="15dp"
                 android:layout_below="@id/pilihjeniskelamin"
                 android:layout_centerHorizontal="true"
                 android:textColor="@color/black"
@@ -182,24 +300,7 @@
                 android:background="@drawable/borderinput"
                 android:drawableLeft="@drawable/baseline_call_24"
                 android:layout_marginBottom="18dp"
-                android:paddingLeft="20dp"
-                android:paddingRight="20dp"
-                android:textSize="14sp"
-                android:drawablePadding="10dp"
-                />
-
-            <EditText
-                android:id="@+id/goldar"
-                android:hint="Golongan Darah"
-                android:layout_width="314dp"
-                android:layout_height="45dp"
-                android:layout_below="@id/notelp"
-                android:layout_centerHorizontal="true"
-                android:textColor="@color/black"
-                android:textColorHint="@color/black"
-                android:background="@drawable/borderinput"
-                android:drawableLeft="@drawable/baseline_bloodtype_24"
-                android:layout_marginBottom="18dp"
+                android:layout_marginTop="5dp"
                 android:paddingLeft="20dp"
                 android:paddingRight="20dp"
                 android:textSize="14sp"
@@ -207,11 +308,24 @@
                 />
 
             <TextView
+                android:layout_width="314dp"
+                android:layout_height="wrap_content"
+                android:text="Berat Badan"
+                android:textStyle="bold"
+                android:layout_gravity="center_horizontal"
+                android:fontFamily="@font/poppins"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                />
+
+            <EditText
+                android:stateListAnimator="@animator/edittext_elevation"
                 android:id="@+id/bb"
                 android:hint="Berat Badan"
                 android:layout_width="314dp"
-                android:layout_height="45dp"
-                android:layout_below="@id/goldar"
+                android:layout_height="wrap_content"
+                android:paddingVertical="15dp"
+                android:layout_below="@id/notelp"
                 android:layout_centerHorizontal="true"
                 android:textColor="@color/black"
                 android:textColorHint="@color/black"
@@ -219,25 +333,40 @@
                 android:background="@drawable/borderinput"
                 android:drawableLeft="@drawable/baseline_monitor_weight_24"
                 android:layout_marginBottom="10dp"
+                android:layout_marginTop="5dp"
                 android:paddingLeft="20dp"
                 android:paddingRight="20dp"
-                android:paddingVertical="12dp"
                 android:textSize="14sp"
                 android:drawablePadding="10dp"
                 />
 
-<Button
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_below="@id/bb"
-    android:backgroundTint="@color/button"
-    android:layout_centerHorizontal="true"
-    android:layout_marginTop="15dp"
-    android:textStyle="bold"
-    android:fontFamily="@font/poppins"
-    android:text="Simpan"
-    android:textAllCaps="false"
-    />
+            <Button
+                android:id="@+id/btn_simpan"
+                android:layout_marginBottom="20dp"
+                android:layout_width="314dp"
+                android:layout_height="wrap_content"
+                android:paddingVertical="15dp"
+                android:layout_below="@id/bb"
+                android:layout_marginTop="15dp"
+                android:backgroundTint="@color/button"
+                android:layout_centerHorizontal="true"
+                android:textStyle="bold"
+                android:fontFamily="@font/poppins"
+                android:text="Simpan"
+                android:textAllCaps="false"
+                />
+
+            <ProgressBar
+                android:id="@+id/loadingProgressBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_below="@id/bb"
+                android:layout_marginTop="15dp"
+                android:visibility="gone"
+                />
+        </LinearLayout>
+    </ScrollView>
 
 
 </RelativeLayout>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:padding="5dp"
+        android:layout_marginTop="50dp"
+        android:gravity="center_horizontal"
+        android:layout_gravity="center_horizontal"
+        android:orientation="vertical"
+        android:background="@drawable/background_white_alert"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        >
+
+        <TextView
+            android:id="@+id/tv_alert_gagal"
+            android:layout_width="198dp"
+            android:layout_height="49dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="50dp"
+            android:layout_marginRight="5dp"
+            android:fontFamily="@font/poppins"
+            android:gravity="center"
+            android:text="Kombinasi kode pendonor dan password salah."
+            android:textColor="@color/black"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+
+        <Button
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_horizontal"
+            android:layout_marginEnd="40dp"
+            android:layout_marginStart="40dp"
+            android:id="@+id/btn_oke"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="OKE"
+            android:textSize="12sp"
+            android:paddingVertical="10dp"
+            android:textStyle="bold"
+            android:backgroundTint="@color/green"
+            android:fontFamily="@font/poppins"/>
+    </LinearLayout>
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/animation_view_people_donor"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center_horizontal"
+        app:lottie_rawRes="@raw/animation_alert_gagal"
+        app:lottie_loop="false"
+        app:lottie_autoPlay="true" />
+</FrameLayout>
+

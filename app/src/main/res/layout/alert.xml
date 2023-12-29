@@ -1,30 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+<FrameLayout android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_margin="52dp"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:cardCornerRadius="15dp"
-    android:padding="20dp">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <LinearLayout
-        android:layout_margin="20dp"
+        android:padding="5dp"
+        android:layout_marginTop="75dp"
         android:gravity="center_horizontal"
         android:layout_gravity="center_horizontal"
         android:orientation="vertical"
+        android:background="@drawable/background_white_alert"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
-        <ImageView
-            android:layout_width="390dp"
-            android:layout_height="wrap_content"
-            android:src="@drawable/logo"
-            android:layout_centerHorizontal="true"
-            android:layout_gravity="center_horizontal"
-            />
-
         <TextView
-            android:layout_marginTop="10dp"
+            android:id="@+id/tv_text"
+            android:layout_marginRight="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="50dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Apakah kamu yakin ingin mendaftar? jika sudah mendaftar tidak bisa batal!!"
@@ -39,7 +33,7 @@
             android:layout_marginTop="10dp"
             android:layout_gravity="center_horizontal"
             android:gravity="center_horizontal"
-            android:layout_width="match_parent"
+            android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
@@ -51,7 +45,7 @@
                 android:layout_width="72dp"
                 android:layout_height="wrap_content"
                 android:text="NO"
-                android:textSize="14sp"
+                android:textSize="12sp"
                 android:textStyle="bold"
                 android:backgroundTint="@color/red"
                 android:fontFamily="@font/poppins"/>
@@ -64,10 +58,20 @@
                 android:layout_width="72dp"
                 android:layout_height="wrap_content"
                 android:text="YES"
-                android:textSize="14sp"
+                android:textSize="12sp"
                 android:textStyle="bold"
                 android:backgroundTint="@color/green"
                 android:fontFamily="@font/poppins"/>
         </LinearLayout>
     </LinearLayout>
-</androidx.cardview.widget.CardView>
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:layout_gravity="center_horizontal"
+        android:id="@+id/animation_view_people_donor"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        app:lottie_rawRes="@raw/animation_alert"
+        app:lottie_loop="true"
+        app:lottie_autoPlay="true" />
+</FrameLayout>
+

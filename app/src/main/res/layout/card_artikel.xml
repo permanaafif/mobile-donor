@@ -3,11 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/card_artikel"
     app:cardCornerRadius="15dp"
-    android:layout_marginBottom="20dp"
+    android:layout_marginLeft="10dp"
+    android:layout_marginRight="10dp"
+    android:layout_marginBottom="10dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <RelativeLayout
+
         android:layout_width="match_parent"
         android:layout_height="135dp">
 
@@ -42,7 +45,7 @@
                 android:maxLines="1"
                 android:ellipsize="end"
                 android:textStyle="bold"
-                android:textSize="14sp"/>
+                android:textSize="12sp"/>
 
             <TextView
                 android:id="@+id/deskripsi_artikel"
@@ -50,10 +53,10 @@
                 android:layout_height="wrap_content"
                 android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incidid et dolore magna veniam, quis nostrud exercitat......"
                 android:fontFamily="@font/poppins"
-                android:maxLines="3"
+                android:maxLines="4"
                 android:justificationMode="inter_word"
                 android:ellipsize="end"
-                android:textSize="12sp"/>
+                android:textSize="10sp"/>
 
             <TextView
                 android:id="@+id/tanggal_artikel"
@@ -64,7 +67,7 @@
                 android:fontFamily="@font/poppins"
                 android:maxLines="1"
                 android:layout_gravity="end"
-                android:textSize="12sp"/>
+                android:textSize="10sp"/>
         </LinearLayout>
     </RelativeLayout>
 
